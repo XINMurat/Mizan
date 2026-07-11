@@ -1,0 +1,112 @@
+# =====================================================================
+# Example Mizan registry — passes tools/mizan_validate.py (R1–R7 clean)
+# Örnek Mizan registry'si — doğrulayıcıdan temiz geçer (R1–R7)
+# =====================================================================
+registry:
+  project: "ExampleLM"
+  owner: "XINMurat"
+  schema_version: "1.1"
+  methodology: "mizan-v2.2"
+  created: "2026-07-11"
+  notes: >
+    Worked example showing a full hypothesis → experiment → result cycle
+    that satisfies every hard rule, including a surprising-positive that
+    correctly waits for its symmetric control before promotion.
+
+hypotheses:
+  - id: "H-001"
+    version: 1
+    tier: "K"
+    status: "closed"
+    preregistered: "2026-07-11"
+    title: "Input-dependent phase improves perplexity"
+    formal: >
+      Adding an input-dependent phase term to the projection lowers
+      validation perplexity relative to a parameter-matched baseline.
+    origin: "user intuition + prior SpectralLM note"
+    metric:
+      name: "perplexity_improvement"
+      instrument: "eval/ppl.py on WikiText-2 val"
+    threshold:
+      support: ">= 5%"
+      refute: "< 1%"
+      underpowered: "1%..5% -> one rerun with a second seed"
+    refutation: >
+      A gain below 1%, or a gain that a phase-free control reproduces,
+      kills the 'geometry matters' reading.
+    two_sided: >
+      Support: phase term earns its place. Refute: the projection budget,
+      not the phase, carries the gain — cheaper design wins.
+    informativeness_precondition: >
+      Both arms must actually learn the task (val loss below random).
+    preregistered_prediction: "Owner expects a real but small (~3-6%) gain."
+    prior_art:
+      - "Fourier/phase features in sequence models"
+    confounds:
+      - parameter_count
+      - initialization
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: []
+    cost: "~1 GPU-day"
+    history:
+      - { date: "2026-07-11", event: "preregistered v1" }
+      - { date: "2026-07-11", event: "H->K confirmed after symmetric control (see RES-001)" }
+
+experiments:
+  - id: "EXP-001"
+    hypotheses: ["H-001"]
+    design: >
+      Train phase-augmented vs. parameter-matched vanilla arm; compare
+      validation perplexity. Run the amplitude-routed control as the
+      symmetric check for the surprising positive.
+    materials:
+      dataset: "WikiText-2"
+      model: "ExampleLM-small"
+      seeds: [42, 7]
+      config: "configs/exp001.yaml"
+    baseline:
+      description: "Parameter-matched vanilla variant (±1% params)"
+    confound_controls:
+      - confound: parameter_count
+        control: "both arms matched to ±1% params"
+      - confound: initialization
+        control: "two seeds (42, 7); variance reported in honesty annexes"
+    status: "completed"
+    raw_output: "runs/exp001/"
+
+results:
+  - id: "RES-001"
+    experiment: "EXP-001"
+    hypothesis: "H-001"
+    date: "2026-07-11"
+    measured: >
+      Phase arm: -6.75% ppl vs baseline (mean over seeds 42,7).
+      Amplitude-routed control: -6.5% ppl vs baseline.
+    threshold_met: "yes"
+    surprising_positive: true
+    confound_control_result: >
+      Amplitude-routed control reproduced ~96% of the gain, so the effect
+      is generic input-conditioning capacity, NOT phase geometry. The
+      'geometry matters' headline is refuted; the perplexity gain itself
+      is real and survives, hence H stays supported for the gain claim.
+    # v1.1 optional structured statistics (opt-in; see schema)
+    statistics:
+      effect_size: "-6.75% ppl (relative)"
+      n: "2 seeds"
+      uncertainty: "±0.4% across seeds"
+      seeds_variance: "42: -6.9%, 7: -6.6%"
+    decision: "propose H->K"
+    decision_confirmed_by: "owner (2026-07-11 audit pass)"
+    honesty_annexes:
+      - "n=1 dataset (WikiText-2), 2 seeds only"
+      - "instrument dependence: ppl.py tokenizer; other tokenizers untested"
+      - "control shows the 'phase geometry' framing does not hold"
+    post_hoc_reasoning: >
+      not preregistered: the amplitude control was designed after seeing
+      the surprising 6.75% — added as a sub-check per R6.
+    followup: []
+
+bugs: []
+features: []

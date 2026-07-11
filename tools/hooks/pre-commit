@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Mizan pre-commit hook — runs the R1–R7 validator on staged registry files.
+# Mizan pre-commit kancası — hazırlanmış registry dosyalarını R1–R7 denetler.
+#
+# Install / Kurulum:
+#   cp tools/hooks/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+# or / veya:
+#   git config core.hooksPath tools/hooks
+#
+# It validates any staged file matching *mizan-registry*.yaml (and .yml),
+# including the append-only (R4) check against HEAD.
+set -euo pipefail
+
+LANG_OPT="${MIZAN_LANG:-en}"   # export MIZAN_LANG=tr for Turkish messages
+PYTHON="${PYTHON:-python}"
+here="$(git rev-parse --show-toplevel)"
+validator="$here/tools/mizan_validate.py"
+
+# Staged, still-present files matching the registry naming convention.
+mapfile -t files < <(git diff --cached --name-only --diff-filter=ACM \
+  | grep -Ei 'mizan-registry.*\.ya?ml$' || true)
+
+if [ "${#files[@]}" -eq 0 ]; then
+  exit 0
+fi
+
+fail=0
+for f in "${files[@]}"; do
+  [ -f "$here/$f" ] || continue
+  echo "mizan: validating $f"
+  # HEAD may not have the file yet (new registry) — --against is best-effort.
+  if git cat-file -e "HEAD:$f" 2>/dev/null; then
+    "$PYTHON" "$validator" --lang "$LANG_OPT" --against HEAD "$here/$f" || fail=1
+  else
+    "$PYTHON" "$validator" --lang "$LANG_OPT" "$here/$f" || fail=1
+  fi
+done
+
+if [ "$fail" -ne 0 ]; then
+  echo ""
+  echo "mizan: commit blocked — registry violates a hard rule (R1–R7)."
+  echo "mizan: commit engellendi — registry bir sert kuralı (R1–R7) ihlal ediyor."
+  echo "       Fix the entry or, if this is a deliberate exception, document it."
+  exit 1
+fi
+exit 0

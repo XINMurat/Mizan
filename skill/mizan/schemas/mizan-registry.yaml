@@ -1,0 +1,163 @@
+# =====================================================================
+# Mizan Registry Schema v1.0  (mizan-registry.yaml)
+# =====================================================================
+# Machine-readable research/engineering registry aligned with the Mizan
+# methodology. Human-editable, AI-readable, git-diff friendly.
+#
+# HARD RULES (validators and AI agents must enforce):
+#   R1. A hypothesis MUST have threshold + refutation BEFORE any result
+#       references it. (No HARKing by construction.)
+#   R2. experiment.baseline is MANDATORY. "none" is allowed ONLY with a
+#       written justification; a result based on a baseline-less
+#       experiment can NEVER promote a hypothesis to tier K.
+#   R3. experiment.confound_controls is MANDATORY: every confound listed
+#       in the hypothesis is either controlled (say how) or explicitly
+#       accepted as a risk (say why).
+#   R4. History is append-only. Refuted entries are never deleted;
+#       tier R is a terminal-but-visible state.
+#   R5. result.honesty_annexes is MANDATORY and non-empty.
+#   R6. If result.surprising_positive is true, promotion to K requires
+#       a completed confound_control_result (or a preregistered
+#       sub-entry for it). The headline waits.
+#   R7. Producer/auditor separation: the agent that writes results
+#       SHOULD NOT be the sole agent that promotes tiers; tier changes
+#       are proposed, then confirmed by the owner or an audit pass.
+#
+# Tiers: K (proven) | H (plausible hypothesis) | S (speculative)
+#        R (refuted) | KKE (critical control missing) | Y (misleading)
+#
+# SCHEMA VERSIONS:
+#   1.0 — base format.
+#   1.1 — adds an OPTIONAL result.statistics block (effect_size, n,
+#         uncertainty, seeds_variance) for machine-readable meta-analysis.
+#         Backward compatible: v1.0 files remain valid; the block is opt-in
+#         and never forced (forcing it would push fabricated numbers — the
+#         opposite of the honesty-annex principle). See FEAT-M002 in the
+#         project roadmap registry — this field ships; whether it earns
+#         its place stays GATED pending real migration data.
+# =====================================================================
+
+registry:
+  project: "ProjectName"            # e.g. SpectralLM
+  owner: "XINMurat"
+  schema_version: "1.0"
+  methodology: "mizan-v2"           # the installed skill version
+  created: "2026-07-10"
+  notes: >
+    Optional free text: scope of this registry, links to project docs.
+
+# ---------------------------------------------------------------------
+# HYPOTHESIS — written BEFORE the test runs (R1)
+# ---------------------------------------------------------------------
+hypotheses:
+  - id: "H-001"
+    version: 1                      # bump on revision; old versions stay in history
+    tier: "H"                       # current evidence tier
+    status: "preregistered"         # preregistered | testing | closed
+    preregistered: "2026-07-10"
+    title: "Short name"
+    formal: >
+      The claim as a precise, testable statement.
+    origin: >
+      Where it came from: user intuition / prior result (ref id) /
+      external AI suggestion (which) / literature.
+    metric:
+      name: "perplexity_improvement"
+      instrument: "script/path or query — the thing that produces the number"
+    threshold:                      # LOCKED now, numeric (R1)
+      support: ">= 5%"
+      refute: "< 1%"
+      underpowered: "1%..5% -> one rerun allowed; state what changes"
+    refutation: >
+      What result kills this hypothesis.
+    two_sided: >
+      What EACH outcome teaches. If only success is informative,
+      redesign before registering.
+    informativeness_precondition: >
+      What must hold for the test to count at all (else: cell_closed).
+    preregistered_prediction: >
+      Optional: author's expectation, written before the result.
+    prior_art:
+      - "Known relatives; where the originality claim actually lives"
+    confounds:                      # feeds R3 — experiments must answer these
+      - parameter_count
+      - initialization
+    relations:                      # keep the small verb set
+      depends_on: []                # ids
+      contradicts: []
+      refines: []                   # e.g. "H-001@v1"
+    cost: "rough effort estimate"
+    history:                        # append-only (R4)
+      - { date: "2026-07-10", event: "preregistered v1" }
+
+# ---------------------------------------------------------------------
+# EXPERIMENT — the test as actually run
+# ---------------------------------------------------------------------
+experiments:
+  - id: "EXP-001"
+    hypotheses: ["H-001"]
+    design: >
+      What is done, in one paragraph.
+    materials:
+      dataset: "WikiText-2"
+      model: "..."
+      seeds: [42]                   # list; single seed => must appear in honesty annexes
+      config: "path or inline"
+    baseline:                       # MANDATORY (R2)
+      description: "Parameter-matched vanilla variant / control arm"
+      # If genuinely none:
+      # description: "none"
+      # justification: "why a comparison object is impossible here"
+    confound_controls:              # MANDATORY (R3) — answer the hypothesis' confound list
+      - confound: parameter_count
+        control: "both arms matched to ±1% params"
+      - confound: initialization
+        control: "accepted risk — single init; rationale: ..."
+    status: "planned"               # planned | running | completed | cell_closed
+    raw_output: "path/to/logs"
+
+# ---------------------------------------------------------------------
+# RESULT — appended, never edited (R4)
+# ---------------------------------------------------------------------
+results:
+  - id: "RES-001"
+    experiment: "EXP-001"
+    hypothesis: "H-001"
+    date: "2026-07-XX"
+    measured: >
+      Values verbatim, no interpretation in this field.
+    threshold_met: "yes"            # yes | no | precondition_failed
+    surprising_positive: false      # true triggers R6
+    # OPTIONAL (schema v1.1) — fill only where a real number exists; leave
+    # the whole block out rather than inventing values (honesty over coverage).
+    statistics:
+      effect_size: ""               # e.g. "-6.75% ppl (relative)"
+      n: ""                         # e.g. "2 seeds" / "1 dataset"
+      uncertainty: ""               # e.g. "±0.4% across seeds", CI, or "unknown"
+      seeds_variance: ""            # per-seed spread if multi-seed, else omit
+    confound_control_result: >
+      Mandatory before K-promotion when surprising_positive: the
+      symmetric control run and its outcome, or the id of a
+      preregistered sub-entry for it.
+    decision: "propose H->K"        # propose H->K | propose H->R |
+                                    # cell_closed | underpowered_rerun
+    decision_confirmed_by: ""       # owner/audit pass (R7); empty = pending
+    honesty_annexes:                # MANDATORY, non-empty (R5)
+      - "n=1 dataset, single seed"
+      - "instrument dependence: ..."
+    post_hoc_reasoning: >
+      Allowed, but labeled: anything reasoned AFTER seeing the result.
+    followup: []                    # new hypothesis/experiment ids
+
+# ---------------------------------------------------------------------
+# OPTIONAL BLOCKS — same rules, specialized fields
+# ---------------------------------------------------------------------
+# Bug hypotheses (Mode 4): add symptom / mechanism / rival_hypotheses /
+#   refutation_test; "fix worked" follows R6 (revert-check as the
+#   symmetric control).
+# Feature gates (Mode 5): add problem_claim (with tier+source),
+#   value_metric, success_threshold, kill_condition, alternatives
+#   (>=1 cheaper + null alternative), acceptance criteria phrased as
+#   refutation conditions.
+bugs: []
+features: []

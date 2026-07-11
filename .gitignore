@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.idea/
+.vscode/
+
+# Local Claude skill installs (do not commit user-scoped installs)
+.claude/skills/
+
+# Working / scratch
+*.log
+tmp/
+scratch/
+
+# Internal roadmap registry — kept private, not published
+mizan-product-registry.yaml

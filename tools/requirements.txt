@@ -1,0 +1,2 @@
+# Mizan tooling dependencies
+PyYAML>=6.0
