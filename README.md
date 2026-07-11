@@ -3,6 +3,8 @@
 **Evidence-tiered auditing & preregistration methodology, packaged as a Claude skill.**
 **Kanıt-katmanlı denetim ve önkayıt metodolojisi — bir Claude skill'i olarak paketlenmiş.**
 
+[![CI](https://github.com/XINMurat/Mizan/actions/workflows/mizan.yml/badge.svg)](https://github.com/XINMurat/Mizan/actions/workflows/mizan.yml)
+
 🌐 **Languages / Diller:** [English](#english) · [Türkçe](#türkçe)
 
 Tiers / Katmanlar: **[K]** proven/kanıtlanmış · **[H]** plausible hypothesis/makul hipotez ·

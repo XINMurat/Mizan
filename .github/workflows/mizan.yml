@@ -1,0 +1,103 @@
+name: CI
+
+# Runs the LLM-free R1–R7 registry validator and checks that the shipped
+# mizan.skill stays in sync with skill/mizan/. This is the static-check
+# automation of the already-shipped tool (FEAT-M001's cheap alternative) —
+# NOT the "full CI/CD gate with an LLM auditor", which stays gated.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate-registries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r tools/requirements.txt
+
+      - name: Validate every registry (R1–R7)
+        run: |
+          set -e
+          found=0
+          while IFS= read -r f; do
+            found=1
+            echo "::group::$f"
+            python tools/mizan_validate.py "$f"
+            echo "::endgroup::"
+          done < <(find . -path ./.git -prune -o -name '*mizan-registry*.y*ml' -print)
+          if [ "$found" -eq 0 ]; then
+            echo "No registry files found to validate." >&2
+            exit 1
+          fi
+
+      - name: Self-test — validator must FAIL on a broken registry
+        run: |
+          set -e
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: t, owner: t, schema_version: "1.1", methodology: m, created: "2026-01-01"}
+          hypotheses:
+            - id: H-1
+              tier: K
+              threshold: {support: ">=1", refute: "<1"}
+              refutation: "x"
+              confounds: []
+          experiments: []
+          results:
+            - id: R-1
+              experiment: E-1
+              hypothesis: H-1
+              measured: "x"
+              decision: "propose H->K"
+              honesty_annexes: []        # R5 (empty) + R7 (K without confirmation)
+          YAML
+          if python tools/mizan_validate.py "$tmp"; then
+            echo "FAIL: validator passed a registry that violates R5/R7" >&2
+            exit 1
+          fi
+          echo "OK: validator correctly rejected the broken registry."
+
+  skill-package-in-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: mizan.skill must match skill/mizan/ contents
+        run: |
+          python - <<'PY'
+          import zipfile, os, sys
+          def norm(b): return b.replace(b"\r\n", b"\n")
+          z = zipfile.ZipFile("mizan.skill")
+          names = set(z.namelist())
+          bad = []
+          # every packaged file must match its source
+          for name in names:
+              src = os.path.join("skill", name)   # arcname is mizan/... ; source is skill/mizan/...
+              if not os.path.exists(src):
+                  bad.append(f"{name}: packaged but missing from source"); continue
+              if norm(z.read(name)) != norm(open(src, "rb").read()):
+                  bad.append(f"{name}: content differs from skill/{name}")
+          # every source file must be packaged
+          for root, _, files in os.walk("skill/mizan"):
+              for f in files:
+                  rel = os.path.relpath(os.path.join(root, f), "skill").replace(os.sep, "/")
+                  if rel not in names:
+                      bad.append(f"{rel}: in source but not packaged")
+          if bad:
+              print("mizan.skill is OUT OF SYNC with skill/mizan/:")
+              for b in bad: print("  -", b)
+              print("\nRebuild it (see CONTRIBUTING.md) and commit.")
+              sys.exit(1)
+          print("mizan.skill is in sync with skill/mizan/.")
+          PY
