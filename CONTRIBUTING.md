@@ -37,6 +37,48 @@ python tools/mizan_validate.py examples/mizan-registry.example.yaml
 git config core.hooksPath tools/hooks
 ```
 
+### Continuous integration (CI)
+
+The badge at the top of the README —
+`[![CI](…/actions/workflows/mizan.yml/badge.svg)](…)` — is **green when
+`main` passes** two jobs, which run on every push and pull request
+([`.github/workflows/mizan.yml`](.github/workflows/mizan.yml)):
+
+- **validate-registries** — runs the R1–R7 validator on every
+  `*mizan-registry*.yaml`, plus a self-test asserting the validator
+  *rejects* a deliberately broken registry (so it can never silently pass
+  everything).
+- **skill-package-in-sync** — fails if `mizan.skill` drifts from
+  `skill/mizan/`; rebuild the package after editing the skill.
+
+**Reproduce CI locally before pushing** (same checks, no waiting):
+
+```bash
+# job 1: validate every registry
+find . -path ./.git -prune -o -name '*mizan-registry*.y*ml' -print \
+  | xargs -I{} python tools/mizan_validate.py {}
+# job 2: skill package in sync with source
+python - <<'PY'
+import zipfile, os, sys
+n = lambda b: b.replace(b"\r\n", b"\n"); z = zipfile.ZipFile("mizan.skill")
+bad = [k for k in z.namelist()
+       if not os.path.exists(os.path.join("skill", k))
+       or n(z.read(k)) != n(open(os.path.join("skill", k), "rb").read())]
+print("skill in sync" if not bad else "OUT OF SYNC: " + ", ".join(bad))
+sys.exit(1 if bad else 0)
+PY
+```
+
+**Check a run's status:** the **Actions** tab on GitHub, the README badge,
+or the GitHub CLI:
+
+```bash
+gh run list --workflow mizan.yml     # recent runs + their conclusion
+gh run watch                         # live-follow the current run
+```
+
+A PR is not done while CI is red.
+
 If you change **any** file under `skill/mizan/`, rebuild the one-file
 package so it stays in sync (the shipped `mizan.skill` embeds those files):
 
@@ -106,6 +148,40 @@ python tools/mizan_validate.py --lang tr examples/mizan-registry.example.yaml
 git config core.hooksPath tools/hooks
 export MIZAN_LANG=tr
 ```
+
+### Sürekli entegrasyon (CI)
+
+README'nin başındaki rozet —
+`[![CI](…/actions/workflows/mizan.yml/badge.svg)](…)` — her push ve pull
+request'te çalışan iki iş geçtiğinde **`main` için yeşildir**
+([`.github/workflows/mizan.yml`](.github/workflows/mizan.yml)):
+
+- **validate-registries** — R1–R7 validator'ını her `*mizan-registry*.yaml`
+  üzerinde çalıştırır; ayrıca validator'ın **kasıtlı bozuk** bir registry'yi
+  *reddettiğini* doğrulayan bir öz-test (yani hiçbir zaman sessizce her şeyi
+  geçiremez).
+- **skill-package-in-sync** — `mizan.skill`, `skill/mizan/` ile ayrışırsa
+  başarısız olur; skill'i düzenledikten sonra paketi yeniden derle.
+
+**Push'tan önce CI'ı yerelde tekrarla** (aynı kontroller, beklemesiz):
+
+```bash
+# 1. iş: her registry'yi doğrula
+find . -path ./.git -prune -o -name '*mizan-registry*.y*ml' -print \
+  | xargs -I{} python tools/mizan_validate.py --lang tr {}
+# 2. iş: skill paketi kaynakla senkron mu — yukarıdaki İngilizce bölümdeki
+#    tek-satırlık Python bloğunun aynısı.
+```
+
+**Bir koşunun durumunu kontrol et:** GitHub'daki **Actions** sekmesi, README
+rozeti veya GitHub CLI:
+
+```bash
+gh run list --workflow mizan.yml     # son koşular + sonuçları
+gh run watch                         # mevcut koşuyu canlı izle
+```
+
+CI kırmızıyken PR "bitti" sayılmaz.
 
 `skill/mizan/` altında **herhangi** bir dosyayı değiştirirsen, tek-dosya
 paketini yeniden derle (yayınlanan `mizan.skill` o dosyaları içinde
