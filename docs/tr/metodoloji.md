@@ -276,6 +276,34 @@ doğrulandı, 14/14 düzeltmenin ayrı commit'i var (github.com/.../commits).
 konuşmaları gerektirir (buradan erişilemiyor).
 ```
 
+## 2.5 Coverage Ledger (fazlı denetimler)
+
+Sıralı fazlara bölünen büyük hedeflerde Mode 3/4/5 için
+(`yazilim-modlari.md` §A5.1). Tüm fazlar ve oturumlar arasında paylaşılan
+tek append-only tablo. Aynı zamanda denetimin kapsam beyanıdır (A5).
+
+```markdown
+# Mizan Coverage Ledger — <hedef> (başlangıç GG-AA-YYYY)
+
+Seçim kuralı: <bölümlemede kullanılan risk-ağırlığı, örn. giriş noktaları
++ para yolları + çalkalanmış dosyalar önce>.
+Registry / rapor dosyası: <fazların append ettiği yol>.
+
+| Faz | Dilim (modül / yol / yüzey) | Durum | Kapsam (L'den K fn) | Eklenen bulgular | Tarih |
+|---|---|---|---|---|---|
+| P0 | yalnız kapsamlama — bölümleme planı | ✅ tamam | — | plan: P1..Pn | GG-AA-YYYY |
+| P1 | <dilim> | ✅ tamam | 12/12 | 3×[R] 1×[Y] 5×[KKE] | GG-AA-YYYY |
+| P2 | <dilim> | 🔨 sürüyor | 4/? | … | — |
+| P3 | <dilim> | ⏳ planlandı | — | — | — |
+| MERGE | fazlar-arası uzlaştırma | ⏳ bekliyor | — | tier-drift + dilim-aşan hop | — |
+
+Kapsam iddiası durumu: MERGE koşana dek `[H]`; ancak sonra `[K]`.
+```
+
+Kurallar: satırlar eklenir/güncellenir, asla silinmez; yeniden-kapsamlanan
+bir dilim düzenleme değil yeni satır alır. Tüm-repo `[K]` kapsam iddiası
+MERGE satırı `✅ tamam` olana dek `[H]` kalır — bkz. §A5.1 adım 3.
+
 ---
 
 # BÖLÜM 3 — Hata-Modu Kontrol Listesi (references/checklist.md karşılığı)

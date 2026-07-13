@@ -113,3 +113,15 @@ While building, PRD claims meet reality. Rules:
 - Acceptance tests are written from the refutation-phrased criteria
   BEFORE the demo, and they are subject to Mode 3's test-quality rule
   (a test that cannot fail is decoration).
+
+## Large PRDs and feature portfolios — phase the gate
+
+A single epic PRD or a whole roadmap of features is too large to atomize
+and preregister in one pass. Reuse the phased protocol from
+`code-audit.md` §A5.1: Phase 0 partitions the PRD into bounded feature
+groups (or the roadmap into individual FEAT-X entries) and records them in
+a Coverage Ledger (`templates.md` §5); each phase gates one group fully
+and APPENDS its FEAT-X entries to the one registry; a final reconciliation
+pass catches cross-feature dependency claims and shared kill conditions
+(feature A's success metric that silently depends on feature B). Until
+that pass runs, "the whole PRD is gated" is `[H]`, not `[K]`.

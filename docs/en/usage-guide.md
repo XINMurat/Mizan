@@ -71,7 +71,11 @@ next steps.
 comment's existence ≠ a behavior's existence), and produces an
 evidence-tiered behavior report + a Gap Map. In an undocumented project,
 that report IS the documentation. A coverage declaration is mandatory on a
-large codebase — a sampled audit is never presented as a full one.
+large codebase — a sampled audit is never presented as a full one. When you
+want *full* coverage on a repo too big for one pass, ask Claude to phase it:
+sequential slices sharing one append-only registry plus a Coverage Ledger
+(procedure in `code-audit.md` §A5.1) — no need to hold the whole repo in
+one session.
 
 ### 2.6 Bug hunt (Mode 4)
 When starting to debug: "register this as a bug hypothesis." The symptom

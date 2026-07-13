@@ -70,6 +70,43 @@ practice:
 - Report coverage: "N of M modules, K of L public functions."
 - Never present a sampled audit as a full one.
 
+### A5.1. Phased audit for large codebases (full coverage without one-pass blow-up)
+
+Sampling (A5) trades coverage for feasibility. When the user wants *full*
+coverage on a repo too large to atomize in one pass, partition the work
+into sequential phases instead — each phase small enough to audit
+completely, all phases sharing one append-only registry as their memory.
+This is not a new mechanism: it is the append-only registry (rule 4) used
+as the cross-phase carrier, exactly as an existing registry file already
+persists across sessions.
+
+Procedure:
+
+1. **Phase 0 — scoping only (cheap).** Do NOT atomize yet. Build the
+   module/path map and risk-rank it (A5 selection rule: entry points,
+   security/money surfaces, recently-churned files). Emit a **partition
+   plan**: phases P1..Pn, each a bounded slice (by module, path, or
+   surface) that fits one pass. Write the plan into the Coverage Ledger
+   (template in `templates.md` §5) with every phase marked `⏳ planned`.
+2. **Phase k — one slice, fully.** Run Mode 3 (or 4) completely on slice
+   Pk only. APPEND findings to the single registry / behavior report;
+   never rewrite prior phases' entries. Update the Coverage Ledger row:
+   `✅ done`, with the "K of L functions" for that slice. Each phase can
+   run in a fresh session — it reads the ledger + registry, sees what is
+   done, continues.
+3. **Merge — cross-phase reconciliation (mandatory, do not skip).**
+   A final pass reconciles claims that cross slice boundaries: tier drift
+   between modules, duplicate findings, and — the real risk — hops where
+   a claim in slice A is verified only by evidence in slice E. Naive
+   partitioning MISSES these; reconciliation is where phased audit is
+   weakest, so name it explicitly. Until this pass runs, the audit's
+   coverage claim is `[H]`, not `[K]`: "each slice fully audited" ≠ "the
+   repo fully audited", and presenting it as the latter is itself a `[Y]`.
+
+The Coverage Ledger IS the deliverable's scope statement (A5): it shows
+at any moment which slices are `[K]`-covered, which are pending, and
+whether reconciliation has run.
+
 ### A6. Deliverables
 
 1. **Evidence-tiered behavior report** — every statement carries a tier

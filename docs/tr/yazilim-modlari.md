@@ -83,6 +83,43 @@ Küçük kod tabanları dışında tam atomizasyon imkânsızdır. Zorunlu prati
 - Kapsamı raporla: "M modülden N'i, L public fonksiyondan K'sı."
 - Örneklenmiş denetimi asla tam denetim gibi sunma.
 
+### A5.1. Büyük kod tabanları için fazlı denetim (tek-geçişte patlamadan tam kapsam)
+
+Örnekleme (A5) kapsamı fizibilite için feda eder. Kullanıcı, tek geçişte
+atomize edilemeyecek kadar büyük bir repoda *tam* kapsam istiyorsa,
+örneklemek yerine işi sıralı fazlara böl — her faz tek başına eksiksiz
+denetlenebilecek kadar küçük, tüm fazlar tek bir append-only registry'yi
+ortak hafıza olarak paylaşır. Bu yeni bir mekanizma DEĞİL: append-only
+registry (kural 4), var olan bir registry dosyasının oturumlar arasında
+zaten kalıcı olması gibi, fazlar-arası taşıyıcı olarak kullanılır.
+
+Prosedür:
+
+1. **Faz 0 — yalnız kapsamlama (ucuz).** Henüz atomize ETME. Modül/yol
+   haritasını çıkar ve risk-sırala (A5 seçim kuralı: giriş noktaları,
+   güvenlik/para yüzeyleri, yakın-zamanda-çalkalanmış dosyalar). Bir
+   **bölümleme planı** yay: P1..Pn fazları, her biri tek geçişe sığan
+   sınırlı bir dilim (modül, yol veya yüzey). Planı Coverage Ledger'a
+   (template: `metodoloji.md` §2.5) her faz `⏳ planlandı` işaretiyle yaz.
+2. **Faz k — tek dilim, eksiksiz.** Yalnız Pk diliminde Mode 3'ü (veya 4)
+   tam çalıştır. Bulguları tek registry / davranış raporuna APPEND et;
+   önceki fazların girişlerini asla yeniden yazma. Coverage Ledger
+   satırını güncelle: `✅ tamam`, o dilim için "L'den K fonksiyon". Her
+   faz ayrı oturumda koşabilir — ledger + registry'yi okur, neyin bittiğini
+   görür, devam eder.
+3. **Merge — fazlar-arası uzlaştırma (zorunlu, atlanmaz).** Son bir geçiş,
+   dilim sınırlarını aşan iddiaları uzlaştırır: modüller arası tier drift,
+   tekrar bulguları ve — asıl risk — A dilimindeki bir iddianın yalnız E
+   diliminde bulunan kanıtla doğrulandığı hop'lar. Naif bölümleme bunları
+   KAÇIRIR; fazlı denetimin en zayıf yeri burasıdır, o yüzden açıkça
+   adlandır. Bu geçiş koşana dek denetimin kapsam iddiası `[K]` değil
+   `[H]`'dir: "her dilim eksiksiz denetlendi" ≠ "repo eksiksiz denetlendi"
+   ve ikincisi gibi sunmak başlı başına bir `[Y]`'dir.
+
+Coverage Ledger'ın kendisi çıktının kapsam beyanıdır (A5): herhangi bir
+anda hangi dilimlerin `[K]`-kapsandığını, hangilerinin beklediğini ve
+uzlaştırmanın koşup koşmadığını gösterir.
+
 ### A6. Çıktılar
 
 1. **Kanıt-katmanlı davranış raporu** — her cümle bir katman ve kaynak
@@ -268,3 +305,16 @@ Yapım sırasında PRD iddiaları gerçekle buluşur. Kurallar:
 - Kabul testleri, çürütme-dilli kriterlerden demo'dan ÖNCE yazılır ve
   Mod 3'ün test-kalite kuralına tabidir (başarısız olamayan test
   dekorasyondur).
+
+## Büyük PRD'ler ve özellik portföyleri — kapıyı fazla
+
+Tek bir epik PRD ya da bir yol haritası dolusu özellik, tek geçişte
+atomize edilip önkayıt edilemeyecek kadar büyüktür. §A5.1'deki fazlı
+protokolü yeniden kullan: Faz 0 PRD'yi sınırlı özellik gruplarına (ya da
+yol haritasını tek tek FEAT-X girdilerine) böler ve bunları bir Coverage
+Ledger'a (`metodoloji.md` §2.5) kaydeder; her faz bir grubu eksiksiz
+kapılar ve FEAT-X girdilerini tek registry'ye APPEND eder; son bir
+uzlaştırma geçişi özellikler-arası bağımlılık iddialarını ve paylaşılan
+kill koşullarını yakalar (A özelliğinin, B özelliğine sessizce bağımlı
+başarı metriği). Bu geçiş koşana dek "tüm PRD kapılandı" iddiası `[K]`
+değil `[H]`'dir.

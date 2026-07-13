@@ -5,6 +5,7 @@ Contents:
 2. Result block format (appended to entries)
 3. Audit Report template (retrospective)
 4. Compact claim-line format (for inline audits)
+5. Coverage Ledger (phased audits — code-audit.md §A5.1)
 
 All templates are bilingual-friendly: keep the tier tags as-is
 (`[K]/[H]/[S]/[R]/[KKE]/[Y]`), write prose in the user's language.
@@ -115,3 +116,31 @@ history, 14/14 fixes have dedicated commits (github.com/.../commits).
 instances found, prediction record incomplete; full hit rate needs the
 project-scoped conversations (inaccessible from here).
 ```
+
+## 5. Coverage Ledger (phased audits)
+
+For Mode 3/4/5 on large targets split into sequential phases
+(`code-audit.md` §A5.1). One append-only table, shared across all phases
+and sessions. It doubles as the audit's scope statement (A5).
+
+```markdown
+# Mizan Coverage Ledger — <target> (started YYYY-MM-DD)
+
+Selection rule: <risk-weighting used to partition, e.g. entry points +
+money paths + churned files first>.
+Registry / report file: <path the phases append to>.
+
+| Phase | Slice (module / path / surface) | Status | Coverage (K of L fns) | Findings appended | Date |
+|---|---|---|---|---|---|
+| P0 | scoping only — partition plan | ✅ done | — | plan: P1..Pn | YYYY-MM-DD |
+| P1 | <slice> | ✅ done | 12/12 | 3×[R] 1×[Y] 5×[KKE] | YYYY-MM-DD |
+| P2 | <slice> | 🔨 in progress | 4/? | … | — |
+| P3 | <slice> | ⏳ planned | — | — | — |
+| MERGE | cross-phase reconciliation | ⏳ pending | — | tier-drift + cross-slice hops | — |
+
+Coverage claim status: `[H]` until MERGE runs; `[K]` only after.
+```
+
+Rules: rows are appended/updated, never deleted; a re-scoped slice gets a
+new row, not an edit. The whole-repo `[K]` coverage claim stays `[H]`
+until the MERGE row is `✅ done` — see §A5.1 step 3.

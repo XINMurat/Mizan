@@ -67,7 +67,11 @@ name, comment, docstring, test, type hint, config value, and commit
 message makes a verifiable claim. Read `references/code-audit.md` before
 the first code audit. Deliverable: an evidence-tiered behavior report
 (which doubles as generated documentation when none exists) plus a Gap
-Map of broken promises, untested surfaces, and deferrals.
+Map of broken promises, untested surfaces, and deferrals. For a repo too
+large to audit in one pass, do NOT force it — partition into sequential
+phases sharing one append-only registry (procedure in `code-audit.md`
+§A5.1; Coverage Ledger template in `templates.md` §5); this applies to
+Modes 4 and 5 too.
 
 **Mode 4 — Bug-hypothesis registry.** Debugging is hypothesis testing
 usually performed as unrecorded HARKing. Each suspicion becomes a

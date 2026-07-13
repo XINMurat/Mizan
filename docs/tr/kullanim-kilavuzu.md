@@ -63,7 +63,11 @@ tablosu, karşı-örnek taraması, isabet oranı, eksik kart, sonraki adımlar.
 (yorumun varlığı ≠ davranışın varlığı), kanıt-katmanlı davranış raporu +
 Boşluk Haritası üretir. Dokümansız projede bu rapor dokümantasyonun
 kendisidir. Büyük kod tabanında kapsam beyanı zorunludur — örneklenmiş
-denetim tam denetim gibi sunulmaz.
+denetim tam denetim gibi sunulmaz. Tek geçişe sığmayacak kadar büyük bir
+repoda *tam* kapsam istiyorsan Claude'dan fazlamasını iste: tek bir
+append-only registry ve bir Coverage Ledger'ı paylaşan sıralı dilimler
+(prosedür: `yazilim-modlari.md` §A5.1) — tüm repoyu tek oturumda tutmaya
+gerek kalmaz.
 
 ### 2.6 Bug avı (Mod 4)
 Debug'a başlarken: "Bug hipotezi olarak kaydet." Semptom (yorumsuz),
