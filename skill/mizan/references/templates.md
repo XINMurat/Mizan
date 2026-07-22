@@ -17,6 +17,12 @@ All templates are bilingual-friendly: keep the tier tags as-is
 Write the entry BEFORE the test runs. Every field is mandatory except
 "Prior art" (mandatory only when relatives are known or suspected).
 
+The Arbiter line is what keeps a preregistration from becoming a
+well-formatted opinion: the code-verification loop draws its force from a
+judge external to the author, and outside code that judge quietly
+disappears while the paperwork still looks rigorous. Naming the arbiter
+makes its absence a visible field rather than an unnoticed one.
+
 ```markdown
 ### HX — <short hypothesis name> `[H]` `[önkayıt / preregistered YYYY-MM-DD]`
 *(Köken / Origin: where this hypothesis came from — user intuition,
@@ -25,6 +31,18 @@ prior result, external suggestion. One or two lines.)*
 - **Formel / Formal:** the claim as a precise, testable statement.
 - **Metrik / Metric:** what will be measured, and with what instrument
   (file, script, query, data source).
+- **Hakem / Arbiter:** WHO returns the verdict on the threshold — not who
+  measures, who decides. Name the class and the concrete judge:
+  `runtime` (deterministic executor: test suite, compiler, solver) /
+  `instrument` (measurement independent of your opinion) /
+  `third_party` (a judge other than this claim's author) /
+  `author` (you judging your own claim — legitimate, but caps the entry at
+  `[KKE]`; it can never reach `[K]`) /
+  `none` (no judge exists — then the threshold below is theatre; say so and
+  leave the entry at `[S]`). Add the verdict latency (seconds / days /
+  quarters / never) and, for `instrument`/`third_party`, where the
+  threshold's null comes from — thresholds are not inherited across
+  instruments.
 - **Eşik / Threshold:** the numeric decision rule, LOCKED now.
   "X ≥ N → supported; X < M → refuted; between → underpowered, one rerun."
 - **Çürütme / Refutation:** what result kills the hypothesis. Check

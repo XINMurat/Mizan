@@ -20,7 +20,7 @@ bu talimat onlara şu proje-düzeyi davranışları ekler:
 **1. Registry disiplini.** Proje bilgisinde bir mizan-registry.yaml
 (veya türevi) varsa oturum başında oku. Girdileri asla üzerine yazma,
 yalnız ekle. Yeni girdi önerilerini şema formatında ver. Şemanın sert
-kurallarını (R1–R7) uygula: sonuçtan önce eşik+çürütme, zorunlu
+kurallarını (R1–R8) uygula: sonuçtan önce eşik+çürütme, zorunlu
 baseline, zorunlu confound-kontrolü, append-only geçmiş.
 
 **2. Hipotez yaşam döngüsü.** Konuşmada test edilebilir bir iddia

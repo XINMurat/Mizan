@@ -100,7 +100,7 @@ methodology — the instructions and schema are themselves subject to
 revision (following their own discipline: changes are justified, history
 is never deleted).
 
-## 3. Hard rules (summary — R1–R7 in the schema)
+## 3. Hard rules (summary — R1–R8 in the schema)
 
 1. Threshold + refutation condition before any result (HARKing structurally closed).
 2. Baseline mandatory; a baseline-less result cannot produce `[K]`.
@@ -111,6 +111,12 @@ is never deleted).
 7. Producer ≠ sole auditor: a tier change is proposed, then the owner /
    a separate audit confirms it. (RSI safety: the agent that writes its
    own result cannot promote its own hypothesis.)
+8. Every threshold names its arbiter — the judge that returns the verdict
+   (`runtime` / `instrument` / `third_party` / `author` / `none`). A
+   self-judged claim (`author`) carries a permanent `[KKE]` and can never
+   reach `[K]`; with no arbiter (`none`) the threshold is decorative and
+   the entry stays `[S]`. This is what keeps the discipline honest outside
+   software, where the runtime no longer decides for you.
 
 ## 4. Common mistakes
 

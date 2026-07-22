@@ -13,7 +13,20 @@ Modes 3, 4, and 5 are software costumes on three universal patterns:
 
 ## The adaptation recipe (use this for any domain not listed)
 
-Answer five questions; the answers ARE the domain module:
+Answer six questions; the answers ARE the domain module. Question 0 is
+the one that decides how much of the software-verification loop actually
+survives the move:
+
+0. **Arbiter:** who returns the verdict on a locked threshold in this
+   domain — a deterministic executor, an independent instrument, a third
+   party, or the claim's own author? Software's rigor is borrowed from
+   the runtime, not from the fact that the artifact is code; most domains
+   inherit the protocol and lose the judge. Answer honestly per entry
+   (schema field `hypothesis.arbiter`, rule R8): `author` caps the claim
+   at a permanent [KKE], `none` means the threshold is decorative and the
+   entry stays [S]. A domain where every arbiter is `author` is not
+   thereby un-auditable — it just cannot produce [K], and saying so is
+   the whole point.
 
 1. **Hop map:** where do claims live vs. where does evidence live?
    (In code: comment vs. implementation. In sales: CRM field vs.

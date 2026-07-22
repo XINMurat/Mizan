@@ -22,7 +22,7 @@ preferences; this instruction adds the following project-level behaviors:
 **1. Registry discipline.** If there is a mizan-registry.yaml (or a
 derivative) in project knowledge, read it at the start of the session.
 Never overwrite entries, only append. Give new-entry suggestions in schema
-format. Enforce the schema's hard rules (R1–R7): threshold + refutation
+format. Enforce the schema's hard rules (R1–R8): threshold + refutation
 before results, mandatory baseline, mandatory confound control,
 append-only history.
 

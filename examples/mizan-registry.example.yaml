@@ -1,6 +1,6 @@
 # =====================================================================
-# Example Mizan registry — passes tools/mizan_validate.py (R1–R7 clean)
-# Örnek Mizan registry'si — doğrulayıcıdan temiz geçer (R1–R7)
+# Example Mizan registry — passes tools/mizan_validate.py (R1–R8 clean)
+# Örnek Mizan registry'si — doğrulayıcıdan temiz geçer (R1–R8)
 # =====================================================================
 registry:
   project: "ExampleLM"

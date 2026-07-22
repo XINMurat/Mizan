@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mizan registry validator — LLM-free static enforcement of hard rules R1–R7.
+Mizan registry validator — LLM-free static enforcement of hard rules R1–R8.
 
 This is the cheap, judgment-free baseline of feature FEAT-M001 (in the
 project's roadmap registry). It does NOT evaluate the *quality* of a
@@ -37,6 +37,7 @@ except ImportError:  # pragma: no cover
     sys.exit(2)
 
 VALID_TIERS = {"K", "H", "S", "R", "KKE", "Y"}
+ARBITER_CLASSES = {"runtime", "instrument", "third_party", "author", "none"}
 
 # Bilingual message catalog: key -> (en, tr)
 MSG = {
@@ -88,13 +89,41 @@ MSG = {
         "R7: hypothesis {hid} is at tier {tier} but the driving result {id} has no decision_confirmed_by — promoted without independent confirmation (producer≠sole auditor).",
         "R7: {hid} hipotezi {tier} katmanında ama onu taşıyan {id} sonucunda decision_confirmed_by boş — bağımsız onay olmadan terfi (üretici≠tek denetçi).",
     ),
+    "R8_no_arbiter": (
+        "R8: hypothesis {id} has no arbiter block — a locked threshold with no named judge is self-report.",
+        "R8: {id} hipotezinde hakem bloğu yok — hakemi isimlendirilmemiş kilitli eşik öz-beyandır.",
+    ),
+    "R8_bad_class": (
+        "R8: hypothesis {id} has invalid arbiter.class '{cls}' (allowed: runtime instrument third_party author none).",
+        "R8: {id} hipotezinde geçersiz arbiter.class '{cls}' (izinli: runtime instrument third_party author none).",
+    ),
+    "R8_no_who": (
+        "R8: hypothesis {id} names arbiter.class '{cls}' but not arbiter.who — the concrete judge is missing.",
+        "R8: {id} hipotezi arbiter.class '{cls}' diyor ama arbiter.who boş — somut hakem yok.",
+    ),
+    "R8_author_promotes_K": (
+        "R8: hypothesis {id} is at tier K but its arbiter is class '{cls}' — self-judged claims stay at KKE.",
+        "R8: {id} hipotezi K katmanında ama hakemi '{cls}' sınıfında — kendi kendini yargılayan iddia KKE'de kalır.",
+    ),
+    "R8_none_leaves_S": (
+        "R8: hypothesis {id} has arbiter.class 'none' but tier '{tier}' — with no arbiter the threshold is decorative; tier stays S.",
+        "R8: {id} hipotezinin arbiter.class'ı 'none' ama tier '{tier}' — hakemsiz eşik dekoratiftir; tier S'de kalır.",
+    ),
+    "R8_no_calibration": (
+        "R8: hypothesis {id} uses arbiter.class '{cls}' without arbiter.calibration — thresholds are not inherited across instruments (write 'unknown' if that is the truth).",
+        "R8: {id} hipotezi '{cls}' hakem sınıfını arbiter.calibration olmadan kullanıyor — eşikler enstrümanlar arası miras alınmaz ('unknown' yazmak da geçerli cevaptır).",
+    ),
+    "R8_independence_contradiction": (
+        "R8: hypothesis {id} declares arbiter.class '{cls}' with independent_of_author: true — that class is by definition not independent.",
+        "R8: {id} hipotezi arbiter.class '{cls}' ile independent_of_author: true beyan ediyor — bu sınıf tanımı gereği bağımsız değil.",
+    ),
     "bad_tier": (
         "SCHEMA: {kind} '{id}' has invalid tier '{tier}' (allowed: K H S R KKE Y).",
         "ŞEMA: {kind} '{id}' geçersiz tier '{tier}' taşıyor (izinli: K H S R KKE Y).",
     ),
     "clean": (
-        "OK — {n} entries checked, no R1–R7 violations.",
-        "OK — {n} girdi kontrol edildi, R1–R7 ihlali yok.",
+        "OK — {n} entries checked, no R1–R8 violations.",
+        "OK — {n} girdi kontrol edildi, R1–R8 ihlali yok.",
     ),
     "found": (
         "{n} violation(s) found.",
@@ -232,11 +261,57 @@ def check(data: dict, lang: str, baseline: dict | None = None) -> list[str]:
             errs.append(m("R7_self_confirmed", lang, id=r.get("id"),
                           hid=hyp.get("id"), tier=target))
 
+    # R8 — every hypothesis names the arbiter that returns the verdict.
+    # Enforced only for registries declaring schema_version >= 1.2, so that
+    # 1.0/1.1 files migrate deliberately instead of failing on upgrade.
+    if _schema_at_least(data, (1, 2)):
+        errs += _check_arbiters(hyps.values(), lang)
+
     # R4 — append-only vs. a git baseline (history may only grow; entries may not vanish)
     if baseline:
         errs += _append_only(data, baseline, lang)
 
     check.n_entries = n_entries  # type: ignore[attr-defined]
+    return errs
+
+
+def _schema_at_least(data: dict, want: tuple[int, int]) -> bool:
+    raw = _s((data.get("registry") or {}).get("schema_version"))
+    parts = raw.split(".")
+    try:
+        got = (int(parts[0]), int(parts[1]) if len(parts) > 1 else 0)
+    except ValueError:
+        return False
+    return got >= want
+
+
+def _check_arbiters(hyps: Any, lang: str) -> list[str]:
+    """R8 — the judge behind the threshold, per hypothesis."""
+    errs: list[str] = []
+    for h in hyps:
+        hid = h.get("id")
+        arb = h.get("arbiter")
+        if not isinstance(arb, dict) or not _s(arb.get("class")):
+            errs.append(m("R8_no_arbiter", lang, id=hid))
+            continue
+        cls = _s(arb.get("class")).lower()
+        if cls not in ARBITER_CLASSES:
+            errs.append(m("R8_bad_class", lang, id=hid, cls=cls))
+            continue
+        if not _s(arb.get("who")):
+            errs.append(m("R8_no_who", lang, id=hid, cls=cls))
+
+        tier = _s(h.get("tier")).upper()
+        if cls == "author" and tier == "K":
+            errs.append(m("R8_author_promotes_K", lang, id=hid, cls=cls))
+        if cls == "none" and tier not in {"", "S", "R"}:
+            # R is reachable without an arbiter only by withdrawal, which the
+            # history field records; S is the resting state.
+            errs.append(m("R8_none_leaves_S", lang, id=hid, tier=tier))
+        if cls in {"instrument", "third_party"} and not _s(arb.get("calibration")):
+            errs.append(m("R8_no_calibration", lang, id=hid, cls=cls))
+        if cls in {"author", "none"} and arb.get("independent_of_author") is True:
+            errs.append(m("R8_independence_contradiction", lang, id=hid, cls=cls))
     return errs
 
 
@@ -262,7 +337,7 @@ def _append_only(new: dict, old: dict, lang: str) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(description="Mizan registry R1–R7 validator")
+    ap = argparse.ArgumentParser(description="Mizan registry R1–R8 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
     ap.add_argument("--lang", choices=["en", "tr"], default="en")
     ap.add_argument("--against", metavar="GITREF",

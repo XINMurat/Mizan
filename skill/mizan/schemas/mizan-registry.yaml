@@ -22,6 +22,13 @@
 #   R7. Producer/auditor separation: the agent that writes results
 #       SHOULD NOT be the sole agent that promotes tiers; tier changes
 #       are proposed, then confirmed by the owner or an audit pass.
+#   R8. Every hypothesis MUST name its arbiter — the thing that returns
+#       the verdict on the locked threshold. A threshold whose arbiter is
+#       the claim's own author is self-report, not measurement:
+#         class runtime | instrument | third_party -> K-promotion open
+#         class author  -> K FORBIDDEN; the entry carries a permanent KKE
+#         class none    -> the threshold is decorative; tier stays S
+#       Enforced from schema_version 1.2 onward (see SCHEMA VERSIONS).
 #
 # Tiers: K (proven) | H (plausible hypothesis) | S (speculative)
 #        R (refuted) | KKE (critical control missing) | Y (misleading)
@@ -35,12 +42,21 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.2 — adds hypothesis.arbiter (rule R8). MANDATORY for files declaring
+#         schema_version 1.2+; 1.0/1.1 files stay valid and unenforced, so
+#         existing registries migrate deliberately rather than breaking.
+#         Rationale: the code-verification loop gets its force from an
+#         arbiter external to the author (the runtime), not from the fact
+#         that the artifact is code. Off-code domains keep the protocol but
+#         silently lose the arbiter; this block makes that loss visible per
+#         entry, instead of letting a locked-looking threshold imply an
+#         oracle that does not exist.
 # =====================================================================
 
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "XINMurat"
-  schema_version: "1.0"
+  schema_version: "1.2"             # 1.2+ activates R8 (arbiter) enforcement
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -64,6 +80,32 @@ hypotheses:
     metric:
       name: "perplexity_improvement"
       instrument: "script/path or query — the thing that produces the number"
+    arbiter:                        # MANDATORY from schema 1.2 (R8)
+      # WHO returns the verdict on the threshold below — not who measures,
+      # who DECIDES. Pick the weakest class that honestly applies.
+      #   runtime      — deterministic executor; same input, same verdict,
+      #                  no judgment (test suite, compiler, checksum, solver)
+      #   instrument   — a measurement independent of the author's opinion
+      #                  but requiring setup/interpretation (benchmark script,
+      #                  query over data the author does not control)
+      #   third_party  — a judge other than the claim's author (reviewer,
+      #                  user cohort, market outcome, downstream system)
+      #   author       — the claim's author (human or model) judging its own
+      #                  claim. Legitimate and often unavoidable; it just
+      #                  cannot yield K. Permanent KKE, stated as such.
+      #   none         — no arbiter exists. Then the numeric threshold is
+      #                  theatre; say so and leave the entry at S.
+      class: "instrument"
+      who: "the concrete judge — script path, person/role, system, cohort"
+      independent_of_author: true   # false is only coherent for author/none
+      latency: "how long until a verdict EXISTS: seconds | days | quarters |
+                never (the last one is class: none in disguise)"
+      calibration: >
+        Where this threshold's null comes from — MANDATORY for class
+        instrument/third_party. The number must be derived from THIS
+        arbiter's own null distribution; thresholds are not inherited
+        across instruments (Kıyas AD1/A3). "unknown" is an honest answer
+        and forces an honesty annex on every result that uses it.
     threshold:                      # LOCKED now, numeric (R1)
       support: ">= 5%"
       refute: "< 1%"
@@ -154,10 +196,13 @@ results:
 # ---------------------------------------------------------------------
 # Bug hypotheses (Mode 4): add symptom / mechanism / rival_hypotheses /
 #   refutation_test; "fix worked" follows R6 (revert-check as the
-#   symmetric control).
+#   symmetric control). Arbiter is usually class: runtime (the failing
+#   test / repro script) — the one place the code loop already holds.
 # Feature gates (Mode 5): add problem_claim (with tier+source),
 #   value_metric, success_threshold, kill_condition, alternatives
 #   (>=1 cheaper + null alternative), acceptance criteria phrased as
-#   refutation conditions.
+#   refutation conditions. The success_threshold carries its own arbiter
+#   block; a value metric whose only judge is the feature's own proposer
+#   is class: author and cannot reach K.
 bugs: []
 features: []

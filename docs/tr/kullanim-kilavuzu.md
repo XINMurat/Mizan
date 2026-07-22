@@ -91,7 +91,7 @@ enstrümanlar güvenilir, yanlılık nerede birikiyor. Çıktı metodolojiyi
 besler — talimat ve şema da revizyona tabidir (kendi disiplinlerine
 uyarak: değişiklik gerekçeli, geçmiş silinmez).
 
-## 3. Sert kurallar (özet — şemadaki R1–R7)
+## 3. Sert kurallar (özet — şemadaki R1–R8)
 
 1. Sonuçtan önce eşik + çürütme koşulu (HARKing yapısal olarak kapalı).
 2. Baseline zorunlu; baseline'sız sonuç [K] üretemez.
@@ -102,6 +102,12 @@ uyarak: değişiklik gerekçeli, geçmiş silinmez).
 7. Üretici ≠ tek denetçi: tier değişikliği önerilir, sahip/ayrı denetim
    onaylar. (RSI-güvenliği: kendi sonucunu yazan ajan kendi hipotezini
    terfi ettiremez.)
+8. Her eşik hakemini isimlendirir — hükmü veren merci
+   (`runtime` / `instrument` / `third_party` / `author` / `none`). Kendi
+   kendini yargılayan iddia (`author`) kalıcı `[KKE]` taşır, asla `[K]`
+   olamaz; hakem yoksa (`none`) eşik dekoratiftir ve girdi `[S]`'de kalır.
+   Yazılım dışında — runtime artık senin yerine karar vermezken —
+   disiplini dürüst tutan şey budur.
 
 ## 4. Sık hatalar
 

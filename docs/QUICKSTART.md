@@ -54,7 +54,7 @@ pip install -r tools/requirements.txt
 python tools/mizan_validate.py examples/mizan-registry.example.yaml   # -> OK
 git config core.hooksPath tools/hooks                                 # block bad commits
 ```
-The validator checks R1–R7 mechanically (no LLM). See
+The validator checks R1–R8 mechanically (no LLM). See
 [`tools/README.md`](../tools/README.md).
 
 ---
@@ -109,5 +109,5 @@ python tools/mizan_validate.py --lang tr examples/mizan-registry.example.yaml
 git config core.hooksPath tools/hooks
 export MIZAN_LANG=tr
 ```
-Doğrulayıcı R1–R7'yi mekanik kontrol eder (LLM yok). Bkz.
+Doğrulayıcı R1–R8'yi mekanik kontrol eder (LLM yok). Bkz.
 [`tools/README.md`](../tools/README.md).

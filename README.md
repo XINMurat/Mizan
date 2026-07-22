@@ -23,7 +23,7 @@ maintaining living hypothesis registries.
 hypothesis carries a refutation condition; surprising positives require a
 symmetric confound control before promotion; history is append-only;
 refuted entries are kept `[R]`, never deleted; the producer of a result is
-not the sole auditor who promotes it (R1–R7).
+not the sole auditor who promotes it (R1–R8).
 
 ### Install
 
@@ -54,13 +54,13 @@ hypothesis"*, *"audit this repo"*, or *"gate this PRD"*.
 - **Reference index:** [`docs/en/reference.md`](docs/en/reference.md) —
   methodology, templates, checklist, software modes, domain adaptation.
 - **Turkish docs:** [`docs/tr/`](docs/tr/).
-- **Contributing:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — the R1–R7
+- **Contributing:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — the R1–R8
   discipline for PRs, bilingual-parity rule (bilingual).
 
 ### Tooling (`tools/`)
 
 A **judgment-free, LLM-free** validator enforces the mechanical hard rules
-R1–R7 on any `mizan-registry.yaml`:
+R1–R8 on any `mizan-registry.yaml`:
 
 ```bash
 pip install -r tools/requirements.txt
@@ -80,7 +80,7 @@ skill/mizan/                    raw skill: SKILL.md, references/, schemas/  (EN 
 docs/en/                        English long-form docs
 docs/tr/                        Türkçe uzun-metin dokümanlar
 templates/                      copy-and-fill templates (registry schema)
-examples/                       worked registry that passes R1–R7
+examples/                       worked registry that passes R1–R8
 tools/                          mizan_validate.py + pre-commit hook
 ```
 
@@ -102,7 +102,7 @@ taşınabilir bir araca dönüştürür.
 her hipotez bir çürütme koşulu taşır; sürpriz pozitifler terfiden önce
 simetrik confound kontrolü ister; geçmiş append-only'dir; çürüyen girdiler
 `[R]` olarak tutulur, silinmez; bir sonucun üreticisi onu terfi ettiren tek
-denetçi olamaz (R1–R7).
+denetçi olamaz (R1–R8).
 
 ### Kurulum
 
@@ -135,13 +135,13 @@ Sonra Claude'a *"bu iddiaları Mizan'la denetle"*, *"bu hipotezi önkaydet"*,
   (Mod 3–5), [`docs/tr/alan-uyarlama.md`](docs/tr/alan-uyarlama.md)
   (14 alan).
 - **İngilizce dokümanlar:** [`docs/en/`](docs/en/).
-- **Katkı:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — PR'lar için R1–R7
+- **Katkı:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — PR'lar için R1–R8
   disiplini ve iki-dillilik kuralı (iki dilli).
 
 ### Araçlar (`tools/`)
 
 **Yargısız, LLM'siz** bir doğrulayıcı, herhangi bir `mizan-registry.yaml`
-üzerinde mekanik sert kuralları (R1–R7) uygular:
+üzerinde mekanik sert kuralları (R1–R8) uygular:
 
 ```bash
 pip install -r tools/requirements.txt
@@ -163,6 +163,11 @@ verirsiniz.
 ---
 
 ### Version / Sürüm
+
+**v2.3** — adds R8 (arbiter) and registry schema 1.2: every threshold names
+the judge that returns its verdict, so a self-judged claim is capped at
+`[KKE]` and an unjudged one stays `[S]`. Schema 1.0/1.1 registries remain
+valid and unenforced; migrate by bumping `schema_version` to `"1.2"`.
 
 **v2.2** — 5 modes + domain-adaptation module (14 domains) + R1–R7 registry
 schema + bilingual docs (TR/EN) + R1–R7 validator & pre-commit hook.

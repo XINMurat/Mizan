@@ -162,6 +162,20 @@ it lists the failure modes to hunt for and worked examples.
 8. **Prior art is declared, not discovered by reviewers.** If the
    hypothesis has known relatives, name them in the entry and state where
    the originality claim actually lives.
+9. **Name the arbiter of every threshold.** A locked numeric threshold is
+   only as strong as the judge that returns its verdict, and that judge is
+   what quietly disappears when this discipline moves off code: in a test
+   suite the runtime decides, in a strategy memo the author decides while
+   the paperwork looks identical. Record the arbiter's class — `runtime`
+   (deterministic executor) / `instrument` (measurement independent of the
+   author's opinion) / `third_party` (a judge other than the author) /
+   `author` (self-judged) / `none` — plus the concrete judge and the
+   verdict latency. Two hard consequences: an `author`-arbitrated claim
+   can never reach `[K]`, it carries a permanent `[KKE]`; and with `none`
+   the threshold is decorative, so say that and leave the entry at `[S]`
+   rather than dressing an opinion in a number. Thresholds are calibrated
+   against the arbiter's own null and are never inherited across
+   instruments.
 
 ## Tone and framing rules
 
@@ -189,6 +203,10 @@ it lists the failure modes to hunt for and worked examples.
 - Letting the user (or yourself) quietly raise a threshold after seeing a
   near-miss result. A near-miss is a near-miss; record it.
 - Deleting or rewriting `[R]` entries "for cleanliness".
+- Threshold theatre: attaching a precise-looking number to a claim whose
+  arbiter is the author or nonexistent. The form of the code-verification
+  loop without its judge is not rigor, it is rigor cosplay — and it is the
+  single most likely way this methodology fails outside software.
 - Auditing only the claims that are easy to check and presenting the
   result as a full audit — state coverage explicitly (N of M claims
   checkable).
@@ -212,7 +230,7 @@ it lists the failure modes to hunt for and worked examples.
 - `schemas/mizan-registry.yaml` — the machine-readable registry format.
   When the user keeps a registry file (in project knowledge, a repo, or
   uploads one), read it at session start, APPEND rather than overwrite,
-  propose new entries in this schema, and enforce its hard rules R1–R7
+  propose new entries in this schema, and enforce its hard rules R1–R8
   (mandatory baseline, mandatory confound controls, append-only history,
   no K-promotion without controls on surprising positives, and
   producer/auditor separation: propose tier changes, let the owner or a
