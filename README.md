@@ -45,6 +45,23 @@ not the sole auditor who promotes it (R1–R8).
 Then ask Claude to *"audit these claims with Mizan"*, *"preregister this
 hypothesis"*, *"audit this repo"*, or *"gate this PRD"*.
 
+### Companion skill — Kıyas
+
+Mizan weighs and refutes; it does not generate what gets weighed. That is the
+job of its upstream partner **[Kıyas](https://github.com/XINMurat/Kiyas)** —
+disciplined ideation and analogical inference. Kıyas produces candidates
+already shaped for a Mizan registry (illet, breaking point, cheapest
+refutation, named prior art, and an **arbiter** block that mirrors Mizan's
+R8), and the loop closes both ways: `tools/mizan_export_refuted.py` turns this
+registry's `[R]`/`[Y]` entries into negative constraints Kıyas consults before
+proposing a relative of something already killed.
+
+```bash
+python tools/mizan_export_refuted.py registry.yaml -o refuted-patterns.yaml
+# then, in the Kıyas repo:
+python tools/kiyas_validate.py --refuted refuted-patterns.yaml seeds.yaml
+```
+
 ### Documentation
 
 - **⚡ Quickstart:** [`docs/QUICKSTART.md`](docs/QUICKSTART.md) — concrete
@@ -123,6 +140,23 @@ denetçi olamaz (R1–R8).
 Sonra Claude'a *"bu iddiaları Mizan'la denetle"*, *"bu hipotezi önkaydet"*,
 *"bu repoyu denetle"* veya *"bu PRD'yi kapıdan geçir"* deyin.
 
+### Kardeş skill — Kıyas
+
+Mizan tartar ve çürütür; tartılacak olanı üretmez. O, üretici üst-kolu
+**[Kıyas](https://github.com/XINMurat/Kiyas)**'ın işidir — ilkeli fikir
+üretimi ve analojik çıkarım. Kıyas, adayları Mizan registry'sine hazır
+biçimde üretir (illet, kırılma noktası, en ucuz çürütme, isimli prior-art ve
+Mizan'ın R8'ini aynalayan bir **hakem** bloğu); döngü iki yönde de kapanır:
+`tools/mizan_export_refuted.py`, bu registry'nin `[R]`/`[Y]` girdilerini,
+Kıyas'ın çürütülmüş bir şeyin akrabasını önermeden önce baktığı
+negatif-kısıtlara çevirir.
+
+```bash
+python tools/mizan_export_refuted.py registry.yaml -o refuted-patterns.yaml
+# sonra Kıyas deposunda:
+python tools/kiyas_validate.py --refuted refuted-patterns.yaml tohumlar.yaml
+```
+
 ### Dokümantasyon
 
 - **⚡ Hızlı başlangıç:** [`docs/QUICKSTART.md`](docs/QUICKSTART.md) — somut
@@ -167,7 +201,10 @@ verirsiniz.
 **v2.3** — adds R8 (arbiter) and registry schema 1.2: every threshold names
 the judge that returns its verdict, so a self-judged claim is capped at
 `[KKE]` and an unjudged one stays `[S]`. Schema 1.0/1.1 registries remain
-valid and unenforced; migrate by bumping `schema_version` to `"1.2"`.
+valid and unenforced; migrate by bumping `schema_version` to `"1.2"`. Also
+adds `tools/mizan_export_refuted.py` and wires the loop to the companion
+skill [Kıyas](https://github.com/XINMurat/Kiyas): refuted entries become
+negative constraints the generator consults.
 
 **v2.2** — 5 modes + domain-adaptation module (14 domains) + R1–R7 registry
 schema + bilingual docs (TR/EN) + R1–R7 validator & pre-commit hook.

@@ -119,6 +119,12 @@ claim with its tier and source, a success metric AND a kill condition, and
 at least one cheaper alternative plus the null alternative. "It would be
 nice" is not a gate.
 
+Mizan audits and refutes; it does not generate candidates. Proposals that
+move idea generation, analogical inference, or brainstorming into this repo
+belong in [Kıyas](https://github.com/XINMurat/Kiyas) instead. Keeping the
+auditor and the generator in separate tools is the producer/auditor
+separation the methodology requires (rule R7), not an accident of packaging.
+
 ---
 
 ## Türkçe
@@ -214,3 +220,9 @@ edersin: kod/şema için **MIT**, metin/metodoloji için **CC-BY-4.0** (bkz.
 Yeni özellikler kapılıdır (Mod 5). Önermeden önce: problem iddiasını
 katmanı ve kaynağıyla, bir başarı metriği VE bir kaldırma koşulu, en az bir
 ucuz alternatif artı null alternatifi yaz. "Güzel olurdu" bir kapı değildir.
+
+Mizan denetler ve çürütür; aday üretmez. Fikir üretimini, analojik çıkarımı
+veya brainstorm'u bu depoya taşıyan öneriler
+[Kıyas](https://github.com/XINMurat/Kiyas)'a aittir. Denetçiyle üreticiyi
+ayrı araçlarda tutmak, metodolojinin gerektirdiği üretici/denetçi ayrımıdır
+(R7 kuralı), paketleme kazası değil.
