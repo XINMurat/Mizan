@@ -112,9 +112,20 @@ Why the document is skewed the way it is — mechanism over motive
 The claims that passed, stated with the same specificity as the
 failures. If nothing survives, question the audit's own thresholds.
 
-## 7. Sonraki adımlar / Next steps
-Ordered by criticality × (impact / effort). If the user wants ongoing
-tracking, seed a registry from the surviving [H] claims.
+## 7. Ulaşılabilirlik / Reachability (software targets)
+The producer→consumer diff, with both denominators: "N of M routes
+reachable from the client", "K of L stores have a read path". List every
+produced-but-unreachable capability as `[Y]`. Omit this section only for
+non-software targets — and say why.
+
+## 8. Süreklilik / Continuity
+The registry file this audit CREATED (path), the failure classes seeded
+into it, and the trigger that re-runs the audit (phase gate, release,
+cadence). If the user declined, record the refusal here — the absence of
+continuity belongs on the record, not in a footnote.
+
+## 9. Sonraki adımlar / Next steps
+Ordered by criticality × (impact / effort).
 ```
 
 ## 4. Compact claim-line format

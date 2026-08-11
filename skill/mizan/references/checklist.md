@@ -83,7 +83,31 @@ and a compact worked example.
   flattering intent anywhere? Then say that; reserve intent claims for
   evidenced cases.
 
-## 10. The auditor's own blind spot
+## 10. Producer-side claim (the unreachable capability)
+- **What:** a claim verified entirely on the PRODUCING side — the system
+  writes the row, emits the event, computes the value — while the
+  CONSUMING side (can a user actually reach it?) was never checked. The
+  claim is true and the capability is absent.
+- **Detect:** for every "X is produced / recorded / stored / emitted",
+  ask "through which surface does someone read X, and was that surface
+  exercised?" In software, diff the endpoint list against the calls the
+  client actually makes, and the table list against the read paths.
+  Anything produced but unreachable is `[Y]`, not `[K]` — the acceptance
+  criterion passed, the promise did not.
+- **Example:** a task closed as "notifications (in-app + email) done" on
+  the criterion *"the relevant event produces a notification"*. Endpoints
+  and twelve tests existed; the frontend contained zero notification
+  calls. One test was even named `read_all_clears_the_badge` — guarding a
+  badge that was never built. Same class had already recurred three times
+  in that project (audit log written but never displayed; delete endpoint
+  with no UI; password-change endpoint with no UI) and none of the four
+  was found by the plan — each surfaced by accident.
+- **Why it survives review:** the acceptance criterion is written by the
+  layer that owns the producing side, and it is *correct for that layer*.
+  The gap lives between tasks, so no single task's checklist can see it.
+  Cutting a backlog by layer (BE/FE) makes this the default failure.
+
+## 11. The auditor's own blind spot
 - **What:** the audit itself is a retrospective document with coverage
   limits and its own selection effects.
 - **Rule:** every audit report opens with a coverage statement (N of M

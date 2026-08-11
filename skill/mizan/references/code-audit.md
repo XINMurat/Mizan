@@ -32,6 +32,22 @@ Extract claims from, in order of evidential weight:
 test. Test name ≠ test content. Tier each hop separately; a claim's tier
 is the tier of its WEAKEST verified hop.
 
+**The reachability hop (mandatory, run it explicitly).** Production ≠
+availability. A value written to a table, an event emitted, a row logged
+— none of it is a delivered capability until something a user operates
+can read it. This hop is invisible to per-unit review because it lives
+BETWEEN units, so audit it as its own pass with two cheap diffs:
+
+- **Endpoint → client:** enumerate server routes; enumerate the calls the
+  client actually issues; the difference is unreachable surface.
+- **Store → read path:** enumerate tables/collections; for each, find the
+  code path that reads it for a user. Zero read paths = dead surface
+  (either an unregistered deferral or a broken promise).
+
+Report both denominators ("57 of 61 routes reachable, 17 of 20 tables
+read") — the ratio is what tells you whether you found an exception or a
+pattern. See checklist §10.
+
 ### A3. Drift catalog (code versions of checklist items)
 
 - **Comment–code drift** = tier drift: the comment described an old or

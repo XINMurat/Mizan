@@ -129,10 +129,22 @@ it lists the failure modes to hunt for and worked examples.
 6. **Name the missing card.** Every summary format structurally omits
    something (failures, deferrals, abandoned lines, costs). State what this
    document's format cannot show, and sketch it from available evidence.
-7. **Declare the HARKing status.** Retrospective analysis selected its
+7. **Close the loop — for an ongoing target, CREATE the registry, do not
+   offer it.** When the audited thing is a living project (a repo, a
+   backlog, a program) rather than a finished document, a one-shot audit
+   cannot see gaps born after it ran. The audit's final act is therefore
+   to WRITE the registry file (Registry mode, seeded with the surviving
+   `[H]` claims and every recurring failure class found) and to name the
+   trigger that re-runs the audit — a phase boundary, a release, a
+   fixed cadence. Ending with "shall I set up tracking?" is a known
+   failure of this skill: the offer gets deferred, the project keeps
+   closing tasks, and the next audit arrives only after a user stumbles
+   on a gap. If the user declines the registry, record the refusal in the
+   report so the absence of continuity is itself on the record.
+8. **Declare the HARKing status.** Retrospective analysis selected its
    examples after seeing outcomes. Say this plainly in the report header —
    including about your own audit, which is also retrospective.
-8. **Separate mechanism from motive.** When explaining why a document is
+9. **Separate mechanism from motive.** When explaining why a document is
    skewed, prefer structural explanations (selection pressure, format
    incentives) over intent attribution ("they designed it to flatter") —
    unless intent is itself evidenced.
