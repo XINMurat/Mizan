@@ -199,7 +199,15 @@ def check(data: dict, lang: str, baseline: dict | None = None) -> list[str]:
 
     # R2 — baseline mandatory; baseline-less experiment cannot promote to K
     for eid, e in exps.items():
+        # A registry written by hand often puts a bare string here ("baseline: >").
+        # Reading .get() off it used to raise AttributeError and abort the whole
+        # run with a traceback — a validator that crashes on a malformed file
+        # teaches nothing. Treat the string as the description and let R2 speak.
         bl = e.get("baseline") or {}
+        if isinstance(bl, str):
+            bl = {"description": bl}
+        elif not isinstance(bl, dict):
+            bl = {}
         desc = _s(bl.get("description"))
         just = _s(bl.get("justification"))
         if not desc:
@@ -211,6 +219,10 @@ def check(data: dict, lang: str, baseline: dict | None = None) -> list[str]:
         e = exps.get(eid)
         if e and str(r.get("decision", "")).lower().replace(" ", "") in {"proposeh->k", "h->k"}:
             bl = e.get("baseline") or {}
+            if isinstance(bl, str):
+                bl = {"description": bl}
+            elif not isinstance(bl, dict):
+                bl = {}
             desc = _s(bl.get("description"))
             if not desc or desc.lower() == "none":
                 errs.append(m("R2_baseless_promotes_K", lang, id=r.get("id"), eid=eid))
