@@ -62,6 +62,21 @@ python tools/mizan_export_refuted.py registry.yaml -o refuted-patterns.yaml
 python tools/kiyas_validate.py --refuted refuted-patterns.yaml seeds.yaml
 ```
 
+### Companion skill — İskele
+
+Kıyas supplies what Mizan weighs; **[İskele](https://github.com/XINMurat/Iskele)**
+supplies the structure both of them operate on — a domain model, a phased
+roadmap with go/no-go gates, an atomic backlog with executable acceptance
+criteria, and a progress report computed from a tracker rather than estimated
+by hand. The three verbs are deliberately kept in three tools:
+
+> **İskele builds · Mizan weighs · Kıyas generates**
+
+The handoff runs in both directions: when İskele finishes a kit, Mizan audits
+the kit's own claims — every "verified" sentence goes through a counter-example
+sweep, and every estimate carries a tier instead of the false precision a
+spreadsheet invites. What the audit turns up re-enters the kit as backlog tasks.
+
 ### Documentation
 
 - **⚡ Quickstart:** [`docs/QUICKSTART.md`](docs/QUICKSTART.md) — concrete
@@ -156,6 +171,21 @@ python tools/mizan_export_refuted.py registry.yaml -o refuted-patterns.yaml
 # sonra Kıyas deposunda:
 python tools/kiyas_validate.py --refuted refuted-patterns.yaml tohumlar.yaml
 ```
+
+### Kardeş skill — İskele
+
+Kıyas, Mizan'ın tartacağını üretir; **[İskele](https://github.com/XINMurat/Iskele)**
+ise ikisinin üzerinde çalıştığı yapıyı kurar — alan modeli, go/no-go kapılı
+fazlı yol haritası, çalıştırılabilir kabul kriterli atomik backlog ve el
+yordamıyla tahmin edilmek yerine çizelgeden **hesaplanan** ilerleme raporu. Üç
+fiil bilinçli olarak üç araçta tutulur:
+
+> **İskele kurar · Mizan tartar · Kıyas üretir**
+
+Devir iki yönlüdür: İskele bir kiti bitirdiğinde Mizan kitin kendi iddialarını
+denetler — "doğrulandı" diyen her cümle karşı-örnek taramasına girer, her tahmin
+çizelgenin davet ettiği sahte kesinlik yerine bir katman taşır. Denetimin
+bulduğu şey kite backlog görevi olarak geri girer.
 
 ### Dokümantasyon
 

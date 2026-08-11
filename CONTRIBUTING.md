@@ -121,8 +121,10 @@ nice" is not a gate.
 
 Mizan audits and refutes; it does not generate candidates. Proposals that
 move idea generation, analogical inference, or brainstorming into this repo
-belong in [Kıyas](https://github.com/XINMurat/Kiyas) instead. Keeping the
-auditor and the generator in separate tools is the producer/auditor
+belong in [Kıyas](https://github.com/XINMurat/Kiyas) instead; proposals about
+project scaffolding — roadmaps, backlogs, trackers, progress reporting —
+belong in [İskele](https://github.com/XINMurat/Iskele). Keeping the auditor,
+the generator, and the builder in separate tools is the producer/auditor
 separation the methodology requires (rule R7), not an accident of packaging.
 
 ---
@@ -223,6 +225,8 @@ ucuz alternatif artı null alternatifi yaz. "Güzel olurdu" bir kapı değildir.
 
 Mizan denetler ve çürütür; aday üretmez. Fikir üretimini, analojik çıkarımı
 veya brainstorm'u bu depoya taşıyan öneriler
-[Kıyas](https://github.com/XINMurat/Kiyas)'a aittir. Denetçiyle üreticiyi
-ayrı araçlarda tutmak, metodolojinin gerektirdiği üretici/denetçi ayrımıdır
-(R7 kuralı), paketleme kazası değil.
+[Kıyas](https://github.com/XINMurat/Kiyas)'a aittir; proje iskelesiyle ilgili
+öneriler — yol haritası, backlog, çizelge, ilerleme raporu —
+[İskele](https://github.com/XINMurat/Iskele)'ye aittir. Denetçiyi, üreticiyi ve
+kurucuyu ayrı araçlarda tutmak, metodolojinin gerektirdiği üretici/denetçi
+ayrımıdır (R7 kuralı), paketleme kazası değil.
