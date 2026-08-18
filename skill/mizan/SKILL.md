@@ -129,7 +129,34 @@ it lists the failure modes to hunt for and worked examples.
 6. **Name the missing card.** Every summary format structurally omits
    something (failures, deferrals, abandoned lines, costs). State what this
    document's format cannot show, and sketch it from available evidence.
-7. **Close the loop — for an ongoing target, CREATE the registry, do not
+7. **Probe the domain, not just the document.** Every step above starts
+   from a sentence someone wrote, so none of them can find a capability
+   that was never claimed — an absence produces no claim to tier. Obtain
+   a list of situations that actually occur in this field and test each
+   against the model: expressible (fine), inexpressible **and recorded as
+   a deliberate boundary** (fine — that is a decision), inexpressible and
+   **nowhere recorded** (finding). **You cannot write this list alone and
+   must not pretend to:** ask the domain owner, and record who supplied
+   the scenarios as part of the coverage statement. Invented
+   plausible-sounding scenarios are fiction wearing an evidence tag.
+   Scenarios written after a gap was found are HARKing and prove nothing
+   about coverage — say which ones were retrospective.
+   (Checklist item 12.)
+8. **Re-assemble — audit the conjunctions, not only the claims.**
+   Step 1 took the document apart; a defect that exists **only when two
+   features hold at once** was destroyed by that very act and cannot
+   reappear in any later step. So put things back together deliberately:
+   for each feature, list the existing guarantees it can touch, and for
+   each pair ask **"does that guarantee still hold while this feature is
+   active?"** Prioritise (a) **derived signals** — anything computed from
+   an absence changes meaning the moment a new state exists — and
+   (b) **guarantees enforced call-site by call-site**, which any new bulk
+   surface can bypass wholesale. Check ordering too: some pairs are safe
+   in one direction only, and the required order is part of the finding.
+   A green test suite is not counter-evidence here: tests are written per
+   feature, so they attest to the parts and are silent about the pair.
+   (Checklist item 13.)
+9. **Close the loop — for an ongoing target, CREATE the registry, do not
    offer it.** When the audited thing is a living project (a repo, a
    backlog, a program) rather than a finished document, a one-shot audit
    cannot see gaps born after it ran. The audit's final act is therefore
@@ -141,10 +168,10 @@ it lists the failure modes to hunt for and worked examples.
    closing tasks, and the next audit arrives only after a user stumbles
    on a gap. If the user declines the registry, record the refusal in the
    report so the absence of continuity is itself on the record.
-8. **Declare the HARKing status.** Retrospective analysis selected its
+10. **Declare the HARKing status.** Retrospective analysis selected its
    examples after seeing outcomes. Say this plainly in the report header —
    including about your own audit, which is also retrospective.
-9. **Separate mechanism from motive.** When explaining why a document is
+11. **Separate mechanism from motive.** When explaining why a document is
    skewed, prefer structural explanations (selection pressure, format
    incentives) over intent attribution ("they designed it to flatter") —
    unless intent is itself evidenced.
@@ -188,6 +215,33 @@ it lists the failure modes to hunt for and worked examples.
    rather than dressing an opinion in a number. Thresholds are calibrated
    against the arbiter's own null and are never inherited across
    instruments.
+
+## Context economy (long audits, long sessions)
+
+An audit's cost grows with the transcript, not with the finding. Every
+turn re-sends the whole conversation, so a large one-pass audit gets
+slower and more expensive with each exchange — and the last claims are
+graded under the worst conditions. The mechanism already exists in this
+skill: **A5.1's phased audit with an append-only registry as the carrier**
+(`references/code-audit.md`). That is not a large-codebase special case;
+it is the general shape. Apply it whenever an audit will not finish in a
+few exchanges:
+
+- **The registry is the memory, the transcript is not.** Append each
+  finding to the file as it is confirmed, never batch them for a summary
+  at the end. A finding that lives only in the conversation is lost at
+  the next context reset — and paid for on every turn until then.
+- **Read ranges, not files.** Locate with search, then open the lines you
+  need. Whole-file reads of large artifacts are the single largest
+  avoidable cost, and they persist for the rest of the session.
+- **Fan-out searching belongs in a subagent.** A sweep over many files
+  should return its conclusion, not its raw material.
+- **A phase boundary is a clean cut.** Once the ledger and registry are
+  written, the next phase can start in a fresh session: it reads the
+  files, sees what is done, continues. Say so explicitly at the boundary
+  instead of carrying the whole history forward out of habit.
+- **State the cost honestly.** If coverage was reduced because the audit
+  ran long, that is a coverage statement (A5), not an aside.
 
 ## Tone and framing rules
 

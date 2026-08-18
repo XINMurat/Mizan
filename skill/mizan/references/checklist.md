@@ -114,3 +114,95 @@ and a compact worked example.
   claims checkable, which sources were inaccessible) and treats the
   auditor's prior outputs as auditable claims. When later evidence
   contradicts an earlier tier you assigned, revise it visibly.
+
+## 12. The never-claimed capability (model–reality gap)
+- **What:** the audit finds nothing wrong because there is nothing to
+  find *in the document*. Every claim checks out, every tier is honest —
+  and a situation that routinely happens in the domain cannot be
+  expressed by the system at all. **An absent capability makes no claim,
+  so claim-auditing is structurally blind to it.** Item 10 is its
+  near neighbour and is NOT the same: there, a promise was made and only
+  half-delivered; here, the promise was never made, so no amount of
+  atomizing the document will surface it.
+- **Detect:** the input for this probe is **the domain, not the
+  document**. List the situations that actually occur in this field, then
+  ask of each: can the model express it? Three outcomes —
+  (a) expressible → fine; (b) inexpressible **and written down as a
+  deliberate boundary** → fine, that is a decision; (c) inexpressible
+  **and nowhere recorded** → finding. An undocumented gap is always worse
+  than a decided limit, because no one chose it.
+- **Honest constraint — you cannot generate this list alone.** The
+  auditor knows the artifact; only someone who knows the field knows what
+  happens in it. **Ask.** An audit that skips the asking and invents
+  plausible-sounding scenarios is producing fiction with an evidence tag
+  on it. Record who supplied the scenarios; that provenance is part of
+  the coverage statement.
+- **Example:** a process-memory application passed a full claim audit
+  (61 endpoints, 20 tables, producer/consumer diff, item-10 sweep). Ten
+  design gaps were found *afterwards*, none by that audit, all by the
+  domain owner asking ordinary questions: *"can two people work the same
+  step?"* (no lock existed; the second writer silently overwrote the
+  first one's signature), *"how does work move between two departments?"*
+  (the model had one unit per process and the concept was neither built
+  nor rejected), *"what happens when a process is retired?"* (an
+  `archived` status was defined and written by no endpoint — while the UI
+  actively told users to archive). The audit had even declared its own
+  limit correctly: *"I could not find the classes I do not know about,
+  and I cannot count what I did not find."* That declaration was right,
+  and it was not a method.
+- **Why it survives review:** every other checklist item starts from a
+  sentence someone wrote. This one has no sentence to start from. It is
+  the only item whose evidence is an **absence**, which is why it must be
+  driven by an external list prepared in advance (see SKILL.md audit
+  step 7) rather than by reading harder.
+- **Preregistration rule:** scenarios written *after* a gap is found are
+  HARKing (item 1) and prove nothing about coverage. Their value is
+  entirely in the gaps not yet known, so each new phase must add its
+  scenarios **before** the phase's work begins, and the report must state
+  plainly which scenarios were retrospective.
+
+## 13. The unaudited conjunction (each feature correct, the pair broken)
+- **What:** every feature is individually correct, individually tested,
+  individually tiered `[K]` — and two of them held **at the same time**
+  break a guarantee that neither one owns. Items 10 and 12 are about a
+  single thing (half-delivered, or never built). This one is about a
+  **pair**, and it is invisible to any procedure that atomizes: atomizing
+  is precisely the act of taking claims apart, so a defect that exists
+  *only in the conjunction* is destroyed by step 1 of the audit.
+- **Detect:** do not ask "is this feature correct?" — ask **"which
+  existing guarantee can this feature touch, and does that guarantee
+  still hold while this feature is active?"** Build the pair list
+  deliberately: new feature × every guarantee it can reach. Two classes
+  are especially fragile:
+  - **Derived signals.** Anything computed from an absence ("no one has
+    touched this in 3 days", "unassigned", "not yet read") silently
+    changes meaning when a new state is introduced.
+  - **Guarantees enforced in one place.** A privacy rule proven across
+    five call sites is voided by a sixth surface that bypasses them —
+    bulk export being the classic one.
+- **Ordering counts.** Some conjunctions are not symmetric: the pair is
+  safe in one order and broken in the other. State the required order as
+  part of the finding, not as an implementation detail.
+- **Examples (one session, five findings, none from claim-auditing):**
+  *pause × staleness signal* — pausing work is correct, flagging
+  untouched work is correct; together, pausing becomes the cheap way to
+  hide stuck work and the flag dies of noise. *mute × handoff
+  notification* — notification preferences are correct, cross-team
+  handoff alerts are correct; together the handoff can be silenced and
+  the system reports success while no one is told. *claim × departure* —
+  claiming a task is correct, deactivating a leaver is correct; together
+  the task is held by someone who will never return, and a timeout that
+  assumes "busy" cannot tell that from "gone". *export × private notes* —
+  a report generator is correct, per-note privacy is correct; one button
+  voids the other. *anonymisation × open work* — both correct, but only
+  in one order: anonymise first and the owner of the work to be
+  reassigned is no longer readable.
+- **Why it survives review:** each feature's acceptance criteria are
+  written by whoever owns that feature, and are *correct for it*. The
+  defect lives between two owners, so no single criterion can see it —
+  the same structural reason item 10 survives, one level up. Tests
+  inherit the flaw: they are written per feature, so a green suite is
+  evidence about the parts and says nothing about the pair.
+- **Cost of finding it late:** cheap on paper, expensive in code. These
+  are model-level conflicts; discovered during design they are one
+  decision, discovered after shipping they are a migration.
