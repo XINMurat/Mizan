@@ -4,7 +4,7 @@
 # =====================================================================
 registry:
   project: "ExampleLM"
-  owner: "XINMurat"
+  owner: "your-org"
   schema_version: "1.1"
   methodology: "mizan-v2.2"
   created: "2026-07-11"
