@@ -186,7 +186,45 @@ Three independent runs, three different harnesses. Constant in all three:
 Consistency across harnesses is the useful signal here, more than any single
 run's verdict.
 
-## 7. What would upgrade it
+## 7. Disclosed confound — the author is not a representative user
+
+This skill's author keeps a personal, always-on instruction set that overlaps
+Mizan's rules at **six points**, several near-verbatim: the three-way
+proven / plausible / speculative split (Mizan's first three tiers, same
+labels); *do not soften with "more research needed" unless genuinely
+uncertain*; *locate errors fully — file, line, mechanism, numeric impact, not
+"this part may be problematic"*; be suspicious of unexpectedly good results;
+after every diagnosis give the next step ordered by criticality × impact/effort;
+and acknowledge contradictions with your own earlier output and revise.
+
+**Consequence: the author's own experience of this skill is not evidence about
+this skill.** Every session they run is a maximally reinforcing host — the
+condition no other user has. Reports of the form "it works very well for me"
+from that setup are confounded by construction, and this file exists because
+that confound is not fixable by trying harder.
+
+It also sets the boundary on §6's result. The runs there used a fresh-context
+subject **verified not to inherit those global instructions** (probed
+separately before the runs), which is why they measure the skill rather than
+the author's configuration.
+
+**This instruction set is deliberately NOT shipped as a recommendation**, for
+reasons that are themselves methodological. Installing it would erase the
+neutral-host case from the user population, and that case is the only source
+of the field evidence §8 asks for. It is also untested: there is evidence the
+skill works without it, and none that it improves outcomes — shipping
+"install this for better results" would be an unaudited `[K]` in the
+repository of a claim-auditing tool. And it would put six rules in two places
+under separate maintenance, which is drift with extra steps. Worst of all, a
+rule living in a user's `CLAUDE.md` **overrides** the skill, so a later fix to
+a bad rule could not reach them.
+
+The general principle: if a rule must survive an unknown setup, put it in the
+validator — not in a paragraph, and never in a second copy of the paragraph.
+Asking users to configure their assistant is a sign the rule is sitting at
+the wrong layer.
+
+## 8. What would upgrade it
 
 Field use: run the skill inside genuinely different projects with genuinely
 different `CLAUDE.md` files, and record each outcome as a result entry — pass

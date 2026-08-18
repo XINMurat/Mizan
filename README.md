@@ -45,6 +45,16 @@ not the sole auditor who promotes it (R1–R8).
 Then ask Claude to *"audit these claims with Mizan"*, *"preregister this
 hypothesis"*, *"audit this repo"*, or *"gate this PRD"*.
 
+**You do not need to configure your assistant for this to work.** No custom
+instructions, no system prompt, no house style. If the skill only behaves
+when your `CLAUDE.md` is set up a particular way, that is a **defect in the
+skill**, not a missing step in your setup — please open an issue. This is a
+tested claim, not a courtesy: `[K]` for the harnesses in
+[`examples/portability-across-hosts.md`](examples/portability-across-hosts.md),
+where the skill was run under a `CLAUDE.md` written to fight it and again
+under none at all. That file also discloses why the author's own setup makes
+their experience unrepresentative.
+
 ### Companion skill — Kıyas
 
 Mizan weighs and refutes; it does not generate what gets weighed. That is the
