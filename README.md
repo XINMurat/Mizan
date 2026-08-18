@@ -113,7 +113,7 @@ docs/en/                        English long-form docs
 docs/tr/                        Türkçe uzun-metin dokümanlar
 templates/                      copy-and-fill templates (registry schema)
 examples/                       worked registry that passes R1–R8;
-                                portability test under a hostile host
+                                portability tests across hostile + neutral hosts
 tools/                          mizan_validate.py + pre-commit hook
 ```
 

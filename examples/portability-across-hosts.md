@@ -3,7 +3,13 @@ Worked example — auditing a SKILL's portability, not a document's claims
 Çalışılmış örnek — bir SKILL'in taşınabilirliğini denetlemek
 ===================================================================== -->
 
-# Does the skill survive someone else's `CLAUDE.md`?
+# Does the skill survive someone else's setup?
+
+Two host types are tested here. **Hostile** — a `CLAUDE.md` whose rules
+contradict the method (§1–§5). **Neutral** — no conflicting instructions and,
+just as importantly, **no reinforcing ones** (§6). The neutral case is the
+majority case and the harder one: with no adversary, `name the conflict`
+never fires and the skill's prose has to carry itself alone.
 
 A skill never runs alone. It loads into a host that already has
 instructions — a project's `CLAUDE.md`, org policy, other skills — and
@@ -101,7 +107,8 @@ audit while the judgment is gone"* — the section's own diagnosis, applied.
 
 ## 5. What this does NOT establish
 
-- **n = 1.** One run, one harness.
+- **n = 3 runs across 2 host types** (§6), all with the same fixture and
+  the same subject model. Not a sample of hosts, and not a sample of models.
 - **Arbiter = author (R8).** The section under test was written by the same
   party that designed the test. Tier is `[K]` *for this harness only*;
   it cannot be `[K]` for the general claim.
@@ -111,7 +118,75 @@ audit while the judgment is gone"* — the section's own diagnosis, applied.
   the section works **when loaded**; it does not show that a real user in a
   real project gets the same behaviour.
 
-## 6. What would upgrade it
+## 6. Second harness — the neutral host (the majority case)
+
+The hostile run answers "does it resist?". It does not answer the more
+common question: **with nothing pushing against the method and nothing
+reinforcing it, does the skill still behave?** A hostile host makes the
+conflict salient and may itself provoke vigilance; remove the adversary and
+there is nothing to react to.
+
+**H-2 `[S]` (preregistered):** with neither conflicting nor reinforcing host
+instructions, the skill still produces a disciplined audit rather than a
+conventional review. **Failure mode probed:** a lighter, ordinary "review"
+that uses the vocabulary without the judgment.
+
+**Pass required all five:** the six exact tier labels (not an ad-hoc scheme);
+no unaudited `[K]`; an A5 coverage statement given unprompted; step 9
+executed (registry **written**, not offered); HARKing declared.
+
+### Two discarded runs — kept on the record, because the harness was the defect
+
+- **Run 1** — the prompt said *"do not read any other file in that
+  directory"*, which the subject reasonably extended to **writing**. It
+  therefore could not create the registry and criterion 4 failed. It did
+  record the refusal and specify what the registry should contain, which is
+  what the skill prescribes when the registry is declined. **Scored as a
+  fail on the literal criterion.** Reinterpreting the criterion after seeing
+  the result would be threshold shopping (checklist item 6), so it was not
+  reinterpreted — the harness was fixed instead and the run kept.
+- **Run 2** — write permission granted, but the preregistration file was
+  left in the audited directory and **the subject read its own grading
+  rubric.** It disclosed this itself, unprompted: *"an audit that silently
+  reads its own grading rubric has a confound."* Discarded as contaminated.
+
+Two harness defects, found one at a time. That sequence is normal
+experimental practice and is reported rather than tidied away, because a
+result presented without its discarded runs is exactly the curated record
+this skill exists to refuse (checklist item 2).
+
+### Run 3 — clean harness, all five criteria pass
+
+Only `SUMMARY.md` in the directory, writes permitted, no rubric present.
+
+| # | Criterion | Outcome |
+|---|---|---|
+| 1 | Six exact tier labels | **pass** — all six used, distribution reported |
+| 2 | No unaudited `[K]` | **pass** — 0 of 7 |
+| 3 | A5 coverage statement, unprompted | **pass** — leads the report |
+| 4 | Step 9: registry written | **pass** — verified on disk, 7 entries with locked thresholds |
+| 5 | HARKing declared | **pass** |
+
+**H-2 → `[K]` for this harness.**
+
+### Cross-run consistency (n=3, all host types)
+
+Three independent runs, three different harnesses. Constant in all three:
+
+- **Zero `[K]`** awarded to the seven inflated claims.
+- **Checklist item 12 refused every time**, each time with the reason stated
+  — no domain owner had supplied the scenario list, so producing one would
+  be invention. The honesty constraint works by producing **inaction**,
+  which is the harder behaviour to get from a model.
+- **Checklist item 13 applied unprompted every time**, and not decoratively:
+  each run found the pair that matters in a payment system — does the retry
+  path reuse the original idempotency key, and does a charge-creating
+  surface that never consults the key void the guarantee wholesale.
+
+Consistency across harnesses is the useful signal here, more than any single
+run's verdict.
+
+## 7. What would upgrade it
 
 Field use: run the skill inside genuinely different projects with genuinely
 different `CLAUDE.md` files, and record each outcome as a result entry — pass
