@@ -55,7 +55,7 @@
 
 registry:
   project: "ProjectName"            # e.g. SpectralLM
-  owner: "XINMurat"
+  owner: "your-org"
   schema_version: "1.2"             # 1.2+ activates R8 (arbiter) enforcement
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"

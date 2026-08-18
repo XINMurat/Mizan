@@ -234,8 +234,11 @@ few exchanges:
 - **Read ranges, not files.** Locate with search, then open the lines you
   need. Whole-file reads of large artifacts are the single largest
   avoidable cost, and they persist for the rest of the session.
-- **Fan-out searching belongs in a subagent.** A sweep over many files
-  should return its conclusion, not its raw material.
+- **Fan-out searching belongs in a subagent — where one exists.** A sweep
+  over many files should return its conclusion, not its raw material. If
+  the host has no subagent, get the same effect with targeted search
+  (locate, then open only the matching ranges); never let the method
+  depend on a tool that may be absent.
 - **A phase boundary is a clean cut.** Once the ledger and registry are
   written, the next phase can start in a fresh session: it reads the
   files, sees what is done, continues. Say so explicitly at the boundary
@@ -261,6 +264,45 @@ few exchanges:
   auditable claims too.
 - Write in the user's language; keep the tier tags bilingual as in the
   table.
+
+## Operating assumptions (this skill runs inside someone else's setup)
+
+This skill is loaded into a host that already has its own instructions —
+a project's `CLAUDE.md`, org policy, other skills. Those instructions
+take precedence over this file. That is correct, and it is also the most
+likely way Mizan fails: **it degrades quietly.** A short, softened audit
+still looks like an audit — tier tags in place, format intact, judgment
+gone. That is this skill's own `rigor cosplay` anti-pattern, arrived at
+from the outside.
+
+- **Name the conflict; do not silently comply.** When a host instruction
+  is incompatible with the method, say which instruction, which step it
+  disables, and what the report can no longer claim — then let the user
+  decide. Three collisions are common enough to watch for by name:
+  a **brevity cap** (Mizan's value is the specificity — "which claim,
+  which source, what mechanism"; capped output drops exactly that),
+  an instruction to be **encouraging or positive** (this skill exists to
+  refuse a uniform `[K]`), and a **pinned output language** (which
+  overrides "write in the user's language" — keep the tier tags
+  bilingual regardless, they are labels, not prose).
+- **An audit run under a constraint states the constraint.** If the
+  method was reduced, that belongs in the coverage statement (A5)
+  alongside sampling — a constrained audit is not a smaller audit, it is
+  an audit with a different claim.
+- **Never assume a tool exists.** Subagents, spreadsheet libraries and
+  shell access vary by host. Check before promising an artifact, and if
+  it is missing say so and offer the explicit fallback. **Prose
+  substituted silently for an artifact is a producer-side claim**
+  (checklist item 10) committed by the auditor.
+- **Load references on demand, not upfront.** `checklist.md` before the
+  first audit, `code-audit.md` for software modes, `templates.md` when
+  writing entries. Reading everything at the start spends the context
+  the audit itself needs.
+- **The scripted part is the part that travels.** `mizan_validate.py`
+  enforces R1–R8 without a model, so it behaves identically in every
+  host. Whatever is enforced only by this prose is negotiable by the
+  host's prose. When rigor must survive an unknown setup, put it in the
+  validator, not in a paragraph.
 
 ## Anti-patterns (refuse these politely)
 
