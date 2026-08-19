@@ -55,6 +55,15 @@ where the skill was run under a `CLAUDE.md` written to fight it and again
 under none at all. That file also discloses why the author's own setup makes
 their experience unrepresentative.
 
+A second worked example covers the case the procedure quietly assumes away —
+**a document whose source the auditor cannot reach** (published after a
+knowledge cutoff, paywalled, internal to someone else). The failure mode there
+is not refusal but **tier laundering**: inheriting a well-made document's own
+tags and presenting them as a verdict. See
+[`examples/unverifiable-source-audit.md`](examples/unverifiable-source-audit.md),
+which also proposes — as a proposal, not a silent patch — a reachability cap on
+tiers, with its illet and its breaking point.
+
 ### Companion skill — Kıyas
 
 Mizan weighs and refutes; it does not generate what gets weighed. That is the
@@ -123,7 +132,8 @@ docs/en/                        English long-form docs
 docs/tr/                        Türkçe uzun-metin dokümanlar
 templates/                      copy-and-fill templates (registry schema)
 examples/                       worked registry that passes R1–R8;
-                                portability tests across hostile + neutral hosts
+                                portability tests across hostile + neutral hosts;
+                                auditing a document whose source you cannot reach
 tools/                          mizan_validate.py + pre-commit hook
 ```
 
