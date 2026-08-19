@@ -126,6 +126,14 @@ ve bir feature gate'i birer hipotezDİR — aynı alanlar, aynı 1–8 kurallar�
 1.0–1.2 beyan eden registry'ler uygulanmadan çalışmaya devam eder; girdiler
 hazır olduğunda sürümü yükseltin.
 
+**Uyarılar (W1–W3) bloke etmez, tavsiye eder.** `two_sided` beyanı olmayan
+girdi; henüz sonucu olmayan ve eşiği/çürütmesi de bulunmayan girdi; her
+etiketli girdisi `[K]` olan registry. Her birinin meşru istisnası var — taslak
+girdi, tek girdili registry — bu yüzden hiçbiri kural değil. `--strict` onları
+hataya yükseltir; CI, disiplini **modellemekle yükümlü** dosyalarda (şema,
+şablon, örnekler) strict, diğerlerinde tavsiye kipinde koşar; böylece henüz
+ele alınmamış bir uyarı, ilgisiz bir değişikliği bloke etmez.
+
 ## 4. Sık hatalar
 
 - **Şemayı forma çevirmek:** her sohbet fikri önkayıt gerektirmez;

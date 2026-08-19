@@ -11,10 +11,27 @@ frontier model (that separation is rule R7 itself).
 
 Bilingual: messages are emitted in the requested language (--lang tr|en).
 
+TWO CHANNELS, and the reason there are two. Every rule here blocks, which
+sounds like rigor and is not: a tool that can only stop you teaches authors
+to write registries that do not trigger it, and that is a different skill
+from writing honest ones. Some findings are usually-wrong-but-legitimately-
+right-often-enough that stopping on them would be false precision. So:
+
+  * VIOLATIONS (R1-R15) block. They mark a registry that is incomplete in a
+    way the prose forbids outright.
+  * WARNINGS (W1-W3) do not block by default. They mark shapes worth a
+    second look. `--strict` promotes them to violations; CI runs strict,
+    local runs do not.
+
+Ported from the sibling Kiyas validator, where the same split exists for the
+same reason (its G6 design note: if every flag blocked promotion, authors
+would learn to leave the sweep silent).
+
 Usage:
     python tools/mizan_validate.py path/to/mizan-registry.yaml
     python tools/mizan_validate.py --lang tr registry.yaml
     python tools/mizan_validate.py --against HEAD registry.yaml   # append-only check
+    python tools/mizan_validate.py --strict registry.yaml         # warnings fail too
 
 Exit code 0 = clean, 1 = violations found, 2 = usage/parse error.
 
@@ -152,6 +169,24 @@ MSG = {
         "SCHEMA: {kind} '{id}' has invalid tier '{tier}' (allowed: K H S R KKE Y).",
         "ŞEMA: {kind} '{id}' geçersiz tier '{tier}' taşıyor (izinli: K H S R KKE Y).",
     ),
+    "W1_no_two_sided": (
+        "W1: {kind} {id} has no two_sided statement — if only one outcome teaches something, the "
+        "test is worth redesigning before it runs.",
+        "W1: {kind} {id} girdisinde two_sided beyanı yok — yalnızca tek sonuç bir şey öğretiyorsa, "
+        "test koşmadan önce yeniden tasarlanmaya değer.",
+    ),
+    "W2_open_no_threshold": (
+        "W2: {kind} {id} has no result yet and no {missing} — the entry is written BEFORE the test, "
+        "and R1 only starts checking once a result references it.",
+        "W2: {kind} {id} henüz sonuçsuz ve {missing} yok — girdi testten ÖNCE yazılır; R1 ise ancak "
+        "bir sonuç ona atıfta bulununca devreye girer.",
+    ),
+    "W3_all_K": (
+        "W3: all {n} tiered entries are at [K] — 'a tiered report where every claim lands in K' is "
+        "the flattery problem wearing a lab coat. Legitimate, but worth checking the sources.",
+        "W3: {n} etiketli girdinin hepsi [K] — 'her iddiası K'ya inen tierlı rapor', laboratuvar "
+        "önlüğü giymiş iltifat problemidir. Meşru olabilir, ama kaynakları kontrol etmeye değer.",
+    ),
     "clean": (
         "OK — {n} entries checked, no R1–R15 violations.",
         "OK — {n} girdi kontrol edildi, R1–R15 ihlali yok.",
@@ -160,12 +195,41 @@ MSG = {
         "{n} violation(s) found.",
         "{n} ihlal bulundu.",
     ),
+    "warn_header": (
+        "{n} warning(s) — not blocking; re-run with --strict to treat them as failures.",
+        "{n} uyarı — bloke etmiyor; hata saymak için --strict ile yeniden koş.",
+    ),
+    "warn_strict": (
+        "{n} warning(s) promoted to violations by --strict.",
+        "{n} uyarı --strict ile ihlale yükseltildi.",
+    ),
 }
 
 
 def m(key: str, lang: str, **kw: Any) -> str:
     en, tr = MSG[key]
     return (tr if lang == "tr" else en).format(**kw)
+
+
+# Feature entries in the wild use references/feature-gate.md's vocabulary
+# ("value metric", "success threshold"), while schema 1.3 maps those onto the
+# hypothesis fields so R1/R8 apply without a second implementation. Both names
+# are accepted: renaming a maintainer's existing entries would be a migration
+# that buys nothing, and the mapping is the point, not the spelling.
+FIELD_ALIASES = {
+    "metric": ("metric", "value_metric"),
+    "threshold": ("threshold", "success_threshold"),
+    "acceptance_criteria": ("acceptance_criteria",
+                            "acceptance_criteria_refutation_phrased"),
+}
+
+
+def _field(e: dict, canonical: str) -> Any:
+    """Read a field by its canonical name, falling back to accepted aliases."""
+    for name in FIELD_ALIASES.get(canonical, (canonical,)):
+        if e.get(name) not in (None, "", [], {}):
+            return e.get(name)
+    return None
 
 
 def _s(v: Any) -> str:
@@ -196,8 +260,11 @@ def load_git_baseline(ref: str, path: str) -> dict | None:
         return None
 
 
-def check(data: dict, lang: str, baseline: dict | None = None) -> list[str]:
+def check(data: dict, lang: str,
+          baseline: dict | None = None) -> tuple[list[str], list[str]]:
+    """Return (violations, warnings). See the module docstring for why two."""
     errs: list[str] = []
+    warns: list[str] = []
     hyps = {h.get("id"): h for h in (data.get("hypotheses") or []) if isinstance(h, dict)}
     exps = {e.get("id"): e for e in (data.get("experiments") or []) if isinstance(e, dict)}
     results = [r for r in (data.get("results") or []) if isinstance(r, dict)]
@@ -333,8 +400,55 @@ def check(data: dict, lang: str, baseline: dict | None = None) -> list[str]:
     if baseline:
         errs += _append_only(data, baseline, lang)
 
+    warns += _warnings(hyps, features, bugs, results, lang)
+
     check.n_entries = n_entries  # type: ignore[attr-defined]
-    return errs
+    return errs, warns
+
+
+def _warnings(hyps: dict, features: list[dict], bugs: list[dict],
+              results: list[dict], lang: str) -> list[str]:
+    """W1-W3 — findings that advise rather than block.
+
+    Each has a legitimate exception, which is exactly why none of them is a
+    rule: a draft entry may not have its threshold yet, a one-entry registry
+    is trivially all-[K], and a test can be honestly one-sided in rare cases.
+    Blocking on those would teach authors to shape registries around the
+    checker instead of around the claim.
+    """
+    warns: list[str] = []
+    referenced = {_s(r.get("hypothesis")) for r in results if _s(r.get("hypothesis"))}
+    kinds = (("hypothesis", list(hyps.values())), ("feature", features), ("bug", bugs))
+
+    for kind, coll in kinds:
+        label = KIND_LABEL[kind][1 if lang == "tr" else 0]
+        for e in coll:
+            eid = e.get("id")
+            if not _s(e.get("two_sided")):
+                warns.append(m("W1_no_two_sided", lang, kind=label, id=eid))
+            if _s(eid) in referenced:
+                continue          # R1 already governs these, and it blocks
+            thr = _field(e, "threshold")
+            missing = []
+            if isinstance(thr, dict):
+                if not (_s(thr.get("support")) and _s(thr.get("refute"))):
+                    missing.append("threshold")
+            elif not _s(thr):
+                # A prose threshold counts as PRESENT here. Whether it is
+                # numeric is a separate finding, still open, and folding it
+                # into W2 would hide two different problems behind one line.
+                missing.append("threshold")
+            if not _s(e.get("refutation")):
+                missing.append("refutation")
+            if missing:
+                warns.append(m("W2_open_no_threshold", lang, kind=label, id=eid,
+                               missing=" / ".join(missing)))
+
+    tiered = [_s(e.get("tier")).upper()
+              for _, coll in kinds for e in coll if _s(e.get("tier"))]
+    if len(tiered) >= 2 and all(t == "K" for t in tiered):
+        warns.append(m("W3_all_K", lang, n=len(tiered)))
+    return warns
 
 
 def _schema_at_least(data: dict, want: tuple[int, int]) -> bool:
@@ -452,6 +566,8 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--lang", choices=["en", "tr"], default="en")
     ap.add_argument("--against", metavar="GITREF",
                     help="git ref to diff against for the append-only (R4) check, e.g. HEAD")
+    ap.add_argument("--strict", action="store_true",
+                    help="treat W1-W3 warnings as violations (CI runs strict; local runs do not)")
     args = ap.parse_args(argv)
 
     # The catalog carries Turkish text and a ✗ glyph; ensure UTF-8 output even
@@ -469,15 +585,31 @@ def main(argv: list[str]) -> int:
         return 2
 
     baseline = load_git_baseline(args.against, args.registry) if args.against else None
-    errs = check(data, args.lang, baseline)
+    errs, warns = check(data, args.lang, baseline)
     n = getattr(check, "n_entries", 0)
+
+    if args.strict and warns:
+        errs = errs + warns
 
     if errs:
         for e in errs:
             print("  ✗ " + e)
+        # Warnings print next to violations too. Holding them back until the
+        # blocking problems are fixed makes a second run reveal something
+        # that was already known, which is how a warning gets ignored.
+        if not args.strict:
+            for w in warns:
+                print("  ! " + w)
         print(m("found", args.lang, n=len(errs)))
+        if args.strict and warns:
+            print(m("warn_strict", args.lang, n=len(warns)))
         return 1
+
     print(m("clean", args.lang, n=n))
+    if warns:
+        for w in warns:
+            print("  ! " + w)
+        print(m("warn_header", args.lang, n=len(warns)))
     return 0
 
 

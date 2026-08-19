@@ -164,6 +164,12 @@ bugs:
       If reverting the fix does NOT reproduce the spike, the mechanism is
       unconfirmed and the entry is KKE, not K — a fix that works from an
       unrelated location refutes the mechanism while curing the symptom.
+    two_sided: >
+      Confirmed: the DDP buffer ordering is the mechanism, and the same
+      pattern is worth checking wherever else a projection buffer crosses an
+      all-reduce. Refuted: the spike is not a sync bug, which promotes the
+      shard-rollover rival and makes the data loader the next place to look.
+      Either way the next step is defined before the test runs.
     cost: "~half a day"
     history:
       - { date: "2026-07-12", event: "preregistered with two rivals" }
@@ -234,6 +240,12 @@ features:
       kills the value claim. Either outcome is worth knowing: the second
       says the mechanism works but is not free, which changes the default
       decision without touching H-001.
+    two_sided: >
+      Supported: input-conditioning earns the default, and the two code paths
+      get a removal date. Refuted at the throughput bar rather than the ppl
+      bar: the mechanism works and is not free, so the honest answer is the
+      cheaper alternative (document the flag) rather than a default change —
+      a result that redirects the work instead of ending it.
     informativeness_precondition: >
       The nightly eval must actually run on the default config. Until that
       job exists, this feature can only ship as S, and saying so is the

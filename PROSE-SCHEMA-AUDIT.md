@@ -19,13 +19,24 @@ Kural eklemek yöntem değişikliğidir ve karar bakımındır.*
 | 0 | R4 CI'da koşmuyor | **KAPATILDI** — `--against`, `fetch-depth: 0`, baseline adımı + self-test |
 | 1 | `features`/`bugs` hiç denetlenmiyor (M5) | **KAPATILDI** — şema v1.3 + R13/R14/R15 + R8 kapsamı |
 | 2 | `[K]` kanıtsız verilebiliyor | AÇIK |
-| 3 | Uyarı kanalı yok | AÇIK |
+| 3 | Uyarı kanalı yok | **KAPATILDI** — `warnings` + `--strict`; CI örneklerde strict, diğerlerinde tavsiye |
 | 4 | Eşikler sayısal olmak zorunda değil | AÇIK |
 | 5 | Tier'sız girdi geçiyor | AÇIK |
 | 6 | "Her alan zorunlu" uygulanmıyor (M6) | AÇIK |
 | 7 | Prior art alanı okunmuyor (koşullu) | AÇIK |
 | 8 | Coverage Ledger'ın veri biçimi yok (M9) | AÇIK |
-| 9–11 | `two_sided`, eşiksiz hipotez, hepsi-`[K]` | AÇIK — uyarı kanalını bekliyor |
+| 9–11 | `two_sided`, eşiksiz hipotez, hepsi-`[K]` | **KAPATILDI** — W1 / W2 / W3 |
+
+**Kanalın ilk koşusunda çıkan iki şey:** (a) kendi eklediğim FEAT-001/BUG-001
+girdilerinde `two_sided` yoktu — W1 hemen yakaladı, şemaya ve örneğe eklendi.
+(b) `mizan-product-registry.yaml`'daki FEAT-M001/M002, `value_metric` /
+`success_threshold` adlarını kullanıyor; v1.3'ün `metric`/`threshold` eşlemesi
+bunları görmez hâle getiriyordu. **Bu, benim önerdiğim tasarım kararının
+sessizce mevcut girdileri geçersiz kılması olurdu.** Doğrulayıcı artık her iki
+adı da kabul ediyor (`FIELD_ALIASES`); yeniden adlandırma hiçbir şey kazandırmaz.
+Geriye kalan tek gerçek göç maliyeti: `alternatives` girdilerine `kind:`
+eklemek — "null alternatif fiyatlandı" ifadesini iddia edilebilir olmaktan
+çıkarıp denetlenebilir yapan şey o.
 
 **Tasarım kararı (kullanıcı):** `features`/`bugs`, hipotez şeklinin **üzerine**
 eklenir. Sonuç: `value metric` → `metric`, `success threshold` → `threshold`,

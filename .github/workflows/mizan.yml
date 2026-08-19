@@ -63,11 +63,20 @@ jobs:
           while IFS= read -r f; do
             found=1
             rel="${f#./}"          # git show wants a repo-relative path
-            echo "::group::$rel"
+            # --strict only where the file's job is to MODEL the discipline:
+            # the schema, the template, and the worked examples. Everywhere
+            # else warnings stay advisory, because a warning the maintainer
+            # has not acted on yet should not block an unrelated PR -- and a
+            # warning that blocks is just a rule with a softer name.
+            strict=""
+            case "$rel" in
+              examples/*|templates/*|skill/*) strict="--strict" ;;
+            esac
+            echo "::group::$rel ${strict:-(advisory)}"
             if [ -n "$base" ]; then
-              python tools/mizan_validate.py --against "$base" "$rel"
+              python tools/mizan_validate.py $strict --against "$base" "$rel"
             else
-              python tools/mizan_validate.py "$rel"
+              python tools/mizan_validate.py $strict "$rel"
             fi
             echo "::endgroup::"
           done < <(find . -path ./.git -prune -o -name '*mizan-registry*.y*ml' -print)
@@ -75,6 +84,33 @@ jobs:
             echo "No registry files found to validate." >&2
             exit 1
           fi
+
+      - name: Self-test — the warning channel warns without blocking
+        run: |
+          set -e
+          # A warning that blocks is a rule; a rule that cannot block is
+          # decoration. This checks the channel is genuinely two-valued:
+          # exit 0 by default, exit 1 under --strict, same finding both times.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.2"}
+          hypotheses:
+            - id: "H-001"
+              tier: "H"
+              formal: "a claim"
+              arbiter: {class: runtime, who: "pytest"}
+          experiments: []
+          results: []
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp")"   # must exit 0
+          echo "$out"
+          echo "$out" | grep -q "W1:" || { echo "FAIL: W1 did not warn" >&2; exit 1; }
+          echo "$out" | grep -q "W2:" || { echo "FAIL: W2 did not warn" >&2; exit 1; }
+          if python tools/mizan_validate.py --strict "$tmp"; then
+            echo "FAIL: --strict did not promote warnings to failures" >&2
+            exit 1
+          fi
+          echo "OK: warnings warn by default and fail under --strict."
 
       - name: Self-test — R13/R14/R15 must reject a free-form feature and bug
         run: |

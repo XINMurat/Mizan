@@ -135,6 +135,15 @@ entry and a feature gate ARE hypotheses — same fields, same rules 1–8 — pl
 Registries declaring 1.0–1.2 keep working unenforced; bump the version when
 the entries are ready.
 
+**Warnings (W1–W3) advise, they do not block.** An entry with no `two_sided`
+statement; an entry with no result yet and no threshold or refutation; a
+registry where every tiered entry sits at `[K]`. Each has a legitimate
+exception — a draft entry, a one-entry registry — which is why none is a
+rule. `--strict` promotes them to failures; CI runs strict on the files whose
+job is to model the discipline (schema, templates, examples) and advisory
+everywhere else, so a warning nobody has acted on yet does not block an
+unrelated change.
+
 ## 4. Common mistakes
 
 - **Turning the schema into a form:** not every chat idea needs

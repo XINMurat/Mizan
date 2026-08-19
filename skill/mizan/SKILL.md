@@ -226,6 +226,13 @@ its **kill condition** (R13) and its **alternatives** including the null
 option (R14); a bug names at least one **rival hypothesis** (R15). The point
 of R15 is Mode 4's whole point — never close on the first story that fits.
 
+The validator also has a **non-blocking warning channel** (W1–W3): a missing
+two-sided statement, an entry written with no threshold or refutation and no
+result yet, and a registry where every tiered entry is `[K]`. These advise
+rather than stop, for the same reason R8's flag classes differ in force — a
+checker that can only block teaches people to write around it, which is a
+different skill from writing honestly.
+
 ## Context economy (long audits, long sessions)
 
 An audit's cost grows with the transcript, not with the finding. Every
