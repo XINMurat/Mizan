@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mizan registry validator — LLM-free static enforcement of hard rules R1–R8.
+Mizan registry validator — LLM-free static enforcement of hard rules R1–R15.
 
 This is the cheap, judgment-free baseline of feature FEAT-M001 (in the
 project's roadmap registry). It does NOT evaluate the *quality* of a
@@ -37,6 +37,15 @@ except ImportError:  # pragma: no cover
     sys.exit(2)
 
 VALID_TIERS = {"K", "H", "S", "R", "KKE", "Y"}
+
+# R8 applies to hypotheses, and from schema 1.3 to features and bugs as well;
+# the message has to say which, or a feature's missing arbiter reads as a
+# hypothesis that does not exist.
+KIND_LABEL = {
+    "hypothesis": ("hypothesis", "hipotez"),
+    "feature": ("feature", "feature"),
+    "bug": ("bug", "bug"),
+}
 ARBITER_CLASSES = {"runtime", "instrument", "third_party", "author", "none"}
 
 # Bilingual message catalog: key -> (en, tr)
@@ -90,40 +99,62 @@ MSG = {
         "R7: {hid} hipotezi {tier} katmanında ama onu taşıyan {id} sonucunda decision_confirmed_by boş — bağımsız onay olmadan terfi (üretici≠tek denetçi).",
     ),
     "R8_no_arbiter": (
-        "R8: hypothesis {id} has no arbiter block — a locked threshold with no named judge is self-report.",
-        "R8: {id} hipotezinde hakem bloğu yok — hakemi isimlendirilmemiş kilitli eşik öz-beyandır.",
+        "R8: {kind} {id} has no arbiter block — a locked threshold with no named judge is self-report.",
+        "R8: {kind} {id} girdisinde hakem bloğu yok — hakemi isimlendirilmemiş kilitli eşik öz-beyandır.",
     ),
     "R8_bad_class": (
-        "R8: hypothesis {id} has invalid arbiter.class '{cls}' (allowed: runtime instrument third_party author none).",
-        "R8: {id} hipotezinde geçersiz arbiter.class '{cls}' (izinli: runtime instrument third_party author none).",
+        "R8: {kind} {id} has invalid arbiter.class '{cls}' (allowed: runtime instrument third_party author none).",
+        "R8: {kind} {id} girdisinde geçersiz arbiter.class '{cls}' (izinli: runtime instrument third_party author none).",
     ),
     "R8_no_who": (
-        "R8: hypothesis {id} names arbiter.class '{cls}' but not arbiter.who — the concrete judge is missing.",
-        "R8: {id} hipotezi arbiter.class '{cls}' diyor ama arbiter.who boş — somut hakem yok.",
+        "R8: {kind} {id} names arbiter.class '{cls}' but not arbiter.who — the concrete judge is missing.",
+        "R8: {kind} {id} arbiter.class '{cls}' diyor ama arbiter.who boş — somut hakem yok.",
     ),
     "R8_author_promotes_K": (
-        "R8: hypothesis {id} is at tier K but its arbiter is class '{cls}' — self-judged claims stay at KKE.",
-        "R8: {id} hipotezi K katmanında ama hakemi '{cls}' sınıfında — kendi kendini yargılayan iddia KKE'de kalır.",
+        "R8: {kind} {id} is at tier K but its arbiter is class '{cls}' — self-judged claims stay at KKE.",
+        "R8: {kind} {id} K katmanında ama hakemi '{cls}' sınıfında — kendi kendini yargılayan iddia KKE'de kalır.",
     ),
     "R8_none_leaves_S": (
-        "R8: hypothesis {id} has arbiter.class 'none' but tier '{tier}' — with no arbiter the threshold is decorative; tier stays S.",
-        "R8: {id} hipotezinin arbiter.class'ı 'none' ama tier '{tier}' — hakemsiz eşik dekoratiftir; tier S'de kalır.",
+        "R8: {kind} {id} has arbiter.class 'none' but tier '{tier}' — with no arbiter the threshold is decorative; tier stays S.",
+        "R8: {kind} {id} arbiter.class'ı 'none' ama tier '{tier}' — hakemsiz eşik dekoratiftir; tier S'de kalır.",
     ),
     "R8_no_calibration": (
-        "R8: hypothesis {id} uses arbiter.class '{cls}' without arbiter.calibration — thresholds are not inherited across instruments (write 'unknown' if that is the truth).",
-        "R8: {id} hipotezi '{cls}' hakem sınıfını arbiter.calibration olmadan kullanıyor — eşikler enstrümanlar arası miras alınmaz ('unknown' yazmak da geçerli cevaptır).",
+        "R8: {kind} {id} uses arbiter.class '{cls}' without arbiter.calibration — thresholds are not inherited across instruments (write 'unknown' if that is the truth).",
+        "R8: {kind} {id} '{cls}' hakem sınıfını arbiter.calibration olmadan kullanıyor — eşikler enstrümanlar arası miras alınmaz ('unknown' yazmak da geçerli cevaptır).",
     ),
     "R8_independence_contradiction": (
-        "R8: hypothesis {id} declares arbiter.class '{cls}' with independent_of_author: true — that class is by definition not independent.",
-        "R8: {id} hipotezi arbiter.class '{cls}' ile independent_of_author: true beyan ediyor — bu sınıf tanımı gereği bağımsız değil.",
+        "R8: {kind} {id} declares arbiter.class '{cls}' with independent_of_author: true — that class is by definition not independent.",
+        "R8: {kind} {id} arbiter.class '{cls}' ile independent_of_author: true beyan ediyor — bu sınıf tanımı gereği bağımsız değil.",
+    ),
+    "R13_no_kill_condition": (
+        "R13: feature {id} has no kill_condition — a feature with no defined end accumulates as "
+        "permanent maintenance debt. Name the post-ship measurement that would justify removing it.",
+        "R13: {id} feature'ında kill_condition yok — sonu tanımlanmamış bir özellik kalıcı bakım "
+        "borcu olarak birikir. Onu kaldırmayı haklı çıkaracak yayın-sonrası ölçümü adlandır.",
+    ),
+    "R14_no_alternatives": (
+        "R14: feature {id} lists no alternatives — every feature entry competes against at least "
+        "one cheaper option and the null alternative, on the SAME value metric.",
+        "R14: {id} feature'ı hiç alternatif listelemiyor — her feature girdisi, AYNI değer metriği "
+        "üzerinde en az bir ucuz seçenek ve null alternatifle yarışır.",
+    ),
+    "R14_missing_kind": (
+        "R14: feature {id} has no '{kind}' alternative — {why}",
+        "R14: {id} feature'ında '{kind}' alternatifi yok — {why}",
+    ),
+    "R15_no_rivals": (
+        "R15: bug {id} lists no rival_hypotheses — a mechanism with no rival is a story, not a "
+        "hypothesis; nothing distinguishes it from the first explanation that came to mind.",
+        "R15: {id} bug'ında rival_hypotheses yok — rakibi olmayan mekanizma hipotez değil hikâyedir; "
+        "onu akla ilk gelen açıklamadan ayıran hiçbir şey yok.",
     ),
     "bad_tier": (
         "SCHEMA: {kind} '{id}' has invalid tier '{tier}' (allowed: K H S R KKE Y).",
         "ŞEMA: {kind} '{id}' geçersiz tier '{tier}' taşıyor (izinli: K H S R KKE Y).",
     ),
     "clean": (
-        "OK — {n} entries checked, no R1–R8 violations.",
-        "OK — {n} girdi kontrol edildi, R1–R8 ihlali yok.",
+        "OK — {n} entries checked, no R1–R15 violations.",
+        "OK — {n} girdi kontrol edildi, R1–R15 ihlali yok.",
     ),
     "found": (
         "{n} violation(s) found.",
@@ -181,6 +212,15 @@ def check(data: dict, lang: str, baseline: dict | None = None) -> list[str]:
             t = _s(e.get("tier"))
             if t and t not in VALID_TIERS:
                 errs.append(m("bad_tier", lang, kind=kind, id=e.get("id"), tier=t))
+    # A feature's problem claim carries its own tier — "users struggle with X"
+    # is usually [H] dressed as [K], and the gate exists to say which.
+    for f in features:
+        pc = f.get("problem_claim")
+        if isinstance(pc, dict):
+            t = _s(pc.get("tier"))
+            if t and t not in VALID_TIERS:
+                errs.append(m("bad_tier", lang, kind="feature problem_claim",
+                              id=f.get("id"), tier=t))
 
     # R1 — threshold + refutation must exist on any hypothesis a result references
     referenced = {_s(r.get("hypothesis")) for r in results if _s(r.get("hypothesis"))}
@@ -279,6 +319,16 @@ def check(data: dict, lang: str, baseline: dict | None = None) -> list[str]:
     if _schema_at_least(data, (1, 2)):
         errs += _check_arbiters(hyps.values(), lang)
 
+    # From 1.3, R8 covers features and bugs too. Until now _check_arbiters
+    # walked hypotheses only, so a feature could sit at [K] with no named
+    # judge — while the schema's own comment already said that a value metric
+    # judged solely by the feature's proposer is class: author.
+    if _schema_at_least(data, (1, 3)):
+        errs += _check_arbiters(features, lang, "feature")
+        errs += _check_arbiters(bugs, lang, "bug")
+        errs += _check_feature_gates(features, lang)
+        errs += _check_bug_rivals(bugs, lang)
+
     # R4 — append-only vs. a git baseline (history may only grow; entries may not vanish)
     if baseline:
         errs += _append_only(data, baseline, lang)
@@ -297,33 +347,81 @@ def _schema_at_least(data: dict, want: tuple[int, int]) -> bool:
     return got >= want
 
 
-def _check_arbiters(hyps: Any, lang: str) -> list[str]:
-    """R8 — the judge behind the threshold, per hypothesis."""
+def _check_arbiters(entries: Any, lang: str, kind: str = "hypothesis") -> list[str]:
+    """R8 — the judge behind the threshold, per entry."""
     errs: list[str] = []
-    for h in hyps:
+    label = KIND_LABEL[kind][1 if lang == "tr" else 0]
+    for h in entries:
         hid = h.get("id")
         arb = h.get("arbiter")
         if not isinstance(arb, dict) or not _s(arb.get("class")):
-            errs.append(m("R8_no_arbiter", lang, id=hid))
+            errs.append(m("R8_no_arbiter", lang, kind=label, id=hid))
             continue
         cls = _s(arb.get("class")).lower()
         if cls not in ARBITER_CLASSES:
-            errs.append(m("R8_bad_class", lang, id=hid, cls=cls))
+            errs.append(m("R8_bad_class", lang, kind=label, id=hid, cls=cls))
             continue
         if not _s(arb.get("who")):
-            errs.append(m("R8_no_who", lang, id=hid, cls=cls))
+            errs.append(m("R8_no_who", lang, kind=label, id=hid, cls=cls))
 
         tier = _s(h.get("tier")).upper()
         if cls == "author" and tier == "K":
-            errs.append(m("R8_author_promotes_K", lang, id=hid, cls=cls))
+            errs.append(m("R8_author_promotes_K", lang, kind=label, id=hid, cls=cls))
         if cls == "none" and tier not in {"", "S", "R"}:
             # R is reachable without an arbiter only by withdrawal, which the
             # history field records; S is the resting state.
-            errs.append(m("R8_none_leaves_S", lang, id=hid, tier=tier))
+            errs.append(m("R8_none_leaves_S", lang, kind=label, id=hid, tier=tier))
         if cls in {"instrument", "third_party"} and not _s(arb.get("calibration")):
-            errs.append(m("R8_no_calibration", lang, id=hid, cls=cls))
+            errs.append(m("R8_no_calibration", lang, kind=label, id=hid, cls=cls))
         if cls in {"author", "none"} and arb.get("independent_of_author") is True:
-            errs.append(m("R8_independence_contradiction", lang, id=hid, cls=cls))
+            errs.append(m("R8_independence_contradiction", lang, kind=label, id=hid, cls=cls))
+    return errs
+
+
+def _check_feature_gates(features: list[dict], lang: str) -> list[str]:
+    """R13/R14 — the two things that stop a feature gate being a wish list.
+
+    Both come from references/feature-gate.md, both were MANDATORY in prose
+    and unrepresented in the schema until 1.3. Neither checks quality: R13
+    verifies a kill condition was WRITTEN, not that it is a good one, and
+    R14 verifies the null alternative is PRESENT, not that it was honestly
+    priced. Contract completeness is machine-checkable; judgement is not.
+    """
+    errs: list[str] = []
+    for f in features:
+        fid = f.get("id")
+        if not _s(f.get("kill_condition")):
+            errs.append(m("R13_no_kill_condition", lang, id=fid))
+
+        alts = f.get("alternatives")
+        if not isinstance(alts, list) or not alts:
+            errs.append(m("R14_no_alternatives", lang, id=fid))
+            continue
+        kinds = {_s(a.get("kind")).lower() for a in alts if isinstance(a, dict)}
+        if "cheaper" not in kinds:
+            errs.append(m("R14_missing_kind", lang, id=fid, kind="cheaper",
+                          why=("a feature that was never compared against a smaller version "
+                               "of itself has not been gated, only described")
+                          if lang != "tr" else
+                          ("kendisinin daha küçük bir hâliyle hiç karşılaştırılmamış bir özellik "
+                           "gate'lenmiş değil, sadece tarif edilmiştir")))
+        if "null" not in kinds:
+            errs.append(m("R14_missing_kind", lang, id=fid, kind="null",
+                          why=("without pricing 'do nothing', the cost of leaving the problem "
+                               "unsolved is assumed rather than compared")
+                          if lang != "tr" else
+                          ("'hiçbir şey yapma' fiyatlanmadan, problemi çözmemenin maliyeti "
+                           "karşılaştırılmaz, varsayılır")))
+    return errs
+
+
+def _check_bug_rivals(bugs: list[dict], lang: str) -> list[str]:
+    """R15 — Mode 4's reason for existing: never close on the first story that fits."""
+    errs: list[str] = []
+    for b in bugs:
+        rivals = b.get("rival_hypotheses")
+        if not isinstance(rivals, list) or not any(_s(r) for r in rivals):
+            errs.append(m("R15_no_rivals", lang, id=b.get("id")))
     return errs
 
 
@@ -349,7 +447,7 @@ def _append_only(new: dict, old: dict, lang: str) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(description="Mizan registry R1–R8 validator")
+    ap = argparse.ArgumentParser(description="Mizan registry R1–R15 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
     ap.add_argument("--lang", choices=["en", "tr"], default="en")
     ap.add_argument("--against", metavar="GITREF",

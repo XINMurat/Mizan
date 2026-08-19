@@ -22,6 +22,23 @@
 #   R7. Producer/auditor separation: the agent that writes results
 #       SHOULD NOT be the sole agent that promotes tiers; tier changes
 #       are proposed, then confirmed by the owner or an audit pass.
+#   R13. A feature entry MUST carry a non-empty kill_condition. Features
+#        without one accumulate as permanent maintenance debt
+#        (references/feature-gate.md Step 2).
+#   R14. A feature entry MUST list alternatives including at least one
+#        `cheaper` and one `null` option, tiered on the SAME value metric
+#        (feature-gate.md Step 3 — this is where "the feature nobody asked
+#        for" gets killed before it is built).
+#   R15. A bug entry MUST list at least one rival hypothesis — a rival
+#        mechanism that produces the same symptom (code-audit.md §B2).
+#        "Never close on the first story that fits" is Mode 4's whole
+#        point, and until 1.3 nothing checked it.
+#
+#   R8 also applies to features and bugs from 1.3 onward. Until then
+#   _check_arbiters() walked hypotheses only, so a feature could sit at [K]
+#   with no named judge — while this file's own comment already said a value
+#   metric judged only by the feature's proposer is class: author.
+#
 #   R8. Every hypothesis MUST name its arbiter — the thing that returns
 #       the verdict on the locked threshold. A threshold whose arbiter is
 #       the claim's own author is self-report, not measurement:
@@ -42,6 +59,20 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.3 — features and bugs stop being free-form. They extend the HYPOTHESIS
+#         shape (same id/tier/status/formal/metric/arbiter/threshold/
+#         refutation/history fields, same rules R1-R8) and add only what is
+#         specific to them: problem_claim / kill_condition / alternatives /
+#         acceptance_criteria for features, symptom / rival_hypotheses for
+#         bugs. Activates R13-R15 and extends R8 to both blocks.
+#         MIGRATION: 1.0-1.2 files keep working unenforced, exactly as 1.1
+#         files did for R8. Bump the version when the entries are ready, not
+#         before — a version bump that breaks the build teaches people to
+#         avoid version bumps.
+#         Naming note: references/feature-gate.md says "value metric" and
+#         "success threshold"; in the schema these ARE `metric` and
+#         `threshold`, so R1 and R8 apply unchanged instead of being
+#         reimplemented under new names.
 #   1.2 — adds hypothesis.arbiter (rule R8). MANDATORY for files declaring
 #         schema_version 1.2+; 1.0/1.1 files stay valid and unenforced, so
 #         existing registries migrate deliberately rather than breaking.
@@ -55,8 +86,8 @@
 
 registry:
   project: "ProjectName"            # e.g. SpectralLM
-  owner: "XINMurat"
-  schema_version: "1.2"             # 1.2+ activates R8 (arbiter) enforcement
+  owner: "your-org"
+  schema_version: "1.3"             # 1.2+ activates R8; 1.3+ activates R13-R15
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -192,17 +223,120 @@ results:
     followup: []                    # new hypothesis/experiment ids
 
 # ---------------------------------------------------------------------
-# OPTIONAL BLOCKS — same rules, specialized fields
+# BUGS (Mode 4) — a bug entry IS a hypothesis about a mechanism.
 # ---------------------------------------------------------------------
-# Bug hypotheses (Mode 4): add symptom / mechanism / rival_hypotheses /
-#   refutation_test; "fix worked" follows R6 (revert-check as the
-#   symmetric control). Arbiter is usually class: runtime (the failing
-#   test / repro script) — the one place the code loop already holds.
-# Feature gates (Mode 5): add problem_claim (with tier+source),
-#   value_metric, success_threshold, kill_condition, alternatives
-#   (>=1 cheaper + null alternative), acceptance criteria phrased as
-#   refutation conditions. The success_threshold carries its own arbiter
-#   block; a value metric whose only judge is the feature's own proposer
-#   is class: author and cannot reach K.
-bugs: []
-features: []
+# It carries every hypothesis field above with the same meaning, and the
+# same rules apply (R1 threshold+refutation, R8 arbiter, R4 history):
+#   formal      — the MECHANISM hypothesis: WHY it happens, specific enough
+#                 to be wrong (file:line, state, ordering). This is the
+#                 claim, so it lives in `formal` rather than in a duplicate
+#                 `mechanism` field.
+#   refutation  — the refutation TEST: the experiment that distinguishes
+#                 this mechanism from its rivals, and what result kills it.
+#   arbiter     — usually class: runtime (the failing test / repro script).
+#                 Mode 4 is the one place the code loop already holds; say
+#                 so rather than reaching for a weaker class out of habit.
+# "The fix worked" is a surprising positive: R6 applies, with the revert
+# check as the symmetric control (references/code-audit.md §B3).
+bugs:
+  - id: "BUG-001"
+    tier: "H"
+    status: "preregistered"
+    formal: >
+      The mechanism hypothesis. See above — this is the claim, not the
+      symptom.
+    symptom: >
+      Observable behaviour, VERBATIM: log line, trace, repro steps. No
+      interpretation in this field — interpretation belongs in `formal`,
+      where it can be refuted.
+    rival_hypotheses:               # MANDATORY, >= 1 (R15)
+      - >
+        At least one alternative mechanism that produces the SAME symptom.
+        A registry with one mechanism and no rival is a story, not a
+        hypothesis: nothing distinguishes it from the first thing that came
+        to mind.
+    arbiter:
+      class: "runtime"
+      who: "the failing test / repro script"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime — the repro either fires or does not"
+    threshold:
+      support: "the repro fails before the fix and passes after, 10/10 runs"
+      refute: "the repro is flaky across 10 runs, or passes before the fix"
+    refutation: >
+      What result kills THIS mechanism — including the revert check: if the
+      bug does not reproduce on revert, the fix is KKE, not K.
+    history:
+      - { date: "2026-08-20", event: "preregistered" }
+
+# ---------------------------------------------------------------------
+# FEATURES (Mode 5) — a feature gate IS a hypothesis about the future.
+# ---------------------------------------------------------------------
+# Same shape again. The mapping from references/feature-gate.md:
+#   value metric      -> metric      (name + the instrument producing it)
+#   success threshold -> threshold   (support / refute, LOCKED now)
+#   acceptance criteria phrased as refutation conditions -> acceptance_criteria
+# R1 and R8 therefore cover a feature entry without a second implementation:
+# a value metric whose only judge is the feature's own proposer is
+# class: author and cannot reach K, which is the entire point of gating.
+features:
+  - id: "FEAT-001"
+    tier: "H"
+    status: "preregistered"
+    formal: >
+      The feature as specified, stated so that "it shipped" and "it worked"
+      are different claims.
+    problem_claim:
+      claim: "Who has this problem, stated concretely."
+      tier: "H"                     # K = tickets/telemetry/quotes; H = founder
+                                    # intuition (legitimate, but labelled);
+                                    # S = "obviously users want".
+      source: "support tickets / telemetry query / user quotes — the evidence, named"
+    metric:
+      name: "adoption_rate"
+      instrument: "the telemetry event, query or ticket count that produces the number"
+    threshold:
+      support: "adoption >= 30% of target users within 6 weeks"
+      refute: "adoption < 10% at 6 weeks"
+      underpowered: "10-30% -> one measurement window extension, stated now"
+    kill_condition: >                # MANDATORY (R13)
+      The POST-SHIP measurement that justifies REMOVING this feature. Not a
+      failure to launch — a condition met later, after it is live. Without
+      one the feature can only ever accumulate maintenance cost, because
+      nothing is defined that would end it.
+    alternatives:                   # MANDATORY (R14): >= 1 cheaper + 1 null
+      - kind: "proposed"
+        option: "The feature as specified."
+        cost: "build + maintenance estimate"
+      - kind: "cheaper"
+        option: >
+          Something attacking the SAME problem claim for less — a config
+          flag instead of a UI, a doc page instead of a wizard, a batch job
+          instead of realtime.
+        cost: "…"
+      - kind: "null"
+        option: >
+          Do nothing, or the 10% version. What does the problem cost if it
+          stays unsolved? Sometimes the honest answer is "less than the
+          maintenance burden", and this row is where that becomes sayable.
+        cost: "0"
+    acceptance_criteria:            # phrased as REFUTATION conditions
+      - "The feature FAILS acceptance if … (the direct antidote to demo-driven features that present well and do not function)"
+    arbiter:
+      class: "instrument"
+      who: "the telemetry query, run by whoever owns the dashboard"
+      independent_of_author: true
+      latency: "weeks"
+      calibration: >
+        Where the threshold's null comes from — the pre-launch baseline for
+        this metric, measured on this instrument.
+    refutation: >
+      What post-ship measurement kills the value claim.
+    informativeness_precondition: >
+      Can success even be measured? If no telemetry or user signal exists,
+      either build the measurement first or accept that the feature ships
+      as S — and say which.
+    cost: "build + maintenance estimate"
+    history:
+      - { date: "2026-08-20", event: "gated, not started" }

@@ -1,11 +1,19 @@
 # =====================================================================
-# Example Mizan registry — passes tools/mizan_validate.py (R1–R8 clean)
-# Örnek Mizan registry'si — doğrulayıcıdan temiz geçer (R1–R8)
+# Example Mizan registry — passes tools/mizan_validate.py (R1–R15 clean)
+# Örnek Mizan registry'si — doğrulayıcıdan temiz geçer (R1–R15)
+# =====================================================================
+# NOTE ON THE VERSION BUMP (2026-08-20). This file declared
+# schema_version 1.1 while claiming to be "R1-R8 clean". It was not: R8 is
+# gated on 1.2, so the arbiter rule never ran here, and H-001 carried no
+# arbiter block at all. The header claim was true only because the check
+# was switched off — this repo's own [Y] tier, in its own example file.
+# Fixed by declaring 1.3, giving H-001 the arbiter it always needed, and
+# adding the worked FEAT/BUG entries the 1.3 schema defines.
 # =====================================================================
 registry:
   project: "ExampleLM"
   owner: "your-org"
-  schema_version: "1.1"
+  schema_version: "1.3"
   methodology: "mizan-v2.2"
   created: "2026-07-11"
   notes: >
@@ -27,6 +35,15 @@ hypotheses:
     metric:
       name: "perplexity_improvement"
       instrument: "eval/ppl.py on WikiText-2 val"
+    arbiter:
+      class: "instrument"
+      who: "eval/ppl.py — the number does not pass through the author's judgement"
+      independent_of_author: true
+      latency: "hours"
+      calibration: >
+        Seed-to-seed spread of the parameter-matched baseline on this same
+        script and dataset; the 5% support bar sits outside it. Not
+        inherited from any other benchmark.
     threshold:
       support: ">= 5%"
       refute: "< 1%"
@@ -108,5 +125,119 @@ results:
       the surprising 6.75% — added as a sub-check per R6.
     followup: []
 
-bugs: []
-features: []
+# ---------------------------------------------------------------------
+# BUG (Mode 4) — the entry is a hypothesis about a MECHANISM, so `formal`
+# carries the mechanism and `symptom` stays interpretation-free.
+# ---------------------------------------------------------------------
+bugs:
+  - id: "BUG-001"
+    tier: "H"
+    status: "preregistered"
+    preregistered: "2026-07-12"
+    title: "Loss spikes around step 4k on multi-GPU runs"
+    formal: >
+      The spike is caused by the gradient all-reduce running before the
+      phase projection's buffer is synchronised (train/ddp.py:118), so one
+      rank contributes a stale projection for exactly one step.
+    symptom: >
+      "train/loss jumps 2.31 -> 5.87 at step 4013, recovers by 4030.
+      Reproduced on 3 of 5 runs, 2 GPUs. Single-GPU runs: never observed."
+    rival_hypotheses:
+      - >
+        A data-loader boundary: the spike coincides with the shard rollover,
+        and a malformed batch would produce the same shape. Distinguished by
+        replaying the exact batch on a single GPU.
+      - >
+        Ordinary LR-schedule instability at the warmup/decay junction, which
+        happens to sit near step 4k. Distinguished by moving the junction to
+        step 6k and seeing whether the spike moves with it.
+    arbiter:
+      class: "runtime"
+      who: "tests/test_ddp_sync.py::test_projection_buffer_synced (repro script)"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime — the repro either fires or does not"
+    threshold:
+      support: "repro fails before the fix and passes after, 10/10 runs"
+      refute: "repro is flaky across 10 runs, or the spike survives the fix"
+    refutation: >
+      If reverting the fix does NOT reproduce the spike, the mechanism is
+      unconfirmed and the entry is KKE, not K — a fix that works from an
+      unrelated location refutes the mechanism while curing the symptom.
+    cost: "~half a day"
+    history:
+      - { date: "2026-07-12", event: "preregistered with two rivals" }
+
+# ---------------------------------------------------------------------
+# FEATURE (Mode 5) — the value metric IS `metric`, the success threshold
+# IS `threshold`, so R1 and R8 apply without a second implementation.
+# ---------------------------------------------------------------------
+features:
+  - id: "FEAT-001"
+    tier: "H"
+    status: "preregistered"
+    preregistered: "2026-07-12"
+    title: "Ship input-conditioning on by default"
+    formal: >
+      Enabling input-dependent conditioning by default lowers perplexity for
+      users who never touch the flag, without a training-throughput
+      regression that outweighs it.
+    problem_claim:
+      claim: "Users keep the default config and never discover the flag."
+      tier: "H"
+      source: >
+        14 of 17 configs in the examples/ directory and in three external
+        forks are unmodified defaults. Suggestive, not decisive: forks may
+        be unrepresentative, hence H rather than K.
+    metric:
+      name: "default_config_perplexity"
+      instrument: "eval/ppl.py on the released default config, per nightly build"
+    arbiter:
+      class: "instrument"
+      who: "the nightly eval job; the author does not decide whether it passed"
+      independent_of_author: true
+      latency: "days"
+      calibration: >
+        Null is the current default config's own nightly spread over 14 runs.
+    threshold:
+      support: ">= 4% relative ppl improvement on the default config"
+      refute: "< 1%, or a > 15% training-throughput regression at equal ppl"
+      underpowered: "1-4% -> extend to 30 nightly runs before deciding"
+    kill_condition: >
+      If, 8 weeks after release, the flag is explicitly disabled in more
+      than 30% of observed configs, the default is wrong and gets reverted —
+      an opt-out rate that high means users are paying a cost the eval does
+      not measure.
+    alternatives:
+      - kind: "proposed"
+        option: "Enable it by default for everyone."
+        cost: "1 day + the migration note; ongoing support for two code paths"
+      - kind: "cheaper"
+        option: >
+          Leave the default alone and put the flag in the quickstart's first
+          example. Attacks the same problem claim (users never discover it)
+          without changing anyone's numbers underneath them.
+        cost: "1 hour"
+      - kind: "null"
+        option: >
+          Do nothing. The problem costs a ~5% ppl improvement that
+          default-config users do not get. Against two maintained code paths
+          and a silent behaviour change for every existing user, this is a
+          real contender and is not listed as a formality.
+        cost: "0"
+    acceptance_criteria:
+      - "FAILS acceptance if the default config's ppl does not improve by >= 4% on the nightly eval."
+      - "FAILS acceptance if training throughput drops more than 15% at equal ppl."
+      - "FAILS acceptance if the change ships without a migration note stating that existing runs are not comparable."
+    refutation: >
+      A nightly improvement below 1%, or a throughput regression above 15%,
+      kills the value claim. Either outcome is worth knowing: the second
+      says the mechanism works but is not free, which changes the default
+      decision without touching H-001.
+    informativeness_precondition: >
+      The nightly eval must actually run on the default config. Until that
+      job exists, this feature can only ship as S, and saying so is the
+      point of this field.
+    cost: "1 day build; two code paths to maintain until the old one is removed"
+    history:
+      - { date: "2026-07-12", event: "gated, not started" }

@@ -91,7 +91,7 @@ enstrümanlar güvenilir, yanlılık nerede birikiyor. Çıktı metodolojiyi
 besler — talimat ve şema da revizyona tabidir (kendi disiplinlerine
 uyarak: değişiklik gerekçeli, geçmiş silinmez).
 
-## 3. Sert kurallar (özet — şemadaki R1–R8)
+## 3. Sert kurallar (özet — şemadaki R1–R15)
 
 1. Sonuçtan önce eşik + çürütme koşulu (HARKing yapısal olarak kapalı).
 2. Baseline zorunlu; baseline'sız sonuç [K] üretemez.
@@ -108,6 +108,23 @@ uyarak: değişiklik gerekçeli, geçmiş silinmez).
    olamaz; hakem yoksa (`none`) eşik dekoratiftir ve girdi `[S]`'de kalır.
    Yazılım dışında — runtime artık senin yerine karar vermezken —
    disiplini dürüst tutan şey budur.
+
+Şema 1.3'ten itibaren üç kural daha, özelleşmiş bloklar için. Bir bug girdisi
+ve bir feature gate'i birer hipotezDİR — aynı alanlar, aynı 1–8 kuralları —
+üstüne:
+
+13. Feature **kaldırma koşulunu** adlandırır: onu kaldırmayı haklı çıkaracak
+    yayın-sonrası ölçüm. Bu olmadan yalnızca maliyet biriktirebilir, çünkü onu
+    bitirecek hiçbir şey tanımlı değildir.
+14. Feature **alternatiflerini** listeler: en az bir ucuz seçenek ve null
+    alternatif ("hiçbir şey yapma"), aynı değer metriği üzerinde fiyatlanmış.
+    Kimsenin ihtiyaç duymadığı özellik burada, inşa edilmeden önce ölür.
+15. Bug en az bir **rakip hipotez** adlandırır — aynı semptomu üreten başka bir
+    mekanizma. Rakibi olmayan mekanizma hikâyedir: onu akla ilk gelen
+    açıklamadan ayıran hiçbir şey yoktur.
+
+1.0–1.2 beyan eden registry'ler uygulanmadan çalışmaya devam eder; girdiler
+hazır olduğunda sürümü yükseltin.
 
 ## 4. Sık hatalar
 

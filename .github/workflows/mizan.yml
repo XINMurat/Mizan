@@ -1,6 +1,6 @@
 name: CI
 
-# Runs the LLM-free R1–R8 registry validator and checks that the shipped
+# Runs the LLM-free R1–R15 registry validator and checks that the shipped
 # mizan.skill stays in sync with skill/mizan/. This is the static-check
 # automation of the already-shipped tool (FEAT-M001's cheap alternative) —
 # NOT the "full CI/CD gate with an LLM auditor", which stays gated.
@@ -55,7 +55,7 @@ jobs:
             echo "::warning::No baseline commit reachable — R4 (append-only) did NOT run."
           fi
 
-      - name: Validate every registry (R1–R8, R4 against the baseline)
+      - name: Validate every registry (R1–R15, R4 against the baseline)
         run: |
           set -e
           base="${{ steps.baseline.outputs.base }}"
@@ -75,6 +75,40 @@ jobs:
             echo "No registry files found to validate." >&2
             exit 1
           fi
+
+      - name: Self-test — R13/R14/R15 must reject a free-form feature and bug
+        run: |
+          set -e
+          # Until schema 1.3 these two blocks were validated for nothing but
+          # tier spelling, so a feature with no kill condition, no
+          # alternatives and no arbiter sat at [K] unchallenged. If this step
+          # ever stops failing, Modes 4 and 5 are unenforced again.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.3"}
+          hypotheses: []
+          experiments: []
+          results: []
+          features:
+            - id: "FEAT-001"
+              tier: "K"
+              title: "Ship the wizard"
+          bugs:
+            - id: "BUG-001"
+              tier: "K"
+              symptom: "it crashes"
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          for rule in "R8: feature" "R8: bug" "R13:" "R14:" "R15:"; do
+            echo "$out" | grep -q "$rule" || { echo "FAIL: $rule did not fire" >&2; exit 1; }
+          done
+          echo "OK: R8 (features+bugs), R13, R14 and R15 all fired."
+          # ...and the migration promise holds: the same file at 1.2 is
+          # unenforced, so existing registries do not break on upgrade.
+          sed -i 's/schema_version: "1.3"/schema_version: "1.2"/' "$tmp"
+          python tools/mizan_validate.py "$tmp"
+          echo "OK: the same registry at 1.2 stays valid and unenforced."
 
       - name: Self-test — R4 must catch a deleted entry
         run: |

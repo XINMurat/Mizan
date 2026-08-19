@@ -100,7 +100,7 @@ methodology — the instructions and schema are themselves subject to
 revision (following their own discipline: changes are justified, history
 is never deleted).
 
-## 3. Hard rules (summary — R1–R8 in the schema)
+## 3. Hard rules (summary — R1–R15 in the schema)
 
 1. Threshold + refutation condition before any result (HARKing structurally closed).
 2. Baseline mandatory; a baseline-less result cannot produce `[K]`.
@@ -117,6 +117,23 @@ is never deleted).
    reach `[K]`; with no arbiter (`none`) the threshold is decorative and
    the entry stays `[S]`. This is what keeps the discipline honest outside
    software, where the runtime no longer decides for you.
+
+Three more apply to the specialised blocks, from schema 1.3 onward. A bug
+entry and a feature gate ARE hypotheses — same fields, same rules 1–8 — plus:
+
+13. A feature names its **kill condition**: the post-ship measurement that
+    would justify removing it. Without one it can only accumulate cost,
+    because nothing is defined that would end it.
+14. A feature lists its **alternatives**, including at least one cheaper
+    option and the null alternative ("do nothing"), priced on the same value
+    metric. This is where a feature nobody needs gets killed before it is
+    built.
+15. A bug names at least one **rival hypothesis** — another mechanism that
+    produces the same symptom. A mechanism with no rival is a story: nothing
+    distinguishes it from the first explanation that came to mind.
+
+Registries declaring 1.0–1.2 keep working unenforced; bump the version when
+the entries are ready.
 
 ## 4. Common mistakes
 

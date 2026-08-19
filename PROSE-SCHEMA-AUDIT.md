@@ -12,6 +12,44 @@ Kural eklemek yöntem değişikliğidir ve karar bakımındır.*
 
 ---
 
+## DURUM (2026-08-20) — hangileri kapatıldı
+
+| # | Bulgu | Durum |
+|---|---|---|
+| 0 | R4 CI'da koşmuyor | **KAPATILDI** — `--against`, `fetch-depth: 0`, baseline adımı + self-test |
+| 1 | `features`/`bugs` hiç denetlenmiyor (M5) | **KAPATILDI** — şema v1.3 + R13/R14/R15 + R8 kapsamı |
+| 2 | `[K]` kanıtsız verilebiliyor | AÇIK |
+| 3 | Uyarı kanalı yok | AÇIK |
+| 4 | Eşikler sayısal olmak zorunda değil | AÇIK |
+| 5 | Tier'sız girdi geçiyor | AÇIK |
+| 6 | "Her alan zorunlu" uygulanmıyor (M6) | AÇIK |
+| 7 | Prior art alanı okunmuyor (koşullu) | AÇIK |
+| 8 | Coverage Ledger'ın veri biçimi yok (M9) | AÇIK |
+| 9–11 | `two_sided`, eşiksiz hipotez, hepsi-`[K]` | AÇIK — uyarı kanalını bekliyor |
+
+**Tasarım kararı (kullanıcı):** `features`/`bugs`, hipotez şeklinin **üzerine**
+eklenir. Sonuç: `value metric` → `metric`, `success threshold` → `threshold`,
+bug'ın mekanizması → `formal` (semptom kendi alanında yorumsuz kalır). Böylece
+R1 ve R8 ikinci bir uygulama yazılmadan bu iki bloğa da geçerli oldu; yalnız
+onlara özgü olan üç şey yeni kural gerektirdi (R13 kill_condition, R14
+alternatives, R15 rival_hypotheses).
+
+### Tarama sırasında çıkan ek bulgu — örnek registry'nin kendi hakkındaki iddiası yanlıştı
+
+`examples/mizan-registry.example.yaml` başlığında *"passes tools/mizan_validate.py
+(R1–R8 clean)"* yazıyordu ve `schema_version: "1.1"` beyan ediyordu. R8 ise
+1.2'ye kapılı. Yani **R8 o dosyada hiç koşmamıştı** — ve H-001'in hakem bloğu
+hiç yoktu. 1.2'ye çıkarıp koşunca tek ihlalle düşüyor. Başlıktaki iddia, ancak
+kontrol kapalı olduğu için doğruydu: reponun kendi terimleriyle bir `[Y]`,
+kendi örnek dosyasında.
+
+Düzeltildi: dosya 1.3 beyan ediyor, H-001 hak ettiği `instrument` hakemini aldı,
+ve 1.3'ün tanımladığı FEAT/BUG girdileri çalışılmış hâlleriyle eklendi. Bu,
+§0'daki sorunun üçüncü bir cevabı: proza–şema farkı yalnızca kuralların değil,
+**örneklerin kendi hakkındaki iddialarının** da altını oyabiliyor.
+
+---
+
 ## 0. Neden bu tarama yapıldı
 
 Kıyas'ta aynı tarama, prozanın açıkça yasakladığı iki şeye şemanın izin verdiğini

@@ -216,6 +216,16 @@ it lists the failure modes to hunt for and worked examples.
    against the arbiter's own null and are never inherited across
    instruments.
 
+**Bug entries and feature gates are hypotheses, not a different species.**
+From schema 1.3 they carry the same fields and the same rules 1–9 above: a
+bug's `formal` holds the MECHANISM (the symptom stays interpretation-free in
+its own field), a feature's value metric IS `metric` and its success
+threshold IS `threshold`. Three rules are specific to them, and each was
+mandatory in `references/` long before anything checked it: a feature names
+its **kill condition** (R13) and its **alternatives** including the null
+option (R14); a bug names at least one **rival hypothesis** (R15). The point
+of R15 is Mode 4's whole point — never close on the first story that fits.
+
 ## Context economy (long audits, long sessions)
 
 An audit's cost grows with the transcript, not with the finding. Every
@@ -299,7 +309,7 @@ from the outside.
   writing entries. Reading everything at the start spends the context
   the audit itself needs.
 - **The scripted part is the part that travels.** `mizan_validate.py`
-  enforces R1–R8 without a model, so it behaves identically in every
+  enforces R1–R15 without a model, so it behaves identically in every
   host. Whatever is enforced only by this prose is negotiable by the
   host's prose. When rigor must survive an unknown setup, put it in the
   validator, not in a paragraph.
@@ -338,7 +348,7 @@ from the outside.
 - `schemas/mizan-registry.yaml` — the machine-readable registry format.
   When the user keeps a registry file (in project knowledge, a repo, or
   uploads one), read it at session start, APPEND rather than overwrite,
-  propose new entries in this schema, and enforce its hard rules R1–R8
+  propose new entries in this schema, and enforce its hard rules R1–R15
   (mandatory baseline, mandatory confound controls, append-only history,
   no K-promotion without controls on surprising positives, and
   producer/auditor separation: propose tier changes, let the owner or a
