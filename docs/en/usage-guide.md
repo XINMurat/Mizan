@@ -118,6 +118,22 @@ is never deleted).
    the entry stays `[S]`. This is what keeps the discipline honest outside
    software, where the runtime no longer decides for you.
 
+Four more come in at schema 1.4, and each one closes a place where the
+schema permitted what the prose already forbade:
+
+9.  A `[K]` entry is backed by a result that **met its threshold**, or by a
+    cited external source. Writing the tier is not the same as earning it.
+    Prior art does not count: relatives are context for originality, not
+    evidence for this claim.
+10. Thresholds **name a quantity**. "Improves things" is the guide's own
+    counter-example; there is an explicit escape hatch
+    (`non_numeric_justification`) for the rare categorical verdict.
+11. Every entry **carries a tier**. The old check only validated the
+    spelling of a tier that happened to be there.
+12. The mandatory entry fields exist: `formal`, `metric` with a **named
+    instrument**, `cost`, `status`, and `prior_art` **present** — "no known
+    relatives" is an answer, an absent field is silence.
+
 Three more apply to the specialised blocks, from schema 1.3 onward. A bug
 entry and a feature gate ARE hypotheses — same fields, same rules 1–8 — plus:
 

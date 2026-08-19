@@ -109,6 +109,21 @@ uyarak: değişiklik gerekçeli, geçmiş silinmez).
    Yazılım dışında — runtime artık senin yerine karar vermezken —
    disiplini dürüst tutan şey budur.
 
+Şema 1.4 ile dört kural daha geliyor; her biri, prozanın zaten yasakladığı
+bir şeye şemanın izin verdiği yeri kapatıyor:
+
+9.  `[K]` girdisi, **eşiğini karşılamış** bir sonuçla ya da gösterilmiş bir dış
+    kaynakla desteklenir. Tier'ı yazmak, onu hak etmekle aynı şey değildir.
+    Prior art saymaz: akrabalar özgünlük bağlamıdır, bu iddianın kanıtı değil.
+10. Eşikler **bir nicelik adlandırır**. "İyileştirir" kılavuzun kendi karşı-
+    örneğidir; nadir kategorik hüküm için açık bir kaçış kapısı var
+    (`non_numeric_justification`).
+11. Her girdi **bir tier taşır**. Eski kontrol yalnızca var olan bir tier'ın
+    yazımını doğruluyordu.
+12. Zorunlu girdi alanları mevcuttur: `formal`, **enstrümanı adlandırılmış**
+    `metric`, `cost`, `status`, ve **mevcut** `prior_art` — "bilinen akraba
+    yok" bir cevaptır, alanın yokluğu sessizliktir.
+
 Şema 1.3'ten itibaren üç kural daha, özelleşmiş bloklar için. Bir bug girdisi
 ve bir feature gate'i birer hipotezDİR — aynı alanlar, aynı 1–8 kuralları —
 üstüne:

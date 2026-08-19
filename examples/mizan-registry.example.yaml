@@ -8,12 +8,15 @@
 # arbiter block at all. The header claim was true only because the check
 # was switched off — this repo's own [Y] tier, in its own example file.
 # Fixed by declaring 1.3, giving H-001 the arbiter it always needed, and
-# adding the worked FEAT/BUG entries the 1.3 schema defines.
+# adding the worked FEAT/BUG entries the 1.3 schema defines. Now at 1.4,
+# which additionally requires evidence behind [K] (R9), numeric thresholds
+# (R10), a tier on every entry (R11) and the mandatory entry fields (R12).
+# H-001 satisfies R9 through RES-001, not by assertion.
 # =====================================================================
 registry:
   project: "ExampleLM"
   owner: "your-org"
-  schema_version: "1.3"
+  schema_version: "1.4"
   methodology: "mizan-v2.2"
   created: "2026-07-11"
   notes: >
@@ -170,6 +173,16 @@ bugs:
       all-reduce. Refuted: the spike is not a sync bug, which promotes the
       shard-rollover rival and makes the data loader the next place to look.
       Either way the next step is defined before the test runs.
+    metric:
+      name: "repro_pass_rate"
+      instrument: "tests/test_ddp_sync.py, 10 consecutive runs on 2 GPUs"
+    prior_art:
+      - >
+        Two earlier entries in this project were DDP ordering bugs
+        (BUG-M004, BUG-M009). That is the reason this mechanism was the
+        first hypothesis rather than the third — and also the reason the
+        rivals below are written out: a project's favourite explanation is
+        the one most in need of a competitor.
     cost: "~half a day"
     history:
       - { date: "2026-07-12", event: "preregistered with two rivals" }
@@ -250,6 +263,13 @@ features:
       The nightly eval must actually run on the default config. Until that
       job exists, this feature can only ship as S, and saying so is the
       point of this field.
+    prior_art:
+      - >
+        The same default was flipped and reverted in v0.3 — the revert
+        commit says "users reported slower training", with no measurement
+        attached. That is exactly the gap the throughput bar in the refute
+        threshold closes, and it is why this entry exists rather than a
+        straight re-flip.
     cost: "1 day build; two code paths to maintain until the old one is removed"
     history:
       - { date: "2026-07-12", event: "gated, not started" }

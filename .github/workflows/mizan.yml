@@ -112,6 +112,44 @@ jobs:
           fi
           echo "OK: warnings warn by default and fail under --strict."
 
+      - name: Self-test — R9/R10/R11/R12 must reject an unearned [K]
+        run: |
+          set -e
+          # This fixture is PROSE-SCHEMA-AUDIT.md's Kanit-A and Kanit-B
+          # merged: a tier written with no evidence, a threshold that names
+          # no quantity, an entry with no tier at all, and missing mandatory
+          # fields. It validated clean through schema 1.3.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.4"}
+          hypotheses:
+            - id: "H-001"
+              threshold: {support: "improves things", refute: "does not improve things"}
+              refutation: "if it does not improve"
+              arbiter: {class: runtime, who: "pytest"}
+            - id: "H-002"
+              tier: "K"
+              formal: "X works."
+              metric: {name: "m"}
+              cost: "1 day"
+              status: "closed"
+              threshold: {support: ">= 5%", refute: "< 1%"}
+              refutation: "below 1%"
+              prior_art: []
+              arbiter: {class: third_party, who: "reviewer", calibration: "reviewer null"}
+          experiments: []
+          results: []
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          for rule in "R9:" "R10:" "R11:" "R12:"; do
+            echo "$out" | grep -q "$rule" || { echo "FAIL: $rule did not fire" >&2; exit 1; }
+          done
+          echo "OK: R9, R10, R11 and R12 all fired."
+          sed -i 's/schema_version: "1.4"/schema_version: "1.3"/' "$tmp"
+          python tools/mizan_validate.py "$tmp"
+          echo "OK: the same registry at 1.3 stays valid and unenforced."
+
       - name: Self-test — R13/R14/R15 must reject a free-form feature and bug
         run: |
           set -e

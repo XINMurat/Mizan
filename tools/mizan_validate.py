@@ -40,6 +40,7 @@ Dependency: PyYAML  (pip install pyyaml)
 from __future__ import annotations
 
 import argparse
+import re
 import subprocess
 import sys
 from typing import Any
@@ -52,6 +53,12 @@ except ImportError:  # pragma: no cover
         "HATA: PyYAML gerekli. Kurulum: pip install pyyaml\n"
     )
     sys.exit(2)
+
+# R10 — "Lock thresholds numerically. 'Improves things' is not a threshold;
+# 'ΔPPL ≤ −3%' or 'counter-example rate < 1 per 10 sources' is." Deliberately
+# permissive: any digit counts. The rule is aimed at prose that names no
+# quantity at all, not at policing how the quantity is expressed.
+HAS_NUMBER = re.compile(r"\d")
 
 VALID_TIERS = {"K", "H", "S", "R", "KKE", "Y"}
 
@@ -168,6 +175,38 @@ MSG = {
     "bad_tier": (
         "SCHEMA: {kind} '{id}' has invalid tier '{tier}' (allowed: K H S R KKE Y).",
         "ŞEMA: {kind} '{id}' geçersiz tier '{tier}' taşıyor (izinli: K H S R KKE Y).",
+    ),
+    "R9_K_without_evidence": (
+        "R9: {kind} {id} sits at [K] with no supporting result and no external_evidence — "
+        "[K] means direct evidence, source cited, threshold met. Writing the tier is not the same "
+        "as earning it.",
+        "R9: {kind} {id} [K] katmanında ama ne destekleyen bir sonuç ne external_evidence var — "
+        "[K] doğrudan kanıt, kaynak gösterimi ve karşılanmış eşik demektir. Tier'ı yazmak, onu "
+        "hak etmekle aynı şey değildir.",
+    ),
+    "R10_threshold_not_numeric": (
+        "R10: {kind} {id} threshold.{side} names no quantity ('{text}') — 'improves things' is not "
+        "a threshold. Add a number, or state threshold.non_numeric_justification.",
+        "R10: {kind} {id} threshold.{side} hiçbir nicelik adlandırmıyor ('{text}') — 'iyileştirir' "
+        "bir eşik değildir. Bir sayı ekle ya da threshold.non_numeric_justification yaz.",
+    ),
+    "R11_no_tier": (
+        "R11: {kind} {id} carries no tier — every claim gets an evidence tier; no untagged "
+        "assertions.",
+        "R11: {kind} {id} hiçbir tier taşımıyor — her iddia bir kanıt katmanı alır; etiketsiz "
+        "iddia olmaz.",
+    ),
+    "R12_missing_field": (
+        "R12: {kind} {id} has no {field} — templates.md: every entry field is mandatory except "
+        "prior art, which must still be PRESENT (\"no known relatives\" is an answer; silence is not).",
+        "R12: {kind} {id} girdisinde {field} yok — templates.md: prior art dışında her alan "
+        "zorunludur; prior art da MEVCUT olmalıdır (\"bilinen akraba yok\" bir cevaptır, sessizlik değil).",
+    ),
+    "R12_metric_no_instrument": (
+        "R12: {kind} {id} metric names no instrument — a threshold whose number has no named "
+        "producer is R8's problem on the measurement side.",
+        "R12: {kind} {id} girdisinin metric'i enstrüman adlandırmıyor — sayısını üreten şeyi "
+        "adlandırmamış eşik, R8'in ölçüm tarafındaki hâlidir.",
     ),
     "W1_no_two_sided": (
         "W1: {kind} {id} has no two_sided statement — if only one outcome teaches something, the "
@@ -396,6 +435,12 @@ def check(data: dict, lang: str,
         errs += _check_feature_gates(features, lang)
         errs += _check_bug_rivals(bugs, lang)
 
+    # R9-R12 — the four places where the schema permitted what the prose
+    # forbids outright (PROSE-SCHEMA-AUDIT.md). Gated on 1.4, the same
+    # migration pattern R8 used for 1.2 and R13-R15 for 1.3.
+    if _schema_at_least(data, (1, 4)):
+        errs += _check_entry_discipline(hyps, features, bugs, results, lang)
+
     # R4 — append-only vs. a git baseline (history may only grow; entries may not vanish)
     if baseline:
         errs += _append_only(data, baseline, lang)
@@ -489,6 +534,64 @@ def _check_arbiters(entries: Any, lang: str, kind: str = "hypothesis") -> list[s
             errs.append(m("R8_no_calibration", lang, kind=label, id=hid, cls=cls))
         if cls in {"author", "none"} and arb.get("independent_of_author") is True:
             errs.append(m("R8_independence_contradiction", lang, kind=label, id=hid, cls=cls))
+    return errs
+
+
+def _check_entry_discipline(hyps: dict, features: list[dict], bugs: list[dict],
+                            results: list[dict], lang: str) -> list[str]:
+    """R9-R12 — evidence for [K], numeric thresholds, a tier, the mandatory fields.
+
+    None of these judges content. R9 checks a result EXISTS, not that it was
+    a good experiment; R10 checks a quantity is NAMED, not that it is the
+    right one; R12 checks prior art is present, not that the relatives found
+    were the real ones. Contract completeness is machine-checkable; the
+    judgement stays with a human or a frontier model (that separation is R7).
+    """
+    errs: list[str] = []
+    supported = {
+        _s(r.get("hypothesis"))
+        for r in results
+        if _s(r.get("threshold_met")).lower() == "yes" and _s(r.get("hypothesis"))
+    }
+    kinds = (("hypothesis", list(hyps.values())), ("feature", features), ("bug", bugs))
+
+    for kind, coll in kinds:
+        label = KIND_LABEL[kind][1 if lang == "tr" else 0]
+        for e in coll:
+            eid = e.get("id")
+            tier = _s(e.get("tier")).upper()
+
+            # R11 — no untagged assertions.
+            if not tier:
+                errs.append(m("R11_no_tier", lang, kind=label, id=eid))
+
+            # R9 — [K] is earned by a result or by a cited external source.
+            # prior_art is deliberately NOT accepted here: relatives are not
+            # evidence for this claim, they are context for its originality.
+            if tier == "K" and _s(eid) not in supported and not _s(e.get("external_evidence")):
+                errs.append(m("R9_K_without_evidence", lang, kind=label, id=eid))
+
+            # R10 — a threshold names a quantity.
+            thr = _field(e, "threshold")
+            if isinstance(thr, dict) and not _s(thr.get("non_numeric_justification")):
+                for side in ("support", "refute"):
+                    text = _s(thr.get(side))
+                    if text and not HAS_NUMBER.search(text):
+                        errs.append(m("R10_threshold_not_numeric", lang, kind=label, id=eid,
+                                      side=side, text=text[:60]))
+
+            # R12 — the mandatory fields of templates.md §1.
+            for field in ("formal", "cost", "status"):
+                if not _s(e.get(field)):
+                    errs.append(m("R12_missing_field", lang, kind=label, id=eid, field=field))
+            metric = _field(e, "metric")
+            if not metric:
+                errs.append(m("R12_missing_field", lang, kind=label, id=eid, field="metric"))
+            elif isinstance(metric, dict) and not _s(metric.get("instrument")):
+                errs.append(m("R12_metric_no_instrument", lang, kind=label, id=eid))
+            pa = e.get("prior_art")
+            if not (isinstance(pa, list) and any(_s(x) for x in pa)) and not _s(pa):
+                errs.append(m("R12_missing_field", lang, kind=label, id=eid, field="prior_art"))
     return errs
 
 

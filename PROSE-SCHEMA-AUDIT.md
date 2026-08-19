@@ -18,14 +18,20 @@ Kural eklemek yöntem değişikliğidir ve karar bakımındır.*
 |---|---|---|
 | 0 | R4 CI'da koşmuyor | **KAPATILDI** — `--against`, `fetch-depth: 0`, baseline adımı + self-test |
 | 1 | `features`/`bugs` hiç denetlenmiyor (M5) | **KAPATILDI** — şema v1.3 + R13/R14/R15 + R8 kapsamı |
-| 2 | `[K]` kanıtsız verilebiliyor | AÇIK |
+| 2 | `[K]` kanıtsız verilebiliyor | **KAPATILDI** — R9 (result VEYA `external_evidence`) |
 | 3 | Uyarı kanalı yok | **KAPATILDI** — `warnings` + `--strict`; CI örneklerde strict, diğerlerinde tavsiye |
-| 4 | Eşikler sayısal olmak zorunda değil | AÇIK |
-| 5 | Tier'sız girdi geçiyor | AÇIK |
-| 6 | "Her alan zorunlu" uygulanmıyor (M6) | AÇIK |
-| 7 | Prior art alanı okunmuyor (koşullu) | AÇIK |
-| 8 | Coverage Ledger'ın veri biçimi yok (M9) | AÇIK |
+| 4 | Eşikler sayısal olmak zorunda değil | **KAPATILDI** — R10, `non_numeric_justification` kaçış kapısıyla |
+| 5 | Tier'sız girdi geçiyor | **KAPATILDI** — R11 |
+| 6 | "Her alan zorunlu" uygulanmıyor (M6) | **KAPATILDI** — R12 (`metric.instrument` dahil) |
+| 7 | Prior art alanı okunmuyor (koşullu) | **KAPATILDI** — R12; "bilinen akraba yok" meşru, sessizlik değil |
+| 8 | Coverage Ledger'ın veri biçimi yok (M9) | **AÇIK — tek kalan** |
 | 9–11 | `two_sided`, eşiksiz hipotez, hepsi-`[K]` | **KAPATILDI** — W1 / W2 / W3 |
+
+**Şema v1.4 notu:** R9–R12'nin göç maliyeti gerçek — her girdi artık
+enstrümanı adlandırılmış bir `metric`, bir `cost`, bir `status` ve açık bir
+`prior_art` ister. Bunu ödeyemeyen bir girdi önkayıt edilmemiş, taslak
+çizilmiştir; R11 de onu etiketsiz bırakmak yerine söyler. 1.0–1.3 dosyaları
+uygulanmadan geçerli kalır.
 
 **Kanalın ilk koşusunda çıkan iki şey:** (a) kendi eklediğim FEAT-001/BUG-001
 girdilerinde `two_sided` yoktu — W1 hemen yakaladı, şemaya ve örneğe eklendi.

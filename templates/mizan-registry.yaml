@@ -22,6 +22,24 @@
 #   R7. Producer/auditor separation: the agent that writes results
 #       SHOULD NOT be the sole agent that promotes tiers; tier changes
 #       are proposed, then confirmed by the owner or an audit pass.
+#   R9.  An entry at tier [K] MUST be backed by a result that met its
+#        threshold, or by a cited external_evidence. [K] means "direct
+#        evidence, source cited, threshold met" — writing the tier is not
+#        the same as earning it, and until 1.4 nothing checked the
+#        difference. prior_art does NOT satisfy R9: relatives are context
+#        for originality, not evidence for this claim.
+#   R10. threshold.support and threshold.refute MUST each name a quantity.
+#        "Improves things" is not a threshold (SKILL.md registry step 2 uses
+#        that exact phrase as its counter-example). Escape hatch, mirroring
+#        R2's baseline: threshold.non_numeric_justification, written out.
+#   R11. Every entry MUST carry a tier. Commitment 1 is "no untagged
+#        assertions"; the tier check only ever validated the SPELLING of a
+#        tier that was present.
+#   R12. The mandatory fields of references/templates.md §1: formal, metric
+#        (with a named instrument), cost, status — and prior_art PRESENT.
+#        "No known relatives" is an answer; an absent field is silence.
+#        templates.md: "Every field is mandatory except Prior art
+#        (mandatory only when relatives are known or suspected)."
 #   R13. A feature entry MUST carry a non-empty kill_condition. Features
 #        without one accumulate as permanent maintenance debt
 #        (references/feature-gate.md Step 2).
@@ -59,6 +77,15 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.4 — activates R9-R12: evidence behind [K], numeric thresholds, a tier
+#         on every entry, and the mandatory entry fields. All four were
+#         already required in prose and permitted by the schema.
+#         MIGRATION: 1.0-1.3 files stay valid and unenforced. The bump costs
+#         a metric block with a named instrument on every entry, a cost and
+#         status line, and an explicit prior_art (which may say "no known
+#         relatives"). If an entry cannot pay that, it was not preregistered,
+#         it was sketched — and R11 will say so rather than letting it sit
+#         untagged.
 #   1.3 — features and bugs stop being free-form. They extend the HYPOTHESIS
 #         shape (same id/tier/status/formal/metric/arbiter/threshold/
 #         refutation/history fields, same rules R1-R8) and add only what is
@@ -106,7 +133,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.3"             # 1.2+ activates R8; 1.3+ activates R13-R15
+  schema_version: "1.4"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -156,10 +183,15 @@ hypotheses:
         arbiter's own null distribution; thresholds are not inherited
         across instruments (Kıyas AD1/A3). "unknown" is an honest answer
         and forces an honesty annex on every result that uses it.
-    threshold:                      # LOCKED now, numeric (R1)
+    threshold:                      # LOCKED now, numeric (R1, R10)
       support: ">= 5%"
       refute: "< 1%"
       underpowered: "1%..5% -> one rerun allowed; state what changes"
+      # non_numeric_justification: >
+      #   Only when a quantity genuinely does not apply — a third_party
+      #   verdict that is categorical, say. Written out, like R2's
+      #   baseline: "none" + justification. Reaching for this field is a
+      #   signal worth noticing, not a shortcut.
     refutation: >
       What result kills this hypothesis.
     two_sided: >
@@ -169,8 +201,15 @@ hypotheses:
       What must hold for the test to count at all (else: cell_closed).
     preregistered_prediction: >
       Optional: author's expectation, written before the result.
-    prior_art:
+    prior_art:                      # MANDATORY to be PRESENT (R12)
       - "Known relatives; where the originality claim actually lives"
+      # "No known relatives" is a legitimate entry. An absent field is not:
+      # silence cannot be distinguished from not having looked.
+    # external_evidence: >
+    #   Only for a claim whose evidence lives outside this registry — a
+    #   published result, a vendor benchmark, a regulator's finding. Cite it.
+    #   This is the second way to satisfy R9 for tier [K]; prior_art is not,
+    #   because relatives are context for originality, not evidence.
     confounds:                      # feeds R3 — experiments must answer these
       - parameter_count
       - initialization
@@ -291,6 +330,12 @@ bugs:
       write a one-sided test ("did the fix work?"), which is why W1 warns
       when this is missing: the confirming branch alone cannot tell a fixed
       mechanism from a moved one.
+    metric:                         # R12 — yes, a bug entry has one too
+      name: "repro_pass_rate"
+      instrument: "the repro script; name the file, not 'manual testing'"
+    prior_art:
+      - "Has this class of bug been recorded before in this project? Name the entry ids."
+    cost: "rough effort to run the refutation test"
     history:
       - { date: "2026-08-20", event: "preregistered" }
 
@@ -365,6 +410,8 @@ features:
       Can success even be measured? If no telemetry or user signal exists,
       either build the measurement first or accept that the feature ships
       as S — and say which.
+    prior_art:
+      - "Has this been tried here or elsewhere, and how did it go? Name it, or say 'no known relatives'."
     cost: "build + maintenance estimate"
     history:
       - { date: "2026-08-20", event: "gated, not started" }

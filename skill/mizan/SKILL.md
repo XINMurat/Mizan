@@ -216,6 +216,16 @@ it lists the failure modes to hunt for and worked examples.
    against the arbiter's own null and are never inherited across
    instruments.
 
+**From schema 1.4, four rules close the gaps between this file and the
+data.** A `[K]` entry needs a threshold-meeting result or a cited external
+source (R9) — prior art is not evidence for the claim, only context for its
+originality. Thresholds name a quantity (R10), with a written justification
+as the escape hatch for a genuinely categorical verdict. Every entry carries
+a tier (R11), since "no untagged assertions" was never checked. And the
+mandatory fields of the entry template are present (R12): `formal`, a
+`metric` with a **named instrument**, `cost`, `status`, and `prior_art` —
+where "no known relatives" is an answer and an absent field is silence.
+
 **Bug entries and feature gates are hypotheses, not a different species.**
 From schema 1.3 they carry the same fields and the same rules 1–9 above: a
 bug's `formal` holds the MECHANISM (the symptom stays interpretation-free in
