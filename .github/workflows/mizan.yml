@@ -4,6 +4,11 @@ name: CI
 # mizan.skill stays in sync with skill/mizan/. This is the static-check
 # automation of the already-shipped tool (FEAT-M001's cheap alternative) —
 # NOT the "full CI/CD gate with an LLM auditor", which stays gated.
+#
+# R4 (append-only) needs a BASELINE to compare against, and until now this
+# workflow never supplied one: _append_only() only runs when --against is
+# passed, so the rule enforcing "refuted entries are never deleted" was
+# written, tested, and never executed by any automated run. It runs now.
 
 on:
   push:
@@ -16,6 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # R4 diffs the registry against its baseline commit; the default
+          # shallow clone has no such commit to reach.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v6
         with:
@@ -24,20 +33,70 @@ jobs:
       - name: Install dependencies
         run: pip install -r tools/requirements.txt
 
-      - name: Validate every registry (R1–R8)
+      - name: Resolve the R4 append-only baseline
+        id: baseline
         run: |
           set -e
+          # On a PR the baseline is the target branch; on a push to main it is
+          # the previous commit. Resolved in its own step and ECHOED, because
+          # the tool degrades silently when a baseline cannot be read — a
+          # skipped check that prints nothing is indistinguishable from a
+          # passing one, which is the failure this whole change is about.
+          if [ -n "${{ github.base_ref }}" ]; then
+            base="origin/${{ github.base_ref }}"
+          else
+            base="$(git rev-parse HEAD^ 2>/dev/null || true)"
+          fi
+          if [ -n "$base" ] && git rev-parse --verify --quiet "$base^{commit}" >/dev/null; then
+            echo "base=$base" >> "$GITHUB_OUTPUT"
+            echo "R4 baseline: $base ($(git rev-parse --short "$base"))"
+          else
+            echo "base=" >> "$GITHUB_OUTPUT"
+            echo "::warning::No baseline commit reachable — R4 (append-only) did NOT run."
+          fi
+
+      - name: Validate every registry (R1–R8, R4 against the baseline)
+        run: |
+          set -e
+          base="${{ steps.baseline.outputs.base }}"
           found=0
           while IFS= read -r f; do
             found=1
-            echo "::group::$f"
-            python tools/mizan_validate.py "$f"
+            rel="${f#./}"          # git show wants a repo-relative path
+            echo "::group::$rel"
+            if [ -n "$base" ]; then
+              python tools/mizan_validate.py --against "$base" "$rel"
+            else
+              python tools/mizan_validate.py "$rel"
+            fi
             echo "::endgroup::"
           done < <(find . -path ./.git -prune -o -name '*mizan-registry*.y*ml' -print)
           if [ "$found" -eq 0 ]; then
             echo "No registry files found to validate." >&2
             exit 1
           fi
+
+      - name: Self-test — R4 must catch a deleted entry
+        run: |
+          set -e
+          # A baseline that is never compared against is the same as no
+          # baseline. This proves the wiring end to end: delete a hypothesis
+          # from a tracked registry in the worktree and require R4 to fire.
+          reg="examples/mizan-registry.example.yaml"
+          cp "$reg" /tmp/reg.bak
+          python - <<'PY'
+          import re
+          p = "examples/mizan-registry.example.yaml"
+          s = open(p, encoding="utf-8").read()
+          # drop the whole hypotheses block -> every prior entry disappears
+          s = re.sub(r"(?ms)^hypotheses:.*?(?=^experiments:)", "hypotheses: []\n\n", s)
+          open(p, "w", encoding="utf-8").write(s)
+          PY
+          out="$(python tools/mizan_validate.py --against HEAD "$reg" || true)"
+          cp /tmp/reg.bak "$reg"
+          echo "$out"
+          echo "$out" | grep -q "R4:" || { echo "FAIL: R4 did not fire on a deleted entry" >&2; exit 1; }
+          echo "OK: R4 caught the deletion."
 
       - name: Self-test — validator must FAIL on a broken registry
         run: |
