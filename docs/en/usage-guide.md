@@ -100,7 +100,7 @@ methodology — the instructions and schema are themselves subject to
 revision (following their own discipline: changes are justified, history
 is never deleted).
 
-## 3. Hard rules (summary — R1–R15 in the schema)
+## 3. Hard rules (summary — R1–R16 in the schema)
 
 1. Threshold + refutation condition before any result (HARKing structurally closed).
 2. Baseline mandatory; a baseline-less result cannot produce `[K]`.
@@ -151,7 +151,14 @@ entry and a feature gate ARE hypotheses — same fields, same rules 1–8 — pl
 Registries declaring 1.0–1.2 keep working unenforced; bump the version when
 the entries are ready.
 
-**Warnings (W1–W3) advise, they do not block.** An entry with no `two_sided`
+16. A **coverage claim** waits for reconciliation. For a phased audit, the
+    `coverage` block's `claim_tier` may only be `[K]` once every phase row
+    *and* the MERGE row are done. "Each slice fully audited" is not "the
+    target fully audited", and presenting the second as the first is itself
+    a `[Y]`. The ledger lives in the registry rather than beside it, so the
+    append-only rule protects its rows like any other entry.
+
+**Warnings (W1–W4) advise, they do not block.** An entry with no `two_sided`
 statement; an entry with no result yet and no threshold or refutation; a
 registry where every tiered entry sits at `[K]`. Each has a legitimate
 exception — a draft entry, a one-entry registry — which is why none is a

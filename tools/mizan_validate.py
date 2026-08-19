@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mizan registry validator — LLM-free static enforcement of hard rules R1–R15.
+Mizan registry validator — LLM-free static enforcement of hard rules R1–R16.
 
 This is the cheap, judgment-free baseline of feature FEAT-M001 (in the
 project's roadmap registry). It does NOT evaluate the *quality* of a
@@ -19,7 +19,7 @@ right-often-enough that stopping on them would be false precision. So:
 
   * VIOLATIONS (R1-R15) block. They mark a registry that is incomplete in a
     way the prose forbids outright.
-  * WARNINGS (W1-W3) do not block by default. They mark shapes worth a
+  * WARNINGS (W1-W4) do not block by default. They mark shapes worth a
     second look. `--strict` promotes them to violations; CI runs strict,
     local runs do not.
 
@@ -208,6 +208,20 @@ MSG = {
         "R12: {kind} {id} girdisinin metric'i enstrüman adlandırmıyor — sayısını üreten şeyi "
         "adlandırmamış eşik, R8'in ölçüm tarafındaki hâlidir.",
     ),
+    "R16_coverage_claim_unearned": (
+        "R16: coverage claims tier K but {why} — \"each slice fully audited\" is not \"the target "
+        "fully audited\", and presenting the second as the first is itself a [Y].",
+        "R16: coverage tier K iddia ediyor ama {why} — \"her dilim tam denetlendi\", \"hedef tam "
+        "denetlendi\" demek değildir; ikincisini birincisi gibi sunmak başlı başına [Y]'dir.",
+    ),
+    "W4_no_merge_row": (
+        "W4: the coverage ledger has phase rows but no MERGE row — reconciliation is where a phased "
+        "audit is weakest (a claim in one slice verified only by evidence in another), so it is "
+        "planned up front or it is skipped.",
+        "W4: coverage defterinde faz satırları var ama MERGE satırı yok — uzlaştırma, fazlı "
+        "denetimin en zayıf yeridir (bir dilimdeki iddianın yalnızca başka bir dilimdeki kanıtla "
+        "doğrulanması), o yüzden ya baştan planlanır ya atlanır.",
+    ),
     "W1_no_two_sided": (
         "W1: {kind} {id} has no two_sided statement — if only one outcome teaches something, the "
         "test is worth redesigning before it runs.",
@@ -227,8 +241,8 @@ MSG = {
         "önlüğü giymiş iltifat problemidir. Meşru olabilir, ama kaynakları kontrol etmeye değer.",
     ),
     "clean": (
-        "OK — {n} entries checked, no R1–R15 violations.",
-        "OK — {n} girdi kontrol edildi, R1–R15 ihlali yok.",
+        "OK — {n} entries checked, no R1–R16 violations.",
+        "OK — {n} girdi kontrol edildi, R1–R16 ihlali yok.",
     ),
     "found": (
         "{n} violation(s) found.",
@@ -441,11 +455,16 @@ def check(data: dict, lang: str,
     if _schema_at_least(data, (1, 4)):
         errs += _check_entry_discipline(hyps, features, bugs, results, lang)
 
+    # R16 — no version gate needed: the coverage block is new, so a registry
+    # without a phased audit has nothing to trip.
+    errs += _check_coverage(data.get("coverage"), lang)
+
     # R4 — append-only vs. a git baseline (history may only grow; entries may not vanish)
     if baseline:
         errs += _append_only(data, baseline, lang)
 
     warns += _warnings(hyps, features, bugs, results, lang)
+    warns += _coverage_warnings(data.get("coverage"), lang)
 
     check.n_entries = n_entries  # type: ignore[attr-defined]
     return errs, warns
@@ -453,7 +472,7 @@ def check(data: dict, lang: str,
 
 def _warnings(hyps: dict, features: list[dict], bugs: list[dict],
               results: list[dict], lang: str) -> list[str]:
-    """W1-W3 — findings that advise rather than block.
+    """W1-W4 — findings that advise rather than block.
 
     Each has a legitimate exception, which is exactly why none of them is a
     rule: a draft entry may not have its threshold yet, a one-entry registry
@@ -535,6 +554,42 @@ def _check_arbiters(entries: Any, lang: str, kind: str = "hypothesis") -> list[s
         if cls in {"author", "none"} and arb.get("independent_of_author") is True:
             errs.append(m("R8_independence_contradiction", lang, kind=label, id=hid, cls=cls))
     return errs
+
+
+def _check_coverage(cov: Any, lang: str) -> list[str]:
+    """R16 — a whole-target coverage claim waits for reconciliation.
+
+    The Coverage Ledger is the one place in this methodology where a
+    DELIVERABLE decides a tier, and until schema 1.5 it lived in a Markdown
+    table nothing could read. This checks completeness, never quality: that
+    every row says done and a MERGE row exists, not that the reconciliation
+    actually found the cross-slice hops it was supposed to look for.
+    """
+    if not isinstance(cov, dict):
+        return []
+    if _s(cov.get("claim_tier")).upper() != "K":
+        return []
+    phases = [ph for ph in (cov.get("phases") or []) if isinstance(ph, dict)]
+    unfinished = [_s(ph.get("id")) or "?" for ph in phases
+                  if _s(ph.get("status")).lower() != "done"]
+    if unfinished:
+        why = (("these phases are not done: " if lang != "tr" else "şu fazlar bitmemiş: ")
+               + ", ".join(unfinished))
+        return [m("R16_coverage_claim_unearned", lang, why=why)]
+    if not any(_s(ph.get("id")).upper() == "MERGE" for ph in phases):
+        why = "there is no MERGE row at all" if lang != "tr" else "hiç MERGE satırı yok"
+        return [m("R16_coverage_claim_unearned", lang, why=why)]
+    return []
+
+
+def _coverage_warnings(cov: Any, lang: str) -> list[str]:
+    """W4 — reconciliation planned up front, or skipped."""
+    if not isinstance(cov, dict):
+        return []
+    phases = [ph for ph in (cov.get("phases") or []) if isinstance(ph, dict)]
+    if phases and not any(_s(ph.get("id")).upper() == "MERGE" for ph in phases):
+        return [m("W4_no_merge_row", lang)]
+    return []
 
 
 def _check_entry_discipline(hyps: dict, features: list[dict], bugs: list[dict],
@@ -649,10 +704,21 @@ def _hist_len(e: dict) -> int:
 
 def _append_only(new: dict, old: dict, lang: str) -> list[str]:
     errs: list[str] = []
+    def _rows(d: dict, key: str) -> list:
+        # The coverage ledger's rows live one level down, under
+        # coverage.phases. code-audit.md: "rows are appended/updated, never
+        # deleted; a re-scoped slice gets a new row, not an edit" — the same
+        # rule as everywhere else, so it uses the same machinery.
+        if key == "coverage.phases":
+            cov = d.get("coverage")
+            return (cov.get("phases") or []) if isinstance(cov, dict) else []
+        return d.get(key) or []
+
     for kind, key in (("hypothesis", "hypotheses"), ("experiment", "experiments"),
-                      ("result", "results"), ("feature", "features"), ("bug", "bugs")):
-        old_by = {e.get("id"): e for e in (old.get(key) or []) if isinstance(e, dict)}
-        new_by = {e.get("id"): e for e in (new.get(key) or []) if isinstance(e, dict)}
+                      ("result", "results"), ("feature", "features"), ("bug", "bugs"),
+                      ("coverage phase", "coverage.phases")):
+        old_by = {e.get("id"): e for e in _rows(old, key) if isinstance(e, dict)}
+        new_by = {e.get("id"): e for e in _rows(new, key) if isinstance(e, dict)}
         for eid, oe in old_by.items():
             if eid not in new_by:
                 errs.append(m("R4_entry_deleted", lang, kind=kind, id=eid))
@@ -664,13 +730,13 @@ def _append_only(new: dict, old: dict, lang: str) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(description="Mizan registry R1–R15 validator")
+    ap = argparse.ArgumentParser(description="Mizan registry R1–R16 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
     ap.add_argument("--lang", choices=["en", "tr"], default="en")
     ap.add_argument("--against", metavar="GITREF",
                     help="git ref to diff against for the append-only (R4) check, e.g. HEAD")
     ap.add_argument("--strict", action="store_true",
-                    help="treat W1-W3 warnings as violations (CI runs strict; local runs do not)")
+                    help="treat W1-W4 warnings as violations (CI runs strict; local runs do not)")
     args = ap.parse_args(argv)
 
     # The catalog carries Turkish text and a ✗ glyph; ensure UTF-8 output even

@@ -91,7 +91,7 @@ enstrümanlar güvenilir, yanlılık nerede birikiyor. Çıktı metodolojiyi
 besler — talimat ve şema da revizyona tabidir (kendi disiplinlerine
 uyarak: değişiklik gerekçeli, geçmiş silinmez).
 
-## 3. Sert kurallar (özet — şemadaki R1–R15)
+## 3. Sert kurallar (özet — şemadaki R1–R16)
 
 1. Sonuçtan önce eşik + çürütme koşulu (HARKing yapısal olarak kapalı).
 2. Baseline zorunlu; baseline'sız sonuç [K] üretemez.
@@ -141,7 +141,14 @@ ve bir feature gate'i birer hipotezDİR — aynı alanlar, aynı 1–8 kurallar�
 1.0–1.2 beyan eden registry'ler uygulanmadan çalışmaya devam eder; girdiler
 hazır olduğunda sürümü yükseltin.
 
-**Uyarılar (W1–W3) bloke etmez, tavsiye eder.** `two_sided` beyanı olmayan
+16. **Kapsam iddiası** uzlaştırmayı bekler. Fazlı denetimde `coverage`
+    bloğunun `claim_tier`'ı ancak her faz satırı *ve* MERGE satırı bittiğinde
+    `[K]` olabilir. "Her dilim tam denetlendi", "hedef tam denetlendi" demek
+    değildir; ikincisini birincisi gibi sunmak başlı başına `[Y]`'dir. Defter
+    registry'nin yanında değil **içinde** durur; böylece append-only kuralı
+    satırlarını da diğer girdiler gibi korur.
+
+**Uyarılar (W1–W4) bloke etmez, tavsiye eder.** `two_sided` beyanı olmayan
 girdi; henüz sonucu olmayan ve eşiği/çürütmesi de bulunmayan girdi; her
 etiketli girdisi `[K]` olan registry. Her birinin meşru istisnası var — taslak
 girdi, tek girdili registry — bu yüzden hiçbiri kural değil. `--strict` onları

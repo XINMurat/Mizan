@@ -1,6 +1,6 @@
 name: CI
 
-# Runs the LLM-free R1–R15 registry validator and checks that the shipped
+# Runs the LLM-free R1–R16 registry validator and checks that the shipped
 # mizan.skill stays in sync with skill/mizan/. This is the static-check
 # automation of the already-shipped tool (FEAT-M001's cheap alternative) —
 # NOT the "full CI/CD gate with an LLM auditor", which stays gated.
@@ -55,7 +55,7 @@ jobs:
             echo "::warning::No baseline commit reachable — R4 (append-only) did NOT run."
           fi
 
-      - name: Validate every registry (R1–R15, R4 against the baseline)
+      - name: Validate every registry (R1–R16, R4 against the baseline)
         run: |
           set -e
           base="${{ steps.baseline.outputs.base }}"
@@ -111,6 +111,33 @@ jobs:
             exit 1
           fi
           echo "OK: warnings warn by default and fail under --strict."
+
+      - name: Self-test — R16 must reject a coverage claim before reconciliation
+        run: |
+          set -e
+          # The Coverage Ledger is the one deliverable that decides a tier.
+          # It used to live in a Markdown table, so this rule could not exist.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.5"}
+          hypotheses: []
+          coverage:
+            target: "big repo"
+            claim_tier: "K"
+            phases:
+              - {id: "P0", slice: "scoping", status: "done"}
+              - {id: "P1", slice: "auth", status: "done"}
+              - {id: "P2", slice: "billing", status: "in_progress"}
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          echo "$out" | grep -q "R16:" || { echo "FAIL: R16 did not fire on an unfinished phase" >&2; exit 1; }
+          echo "$out" | grep -q "W4:" || { echo "FAIL: W4 did not warn about the missing MERGE row" >&2; exit 1; }
+          # finishing every slice is still not finishing the audit
+          sed -i 's/status: "in_progress"/status: "done"/' "$tmp"
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out" | grep -q "no MERGE row" || { echo "FAIL: R16 accepted slices-done as target-done" >&2; exit 1; }
+          echo "OK: R16 holds the coverage claim until reconciliation runs."
 
       - name: Self-test — R9/R10/R11/R12 must reject an unearned [K]
         run: |

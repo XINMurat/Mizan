@@ -236,7 +236,15 @@ its **kill condition** (R13) and its **alternatives** including the null
 option (R14); a bug names at least one **rival hypothesis** (R15). The point
 of R15 is Mode 4's whole point — never close on the first story that fits.
 
-The validator also has a **non-blocking warning channel** (W1–W3): a missing
+**The Coverage Ledger lives in the registry (schema 1.5, rule R16).** For a
+phased audit it is the one deliverable that DECIDES a tier — the whole-target
+coverage claim stays `[H]` until the MERGE row is done — and it used to live
+in a Markdown table no check could read. Keeping it in the registry follows
+`code-audit.md`'s own description of it as "the append-only registry used as
+the cross-phase carrier", and it means R4 protects its rows for free: a
+re-scoped slice gets a new row, never an edit that erases the old one.
+
+The validator also has a **non-blocking warning channel** (W1–W4): a missing
 two-sided statement, an entry written with no threshold or refutation and no
 result yet, and a registry where every tiered entry is `[K]`. These advise
 rather than stop, for the same reason R8's flag classes differ in force — a
@@ -326,7 +334,7 @@ from the outside.
   writing entries. Reading everything at the start spends the context
   the audit itself needs.
 - **The scripted part is the part that travels.** `mizan_validate.py`
-  enforces R1–R15 without a model, so it behaves identically in every
+  enforces R1–R16 without a model, so it behaves identically in every
   host. Whatever is enforced only by this prose is negotiable by the
   host's prose. When rigor must survive an unknown setup, put it in the
   validator, not in a paragraph.
@@ -365,7 +373,7 @@ from the outside.
 - `schemas/mizan-registry.yaml` — the machine-readable registry format.
   When the user keeps a registry file (in project knowledge, a repo, or
   uploads one), read it at session start, APPEND rather than overwrite,
-  propose new entries in this schema, and enforce its hard rules R1–R15
+  propose new entries in this schema, and enforce its hard rules R1–R16
   (mandatory baseline, mandatory confound controls, append-only history,
   no K-promotion without controls on surprising positives, and
   producer/auditor separation: propose tier changes, let the owner or a

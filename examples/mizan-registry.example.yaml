@@ -1,6 +1,6 @@
 # =====================================================================
-# Example Mizan registry — passes tools/mizan_validate.py (R1–R15 clean)
-# Örnek Mizan registry'si — doğrulayıcıdan temiz geçer (R1–R15)
+# Example Mizan registry — passes tools/mizan_validate.py (R1–R16 clean)
+# Örnek Mizan registry'si — doğrulayıcıdan temiz geçer (R1–R16)
 # =====================================================================
 # NOTE ON THE VERSION BUMP (2026-08-20). This file declared
 # schema_version 1.1 while claiming to be "R1-R8 clean". It was not: R8 is

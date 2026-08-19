@@ -24,7 +24,15 @@ Kural eklemek yöntem değişikliğidir ve karar bakımındır.*
 | 5 | Tier'sız girdi geçiyor | **KAPATILDI** — R11 |
 | 6 | "Her alan zorunlu" uygulanmıyor (M6) | **KAPATILDI** — R12 (`metric.instrument` dahil) |
 | 7 | Prior art alanı okunmuyor (koşullu) | **KAPATILDI** — R12; "bilinen akraba yok" meşru, sessizlik değil |
-| 8 | Coverage Ledger'ın veri biçimi yok (M9) | **AÇIK — tek kalan** |
+| 8 | Coverage Ledger'ın veri biçimi yok (M9) | **KAPATILDI** — şema 1.5 `coverage` bloğu + R16 + W4 |
+
+**Denetimin 12 bulgusunun 12'si kapandı.** Coverage Ledger için karar: defter
+registry'nin **içine** girdi, yanına ayrı dosya olarak değil. Gerekçe
+`code-audit.md`'nin kendi cümlesi — defter zaten *"the append-only registry
+used as the cross-phase carrier"*. Bunun bedavaya getirdiği şey R4: faz
+satırları da diğer girdiler gibi silinemez oldu (birim testiyle doğrulandı).
+R16 sürüm kapısı istemiyor; blok yeni olduğu için coverage bloğu olmayan bir
+registry onu tetikleyemez.
 | 9–11 | `two_sided`, eşiksiz hipotez, hepsi-`[K]` | **KAPATILDI** — W1 / W2 / W3 |
 
 **Şema v1.4 notu:** R9–R12'nin göç maliyeti gerçek — her girdi artık

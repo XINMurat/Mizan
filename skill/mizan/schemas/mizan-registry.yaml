@@ -40,6 +40,14 @@
 #        "No known relatives" is an answer; an absent field is silence.
 #        templates.md: "Every field is mandatory except Prior art
 #        (mandatory only when relatives are known or suspected)."
+#   R16. If a `coverage` block claims tier K, EVERY phase row must be done
+#        AND a MERGE row must exist and be done. code-audit.md A5.1:
+#        "each slice fully audited" != "the repo fully audited", and
+#        presenting the latter is itself a [Y]. This rule exists because
+#        the Coverage Ledger DECIDES a tier while living in a Markdown
+#        table no validator could read — the same shape as Kiyas' discard
+#        list before G7. No version gate: the block is new, so a registry
+#        without one cannot trip it.
 #   R13. A feature entry MUST carry a non-empty kill_condition. Features
 #        without one accumulate as permanent maintenance debt
 #        (references/feature-gate.md Step 2).
@@ -77,6 +85,15 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.5 — adds the `coverage` block (rule R16): the Coverage Ledger of
+#         references/code-audit.md A5.1 and templates.md §5, moved out of a
+#         Markdown table and into the registry. It belongs here rather than
+#         in a side file for the reason code-audit.md already gives — the
+#         ledger IS "the append-only registry used as the cross-phase
+#         carrier" — and putting it here buys R4 for free: phase rows become
+#         undeletable like every other entry.
+#         MIGRATION: none. The block is optional and new; a registry without
+#         a phased audit simply has no coverage block, and R16 cannot fire.
 #   1.4 — activates R9-R12: evidence behind [K], numeric thresholds, a tier
 #         on every entry, and the mandatory entry fields. All four were
 #         already required in prose and permitted by the schema.
@@ -133,7 +150,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.4"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12
+  schema_version: "1.5"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 adds coverage
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -415,3 +432,51 @@ features:
     cost: "build + maintenance estimate"
     history:
       - { date: "2026-08-20", event: "gated, not started" }
+
+# ---------------------------------------------------------------------
+# COVERAGE LEDGER (phased audits) — references/code-audit.md A5.1
+# ---------------------------------------------------------------------
+# Only for targets too large to audit in one pass. Phase 0 partitions and
+# plans; each phase audits one slice completely and APPENDS its findings to
+# this same file; the MERGE row reconciles claims that cross slice
+# boundaries — tier drift between modules, duplicate findings, and the real
+# risk, a claim in slice A verified only by evidence in slice E.
+#
+# Naive partitioning MISSES those, which is why reconciliation is named as
+# the weakest point of a phased audit rather than assumed. Until the MERGE
+# row is done, "each slice fully audited" is not "the target fully audited",
+# and claiming the latter is a [Y] — so claim_tier is what R16 guards.
+#
+# Rows are appended or updated, never deleted; a re-scoped slice gets a NEW
+# row, not an edit. R4 enforces that here exactly as it does for hypotheses.
+coverage:
+  target: "the repo / PRD / corpus this phased audit covers"
+  started: "2026-08-20"
+  selection_rule: >
+    The risk weighting used to partition — entry points, security and money
+    surfaces, recently-churned files (git log --stat). Written down because
+    a partition nobody can reconstruct is not a scope statement.
+  claim_tier: "H"                   # K only when every row below is done (R16)
+  phases:
+    - id: "P0"
+      slice: "scoping only — the partition plan"
+      status: "done"                # planned | in_progress | done
+      coverage: "—"
+      findings: "plan: P1..Pn"
+      date: "2026-08-20"
+      history:
+        - { date: "2026-08-20", event: "partition plan written" }
+    - id: "P1"
+      slice: "module / path / surface — bounded enough for one pass"
+      status: "planned"
+      coverage: "K of L public functions, once run"
+      findings: ""
+      date: ""
+      history: []
+    - id: "MERGE"
+      slice: "cross-phase reconciliation — mandatory, do not skip"
+      status: "planned"
+      coverage: "—"
+      findings: "tier drift across slices; cross-slice hops; duplicates"
+      date: ""
+      history: []
