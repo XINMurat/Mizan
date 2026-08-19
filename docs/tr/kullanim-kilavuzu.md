@@ -91,7 +91,7 @@ enstrümanlar güvenilir, yanlılık nerede birikiyor. Çıktı metodolojiyi
 besler — talimat ve şema da revizyona tabidir (kendi disiplinlerine
 uyarak: değişiklik gerekçeli, geçmiş silinmez).
 
-## 3. Sert kurallar (özet — şemadaki R1–R8)
+## 3. Sert kurallar (özet — şemadaki R1–R16)
 
 1. Sonuçtan önce eşik + çürütme koşulu (HARKing yapısal olarak kapalı).
 2. Baseline zorunlu; baseline'sız sonuç [K] üretemez.
@@ -108,6 +108,53 @@ uyarak: değişiklik gerekçeli, geçmiş silinmez).
    olamaz; hakem yoksa (`none`) eşik dekoratiftir ve girdi `[S]`'de kalır.
    Yazılım dışında — runtime artık senin yerine karar vermezken —
    disiplini dürüst tutan şey budur.
+
+Şema 1.4 ile dört kural daha geliyor; her biri, prozanın zaten yasakladığı
+bir şeye şemanın izin verdiği yeri kapatıyor:
+
+9.  `[K]` girdisi, **eşiğini karşılamış** bir sonuçla ya da gösterilmiş bir dış
+    kaynakla desteklenir. Tier'ı yazmak, onu hak etmekle aynı şey değildir.
+    Prior art saymaz: akrabalar özgünlük bağlamıdır, bu iddianın kanıtı değil.
+10. Eşikler **bir nicelik adlandırır**. "İyileştirir" kılavuzun kendi karşı-
+    örneğidir; nadir kategorik hüküm için açık bir kaçış kapısı var
+    (`non_numeric_justification`).
+11. Her girdi **bir tier taşır**. Eski kontrol yalnızca var olan bir tier'ın
+    yazımını doğruluyordu.
+12. Zorunlu girdi alanları mevcuttur: `formal`, **enstrümanı adlandırılmış**
+    `metric`, `cost`, `status`, ve **mevcut** `prior_art` — "bilinen akraba
+    yok" bir cevaptır, alanın yokluğu sessizliktir.
+
+Şema 1.3'ten itibaren üç kural daha, özelleşmiş bloklar için. Bir bug girdisi
+ve bir feature gate'i birer hipotezDİR — aynı alanlar, aynı 1–8 kuralları —
+üstüne:
+
+13. Feature **kaldırma koşulunu** adlandırır: onu kaldırmayı haklı çıkaracak
+    yayın-sonrası ölçüm. Bu olmadan yalnızca maliyet biriktirebilir, çünkü onu
+    bitirecek hiçbir şey tanımlı değildir.
+14. Feature **alternatiflerini** listeler: en az bir ucuz seçenek ve null
+    alternatif ("hiçbir şey yapma"), aynı değer metriği üzerinde fiyatlanmış.
+    Kimsenin ihtiyaç duymadığı özellik burada, inşa edilmeden önce ölür.
+15. Bug en az bir **rakip hipotez** adlandırır — aynı semptomu üreten başka bir
+    mekanizma. Rakibi olmayan mekanizma hikâyedir: onu akla ilk gelen
+    açıklamadan ayıran hiçbir şey yoktur.
+
+1.0–1.2 beyan eden registry'ler uygulanmadan çalışmaya devam eder; girdiler
+hazır olduğunda sürümü yükseltin.
+
+16. **Kapsam iddiası** uzlaştırmayı bekler. Fazlı denetimde `coverage`
+    bloğunun `claim_tier`'ı ancak her faz satırı *ve* MERGE satırı bittiğinde
+    `[K]` olabilir. "Her dilim tam denetlendi", "hedef tam denetlendi" demek
+    değildir; ikincisini birincisi gibi sunmak başlı başına `[Y]`'dir. Defter
+    registry'nin yanında değil **içinde** durur; böylece append-only kuralı
+    satırlarını da diğer girdiler gibi korur.
+
+**Uyarılar (W1–W4) bloke etmez, tavsiye eder.** `two_sided` beyanı olmayan
+girdi; henüz sonucu olmayan ve eşiği/çürütmesi de bulunmayan girdi; her
+etiketli girdisi `[K]` olan registry. Her birinin meşru istisnası var — taslak
+girdi, tek girdili registry — bu yüzden hiçbiri kural değil. `--strict` onları
+hataya yükseltir; CI, disiplini **modellemekle yükümlü** dosyalarda (şema,
+şablon, örnekler) strict, diğerlerinde tavsiye kipinde koşar; böylece henüz
+ele alınmamış bir uyarı, ilgisiz bir değişikliği bloke etmez.
 
 ## 4. Sık hatalar
 

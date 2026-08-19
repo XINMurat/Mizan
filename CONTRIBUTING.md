@@ -10,7 +10,7 @@ enforces on everyone else.
 
 ## English
 
-### Ground rules (the same R1–R8 the tool enforces)
+### Ground rules (the same R1–R16 the tool enforces)
 
 1. **Preregister before you measure.** If a change claims an improvement,
    state the threshold and the refutation condition *before* showing the
@@ -35,7 +35,7 @@ enforces on everyone else.
 
 ```bash
 pip install -r tools/requirements.txt
-# 1. registries must pass R1–R8 (English or Turkish messages):
+# 1. registries must pass R1–R16 (English or Turkish messages):
 python tools/mizan_validate.py examples/mizan-registry.example.yaml
 # 2. enable the gate so bad registries can't be committed:
 git config core.hooksPath tools/hooks
@@ -48,7 +48,7 @@ The badge at the top of the README —
 `main` passes** two jobs, which run on every push and pull request
 ([`.github/workflows/mizan.yml`](.github/workflows/mizan.yml)):
 
-- **validate-registries** — runs the R1–R8 validator on every
+- **validate-registries** — runs the R1–R16 validator on every
   `*mizan-registry*.yaml`, plus a self-test asserting the validator
   *rejects* a deliberately broken registry (so it can never silently pass
   everything).
@@ -103,8 +103,8 @@ PY
 - `skill/mizan/` — the portable skill (English canonical). Editing here is
   editing the product; rebuild `mizan.skill` after.
 - `docs/en/`, `docs/tr/` — long-form docs, kept at parity.
-- `tools/` — the R1–R8 validator and git hook (MIT).
-- `examples/` — worked registries that MUST stay R1–R8-clean.
+- `tools/` — the R1–R16 validator and git hook (MIT).
+- `examples/` — worked registries that MUST stay R1–R16-clean.
 
 ### Licensing of contributions
 
@@ -135,7 +135,7 @@ Mizan bir metodoloji projesidir; bu yüzden kendi disiplinine kendisi de
 uyar. Katkılar memnuniyetle karşılanır ama aracın herkese uyguladığı sert
 kurallara saygı göstermek zorundadır.
 
-### Temel kurallar (aracın uyguladığı R1–R8'nin aynısı)
+### Temel kurallar (aracın uyguladığı R1–R16'nin aynısı)
 
 1. **Ölçmeden önce önkaydet.** Bir değişiklik iyileştirme iddia ediyorsa,
    eşiği ve çürütme koşulunu sonucu göstermeden *önce* yaz. HARKing yok.
@@ -172,7 +172,7 @@ README'nin başındaki rozet —
 request'te çalışan iki iş geçtiğinde **`main` için yeşildir**
 ([`.github/workflows/mizan.yml`](.github/workflows/mizan.yml)):
 
-- **validate-registries** — R1–R8 validator'ını her `*mizan-registry*.yaml`
+- **validate-registries** — R1–R16 validator'ını her `*mizan-registry*.yaml`
   üzerinde çalıştırır; ayrıca validator'ın **kasıtlı bozuk** bir registry'yi
   *reddettiğini* doğrulayan bir öz-test (yani hiçbir zaman sessizce her şeyi
   geçiremez).
@@ -208,8 +208,8 @@ gömülü tutar) — komut yukarıdaki İngilizce bölümde.
 - `skill/mizan/` — taşınabilir skill (İngilizce kanonik). Burayı düzenlemek
   ürünü düzenlemektir; sonra `mizan.skill`'i yeniden derle.
 - `docs/en/`, `docs/tr/` — uzun-metin dokümanlar, paritede tutulur.
-- `tools/` — R1–R8 doğrulayıcı ve git hook (MIT).
-- `examples/` — R1–R8'den temiz kalması ZORUNLU çalışan registry'ler.
+- `tools/` — R1–R16 doğrulayıcı ve git hook (MIT).
+- `examples/` — R1–R16'den temiz kalması ZORUNLU çalışan registry'ler.
 
 ### Katkıların lisansı
 

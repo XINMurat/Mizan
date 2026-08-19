@@ -22,6 +22,49 @@
 #   R7. Producer/auditor separation: the agent that writes results
 #       SHOULD NOT be the sole agent that promotes tiers; tier changes
 #       are proposed, then confirmed by the owner or an audit pass.
+#   R9.  An entry at tier [K] MUST be backed by a result that met its
+#        threshold, or by a cited external_evidence. [K] means "direct
+#        evidence, source cited, threshold met" — writing the tier is not
+#        the same as earning it, and until 1.4 nothing checked the
+#        difference. prior_art does NOT satisfy R9: relatives are context
+#        for originality, not evidence for this claim.
+#   R10. threshold.support and threshold.refute MUST each name a quantity.
+#        "Improves things" is not a threshold (SKILL.md registry step 2 uses
+#        that exact phrase as its counter-example). Escape hatch, mirroring
+#        R2's baseline: threshold.non_numeric_justification, written out.
+#   R11. Every entry MUST carry a tier. Commitment 1 is "no untagged
+#        assertions"; the tier check only ever validated the SPELLING of a
+#        tier that was present.
+#   R12. The mandatory fields of references/templates.md §1: formal, metric
+#        (with a named instrument), cost, status — and prior_art PRESENT.
+#        "No known relatives" is an answer; an absent field is silence.
+#        templates.md: "Every field is mandatory except Prior art
+#        (mandatory only when relatives are known or suspected)."
+#   R16. If a `coverage` block claims tier K, EVERY phase row must be done
+#        AND a MERGE row must exist and be done. code-audit.md A5.1:
+#        "each slice fully audited" != "the repo fully audited", and
+#        presenting the latter is itself a [Y]. This rule exists because
+#        the Coverage Ledger DECIDES a tier while living in a Markdown
+#        table no validator could read — the same shape as Kiyas' discard
+#        list before G7. No version gate: the block is new, so a registry
+#        without one cannot trip it.
+#   R13. A feature entry MUST carry a non-empty kill_condition. Features
+#        without one accumulate as permanent maintenance debt
+#        (references/feature-gate.md Step 2).
+#   R14. A feature entry MUST list alternatives including at least one
+#        `cheaper` and one `null` option, tiered on the SAME value metric
+#        (feature-gate.md Step 3 — this is where "the feature nobody asked
+#        for" gets killed before it is built).
+#   R15. A bug entry MUST list at least one rival hypothesis — a rival
+#        mechanism that produces the same symptom (code-audit.md §B2).
+#        "Never close on the first story that fits" is Mode 4's whole
+#        point, and until 1.3 nothing checked it.
+#
+#   R8 also applies to features and bugs from 1.3 onward. Until then
+#   _check_arbiters() walked hypotheses only, so a feature could sit at [K]
+#   with no named judge — while this file's own comment already said a value
+#   metric judged only by the feature's proposer is class: author.
+#
 #   R8. Every hypothesis MUST name its arbiter — the thing that returns
 #       the verdict on the locked threshold. A threshold whose arbiter is
 #       the claim's own author is self-report, not measurement:
@@ -42,6 +85,57 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.5 — adds the `coverage` block (rule R16): the Coverage Ledger of
+#         references/code-audit.md A5.1 and templates.md §5, moved out of a
+#         Markdown table and into the registry. It belongs here rather than
+#         in a side file for the reason code-audit.md already gives — the
+#         ledger IS "the append-only registry used as the cross-phase
+#         carrier" — and putting it here buys R4 for free: phase rows become
+#         undeletable like every other entry.
+#         MIGRATION: none. The block is optional and new; a registry without
+#         a phased audit simply has no coverage block, and R16 cannot fire.
+#   1.4 — activates R9-R12: evidence behind [K], numeric thresholds, a tier
+#         on every entry, and the mandatory entry fields. All four were
+#         already required in prose and permitted by the schema.
+#         MIGRATION: 1.0-1.3 files stay valid and unenforced. The bump costs
+#         a metric block with a named instrument on every entry, a cost and
+#         status line, and an explicit prior_art (which may say "no known
+#         relatives"). If an entry cannot pay that, it was not preregistered,
+#         it was sketched — and R11 will say so rather than letting it sit
+#         untagged.
+#   1.3 — features and bugs stop being free-form. They extend the HYPOTHESIS
+#         shape (same id/tier/status/formal/metric/arbiter/threshold/
+#         refutation/history fields, same rules R1-R8) and add only what is
+#         specific to them: problem_claim / kill_condition / alternatives /
+#         acceptance_criteria for features, symptom / rival_hypotheses for
+#         bugs. Activates R13-R15 and extends R8 to both blocks.
+#         MIGRATION: 1.0-1.2 files keep working unenforced, exactly as 1.1
+#         files did for R8. Bump the version when the entries are ready, not
+#         before — a version bump that breaks the build teaches people to
+#         avoid version bumps.
+#         Naming note: references/feature-gate.md says "value metric" and
+#         "success threshold"; in the schema these ARE `metric` and
+#         `threshold`, so R1 and R8 apply unchanged instead of being
+#         reimplemented under new names. Existing entries written with the
+#         reference vocabulary keep working: the validator accepts
+#         value_metric / success_threshold / acceptance_criteria_refutation_
+#         phrased as aliases. Renaming a maintainer's entries would be a
+#         migration that buys nothing.
+#         The ONE real migration cost of 1.3: alternatives now carry an
+#         explicit `kind` (proposed / cheaper / null). Prose like "close to
+#         the null alternative" is not machine-visible, and R14 exists
+#         precisely to make "the null option was priced" checkable rather
+#         than assertable.
+#
+# WARNINGS (W1..W3) — checked but NOT blocking, unless --strict:
+#   W1. an entry with no two_sided statement.
+#   W2. an entry with no result yet and no threshold / refutation. R1 only
+#       starts once a result references it, but the entry is written BEFORE
+#       the test, so the gap is worth naming early.
+#   W3. every tiered entry in the registry sitting at [K].
+# Each has a legitimate exception -- a draft entry, a one-entry registry --
+# which is why none is a rule. Blocking on them would teach authors to shape
+# registries around the checker instead of around the claim.
 #   1.2 — adds hypothesis.arbiter (rule R8). MANDATORY for files declaring
 #         schema_version 1.2+; 1.0/1.1 files stay valid and unenforced, so
 #         existing registries migrate deliberately rather than breaking.
@@ -56,7 +150,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.2"             # 1.2+ activates R8 (arbiter) enforcement
+  schema_version: "1.5"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 adds coverage
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -106,10 +200,15 @@ hypotheses:
         arbiter's own null distribution; thresholds are not inherited
         across instruments (Kıyas AD1/A3). "unknown" is an honest answer
         and forces an honesty annex on every result that uses it.
-    threshold:                      # LOCKED now, numeric (R1)
+    threshold:                      # LOCKED now, numeric (R1, R10)
       support: ">= 5%"
       refute: "< 1%"
       underpowered: "1%..5% -> one rerun allowed; state what changes"
+      # non_numeric_justification: >
+      #   Only when a quantity genuinely does not apply — a third_party
+      #   verdict that is categorical, say. Written out, like R2's
+      #   baseline: "none" + justification. Reaching for this field is a
+      #   signal worth noticing, not a shortcut.
     refutation: >
       What result kills this hypothesis.
     two_sided: >
@@ -119,8 +218,15 @@ hypotheses:
       What must hold for the test to count at all (else: cell_closed).
     preregistered_prediction: >
       Optional: author's expectation, written before the result.
-    prior_art:
+    prior_art:                      # MANDATORY to be PRESENT (R12)
       - "Known relatives; where the originality claim actually lives"
+      # "No known relatives" is a legitimate entry. An absent field is not:
+      # silence cannot be distinguished from not having looked.
+    # external_evidence: >
+    #   Only for a claim whose evidence lives outside this registry — a
+    #   published result, a vendor benchmark, a regulator's finding. Cite it.
+    #   This is the second way to satisfy R9 for tier [K]; prior_art is not,
+    #   because relatives are context for originality, not evidence.
     confounds:                      # feeds R3 — experiments must answer these
       - parameter_count
       - initialization
@@ -192,17 +298,185 @@ results:
     followup: []                    # new hypothesis/experiment ids
 
 # ---------------------------------------------------------------------
-# OPTIONAL BLOCKS — same rules, specialized fields
+# BUGS (Mode 4) — a bug entry IS a hypothesis about a mechanism.
 # ---------------------------------------------------------------------
-# Bug hypotheses (Mode 4): add symptom / mechanism / rival_hypotheses /
-#   refutation_test; "fix worked" follows R6 (revert-check as the
-#   symmetric control). Arbiter is usually class: runtime (the failing
-#   test / repro script) — the one place the code loop already holds.
-# Feature gates (Mode 5): add problem_claim (with tier+source),
-#   value_metric, success_threshold, kill_condition, alternatives
-#   (>=1 cheaper + null alternative), acceptance criteria phrased as
-#   refutation conditions. The success_threshold carries its own arbiter
-#   block; a value metric whose only judge is the feature's own proposer
-#   is class: author and cannot reach K.
-bugs: []
-features: []
+# It carries every hypothesis field above with the same meaning, and the
+# same rules apply (R1 threshold+refutation, R8 arbiter, R4 history):
+#   formal      — the MECHANISM hypothesis: WHY it happens, specific enough
+#                 to be wrong (file:line, state, ordering). This is the
+#                 claim, so it lives in `formal` rather than in a duplicate
+#                 `mechanism` field.
+#   refutation  — the refutation TEST: the experiment that distinguishes
+#                 this mechanism from its rivals, and what result kills it.
+#   arbiter     — usually class: runtime (the failing test / repro script).
+#                 Mode 4 is the one place the code loop already holds; say
+#                 so rather than reaching for a weaker class out of habit.
+# "The fix worked" is a surprising positive: R6 applies, with the revert
+# check as the symmetric control (references/code-audit.md §B3).
+bugs:
+  - id: "BUG-001"
+    tier: "H"
+    status: "preregistered"
+    formal: >
+      The mechanism hypothesis. See above — this is the claim, not the
+      symptom.
+    symptom: >
+      Observable behaviour, VERBATIM: log line, trace, repro steps. No
+      interpretation in this field — interpretation belongs in `formal`,
+      where it can be refuted.
+    rival_hypotheses:               # MANDATORY, >= 1 (R15)
+      - >
+        At least one alternative mechanism that produces the SAME symptom.
+        A registry with one mechanism and no rival is a story, not a
+        hypothesis: nothing distinguishes it from the first thing that came
+        to mind.
+    arbiter:
+      class: "runtime"
+      who: "the failing test / repro script"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime — the repro either fires or does not"
+    threshold:
+      support: "the repro fails before the fix and passes after, 10/10 runs"
+      refute: "the repro is flaky across 10 runs, or passes before the fix"
+    refutation: >
+      What result kills THIS mechanism — including the revert check: if the
+      bug does not reproduce on revert, the fix is KKE, not K.
+    two_sided: >
+      What EACH outcome teaches. A bug entry is one of the easiest places to
+      write a one-sided test ("did the fix work?"), which is why W1 warns
+      when this is missing: the confirming branch alone cannot tell a fixed
+      mechanism from a moved one.
+    metric:                         # R12 — yes, a bug entry has one too
+      name: "repro_pass_rate"
+      instrument: "the repro script; name the file, not 'manual testing'"
+    prior_art:
+      - "Has this class of bug been recorded before in this project? Name the entry ids."
+    cost: "rough effort to run the refutation test"
+    history:
+      - { date: "2026-08-20", event: "preregistered" }
+
+# ---------------------------------------------------------------------
+# FEATURES (Mode 5) — a feature gate IS a hypothesis about the future.
+# ---------------------------------------------------------------------
+# Same shape again. The mapping from references/feature-gate.md:
+#   value metric      -> metric      (name + the instrument producing it)
+#   success threshold -> threshold   (support / refute, LOCKED now)
+#   acceptance criteria phrased as refutation conditions -> acceptance_criteria
+# R1 and R8 therefore cover a feature entry without a second implementation:
+# a value metric whose only judge is the feature's own proposer is
+# class: author and cannot reach K, which is the entire point of gating.
+features:
+  - id: "FEAT-001"
+    tier: "H"
+    status: "preregistered"
+    formal: >
+      The feature as specified, stated so that "it shipped" and "it worked"
+      are different claims.
+    problem_claim:
+      claim: "Who has this problem, stated concretely."
+      tier: "H"                     # K = tickets/telemetry/quotes; H = founder
+                                    # intuition (legitimate, but labelled);
+                                    # S = "obviously users want".
+      source: "support tickets / telemetry query / user quotes — the evidence, named"
+    metric:
+      name: "adoption_rate"
+      instrument: "the telemetry event, query or ticket count that produces the number"
+    threshold:
+      support: "adoption >= 30% of target users within 6 weeks"
+      refute: "adoption < 10% at 6 weeks"
+      underpowered: "10-30% -> one measurement window extension, stated now"
+    kill_condition: >                # MANDATORY (R13)
+      The POST-SHIP measurement that justifies REMOVING this feature. Not a
+      failure to launch — a condition met later, after it is live. Without
+      one the feature can only ever accumulate maintenance cost, because
+      nothing is defined that would end it.
+    alternatives:                   # MANDATORY (R14): >= 1 cheaper + 1 null
+      - kind: "proposed"
+        option: "The feature as specified."
+        cost: "build + maintenance estimate"
+      - kind: "cheaper"
+        option: >
+          Something attacking the SAME problem claim for less — a config
+          flag instead of a UI, a doc page instead of a wizard, a batch job
+          instead of realtime.
+        cost: "…"
+      - kind: "null"
+        option: >
+          Do nothing, or the 10% version. What does the problem cost if it
+          stays unsolved? Sometimes the honest answer is "less than the
+          maintenance burden", and this row is where that becomes sayable.
+        cost: "0"
+    acceptance_criteria:            # phrased as REFUTATION conditions
+      - "The feature FAILS acceptance if … (the direct antidote to demo-driven features that present well and do not function)"
+    arbiter:
+      class: "instrument"
+      who: "the telemetry query, run by whoever owns the dashboard"
+      independent_of_author: true
+      latency: "weeks"
+      calibration: >
+        Where the threshold's null comes from — the pre-launch baseline for
+        this metric, measured on this instrument.
+    refutation: >
+      What post-ship measurement kills the value claim.
+    two_sided: >
+      What EACH outcome teaches. For a feature gate the refuting branch is
+      usually the more valuable one — "the metric moved but throughput paid
+      for it" changes the decision without touching the underlying claim.
+    informativeness_precondition: >
+      Can success even be measured? If no telemetry or user signal exists,
+      either build the measurement first or accept that the feature ships
+      as S — and say which.
+    prior_art:
+      - "Has this been tried here or elsewhere, and how did it go? Name it, or say 'no known relatives'."
+    cost: "build + maintenance estimate"
+    history:
+      - { date: "2026-08-20", event: "gated, not started" }
+
+# ---------------------------------------------------------------------
+# COVERAGE LEDGER (phased audits) — references/code-audit.md A5.1
+# ---------------------------------------------------------------------
+# Only for targets too large to audit in one pass. Phase 0 partitions and
+# plans; each phase audits one slice completely and APPENDS its findings to
+# this same file; the MERGE row reconciles claims that cross slice
+# boundaries — tier drift between modules, duplicate findings, and the real
+# risk, a claim in slice A verified only by evidence in slice E.
+#
+# Naive partitioning MISSES those, which is why reconciliation is named as
+# the weakest point of a phased audit rather than assumed. Until the MERGE
+# row is done, "each slice fully audited" is not "the target fully audited",
+# and claiming the latter is a [Y] — so claim_tier is what R16 guards.
+#
+# Rows are appended or updated, never deleted; a re-scoped slice gets a NEW
+# row, not an edit. R4 enforces that here exactly as it does for hypotheses.
+coverage:
+  target: "the repo / PRD / corpus this phased audit covers"
+  started: "2026-08-20"
+  selection_rule: >
+    The risk weighting used to partition — entry points, security and money
+    surfaces, recently-churned files (git log --stat). Written down because
+    a partition nobody can reconstruct is not a scope statement.
+  claim_tier: "H"                   # K only when every row below is done (R16)
+  phases:
+    - id: "P0"
+      slice: "scoping only — the partition plan"
+      status: "done"                # planned | in_progress | done
+      coverage: "—"
+      findings: "plan: P1..Pn"
+      date: "2026-08-20"
+      history:
+        - { date: "2026-08-20", event: "partition plan written" }
+    - id: "P1"
+      slice: "module / path / surface — bounded enough for one pass"
+      status: "planned"
+      coverage: "K of L public functions, once run"
+      findings: ""
+      date: ""
+      history: []
+    - id: "MERGE"
+      slice: "cross-phase reconciliation — mandatory, do not skip"
+      status: "planned"
+      coverage: "—"
+      findings: "tier drift across slices; cross-slice hops; duplicates"
+      date: ""
+      history: []

@@ -1,9 +1,14 @@
 name: CI
 
-# Runs the LLM-free R1–R8 registry validator and checks that the shipped
+# Runs the LLM-free R1–R16 registry validator and checks that the shipped
 # mizan.skill stays in sync with skill/mizan/. This is the static-check
 # automation of the already-shipped tool (FEAT-M001's cheap alternative) —
 # NOT the "full CI/CD gate with an LLM auditor", which stays gated.
+#
+# R4 (append-only) needs a BASELINE to compare against, and until now this
+# workflow never supplied one: _append_only() only runs when --against is
+# passed, so the rule enforcing "refuted entries are never deleted" was
+# written, tested, and never executed by any automated run. It runs now.
 
 on:
   push:
@@ -16,6 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # R4 diffs the registry against its baseline commit; the default
+          # shallow clone has no such commit to reach.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v6
         with:
@@ -24,20 +33,205 @@ jobs:
       - name: Install dependencies
         run: pip install -r tools/requirements.txt
 
-      - name: Validate every registry (R1–R8)
+      - name: Resolve the R4 append-only baseline
+        id: baseline
         run: |
           set -e
+          # On a PR the baseline is the target branch; on a push to main it is
+          # the previous commit. Resolved in its own step and ECHOED, because
+          # the tool degrades silently when a baseline cannot be read — a
+          # skipped check that prints nothing is indistinguishable from a
+          # passing one, which is the failure this whole change is about.
+          if [ -n "${{ github.base_ref }}" ]; then
+            base="origin/${{ github.base_ref }}"
+          else
+            base="$(git rev-parse HEAD^ 2>/dev/null || true)"
+          fi
+          if [ -n "$base" ] && git rev-parse --verify --quiet "$base^{commit}" >/dev/null; then
+            echo "base=$base" >> "$GITHUB_OUTPUT"
+            echo "R4 baseline: $base ($(git rev-parse --short "$base"))"
+          else
+            echo "base=" >> "$GITHUB_OUTPUT"
+            echo "::warning::No baseline commit reachable — R4 (append-only) did NOT run."
+          fi
+
+      - name: Validate every registry (R1–R16, R4 against the baseline)
+        run: |
+          set -e
+          base="${{ steps.baseline.outputs.base }}"
           found=0
           while IFS= read -r f; do
             found=1
-            echo "::group::$f"
-            python tools/mizan_validate.py "$f"
+            rel="${f#./}"          # git show wants a repo-relative path
+            # --strict only where the file's job is to MODEL the discipline:
+            # the schema, the template, and the worked examples. Everywhere
+            # else warnings stay advisory, because a warning the maintainer
+            # has not acted on yet should not block an unrelated PR -- and a
+            # warning that blocks is just a rule with a softer name.
+            strict=""
+            case "$rel" in
+              examples/*|templates/*|skill/*) strict="--strict" ;;
+            esac
+            echo "::group::$rel ${strict:-(advisory)}"
+            if [ -n "$base" ]; then
+              python tools/mizan_validate.py $strict --against "$base" "$rel"
+            else
+              python tools/mizan_validate.py $strict "$rel"
+            fi
             echo "::endgroup::"
           done < <(find . -path ./.git -prune -o -name '*mizan-registry*.y*ml' -print)
           if [ "$found" -eq 0 ]; then
             echo "No registry files found to validate." >&2
             exit 1
           fi
+
+      - name: Self-test — the warning channel warns without blocking
+        run: |
+          set -e
+          # A warning that blocks is a rule; a rule that cannot block is
+          # decoration. This checks the channel is genuinely two-valued:
+          # exit 0 by default, exit 1 under --strict, same finding both times.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.2"}
+          hypotheses:
+            - id: "H-001"
+              tier: "H"
+              formal: "a claim"
+              arbiter: {class: runtime, who: "pytest"}
+          experiments: []
+          results: []
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp")"   # must exit 0
+          echo "$out"
+          echo "$out" | grep -q "W1:" || { echo "FAIL: W1 did not warn" >&2; exit 1; }
+          echo "$out" | grep -q "W2:" || { echo "FAIL: W2 did not warn" >&2; exit 1; }
+          if python tools/mizan_validate.py --strict "$tmp"; then
+            echo "FAIL: --strict did not promote warnings to failures" >&2
+            exit 1
+          fi
+          echo "OK: warnings warn by default and fail under --strict."
+
+      - name: Self-test — R16 must reject a coverage claim before reconciliation
+        run: |
+          set -e
+          # The Coverage Ledger is the one deliverable that decides a tier.
+          # It used to live in a Markdown table, so this rule could not exist.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.5"}
+          hypotheses: []
+          coverage:
+            target: "big repo"
+            claim_tier: "K"
+            phases:
+              - {id: "P0", slice: "scoping", status: "done"}
+              - {id: "P1", slice: "auth", status: "done"}
+              - {id: "P2", slice: "billing", status: "in_progress"}
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          echo "$out" | grep -q "R16:" || { echo "FAIL: R16 did not fire on an unfinished phase" >&2; exit 1; }
+          echo "$out" | grep -q "W4:" || { echo "FAIL: W4 did not warn about the missing MERGE row" >&2; exit 1; }
+          # finishing every slice is still not finishing the audit
+          sed -i 's/status: "in_progress"/status: "done"/' "$tmp"
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out" | grep -q "no MERGE row" || { echo "FAIL: R16 accepted slices-done as target-done" >&2; exit 1; }
+          echo "OK: R16 holds the coverage claim until reconciliation runs."
+
+      - name: Self-test — R9/R10/R11/R12 must reject an unearned [K]
+        run: |
+          set -e
+          # This fixture is PROSE-SCHEMA-AUDIT.md's Kanit-A and Kanit-B
+          # merged: a tier written with no evidence, a threshold that names
+          # no quantity, an entry with no tier at all, and missing mandatory
+          # fields. It validated clean through schema 1.3.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.4"}
+          hypotheses:
+            - id: "H-001"
+              threshold: {support: "improves things", refute: "does not improve things"}
+              refutation: "if it does not improve"
+              arbiter: {class: runtime, who: "pytest"}
+            - id: "H-002"
+              tier: "K"
+              formal: "X works."
+              metric: {name: "m"}
+              cost: "1 day"
+              status: "closed"
+              threshold: {support: ">= 5%", refute: "< 1%"}
+              refutation: "below 1%"
+              prior_art: []
+              arbiter: {class: third_party, who: "reviewer", calibration: "reviewer null"}
+          experiments: []
+          results: []
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          for rule in "R9:" "R10:" "R11:" "R12:"; do
+            echo "$out" | grep -q "$rule" || { echo "FAIL: $rule did not fire" >&2; exit 1; }
+          done
+          echo "OK: R9, R10, R11 and R12 all fired."
+          sed -i 's/schema_version: "1.4"/schema_version: "1.3"/' "$tmp"
+          python tools/mizan_validate.py "$tmp"
+          echo "OK: the same registry at 1.3 stays valid and unenforced."
+
+      - name: Self-test — R13/R14/R15 must reject a free-form feature and bug
+        run: |
+          set -e
+          # Until schema 1.3 these two blocks were validated for nothing but
+          # tier spelling, so a feature with no kill condition, no
+          # alternatives and no arbiter sat at [K] unchallenged. If this step
+          # ever stops failing, Modes 4 and 5 are unenforced again.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.3"}
+          hypotheses: []
+          experiments: []
+          results: []
+          features:
+            - id: "FEAT-001"
+              tier: "K"
+              title: "Ship the wizard"
+          bugs:
+            - id: "BUG-001"
+              tier: "K"
+              symptom: "it crashes"
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          for rule in "R8: feature" "R8: bug" "R13:" "R14:" "R15:"; do
+            echo "$out" | grep -q "$rule" || { echo "FAIL: $rule did not fire" >&2; exit 1; }
+          done
+          echo "OK: R8 (features+bugs), R13, R14 and R15 all fired."
+          # ...and the migration promise holds: the same file at 1.2 is
+          # unenforced, so existing registries do not break on upgrade.
+          sed -i 's/schema_version: "1.3"/schema_version: "1.2"/' "$tmp"
+          python tools/mizan_validate.py "$tmp"
+          echo "OK: the same registry at 1.2 stays valid and unenforced."
+
+      - name: Self-test — R4 must catch a deleted entry
+        run: |
+          set -e
+          # A baseline that is never compared against is the same as no
+          # baseline. This proves the wiring end to end: delete a hypothesis
+          # from a tracked registry in the worktree and require R4 to fire.
+          reg="examples/mizan-registry.example.yaml"
+          cp "$reg" /tmp/reg.bak
+          python - <<'PY'
+          import re
+          p = "examples/mizan-registry.example.yaml"
+          s = open(p, encoding="utf-8").read()
+          # drop the whole hypotheses block -> every prior entry disappears
+          s = re.sub(r"(?ms)^hypotheses:.*?(?=^experiments:)", "hypotheses: []\n\n", s)
+          open(p, "w", encoding="utf-8").write(s)
+          PY
+          out="$(python tools/mizan_validate.py --against HEAD "$reg" || true)"
+          cp /tmp/reg.bak "$reg"
+          echo "$out"
+          echo "$out" | grep -q "R4:" || { echo "FAIL: R4 did not fire on a deleted entry" >&2; exit 1; }
+          echo "OK: R4 caught the deletion."
 
       - name: Self-test — validator must FAIL on a broken registry
         run: |

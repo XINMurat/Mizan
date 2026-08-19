@@ -216,6 +216,41 @@ it lists the failure modes to hunt for and worked examples.
    against the arbiter's own null and are never inherited across
    instruments.
 
+**From schema 1.4, four rules close the gaps between this file and the
+data.** A `[K]` entry needs a threshold-meeting result or a cited external
+source (R9) — prior art is not evidence for the claim, only context for its
+originality. Thresholds name a quantity (R10), with a written justification
+as the escape hatch for a genuinely categorical verdict. Every entry carries
+a tier (R11), since "no untagged assertions" was never checked. And the
+mandatory fields of the entry template are present (R12): `formal`, a
+`metric` with a **named instrument**, `cost`, `status`, and `prior_art` —
+where "no known relatives" is an answer and an absent field is silence.
+
+**Bug entries and feature gates are hypotheses, not a different species.**
+From schema 1.3 they carry the same fields and the same rules 1–9 above: a
+bug's `formal` holds the MECHANISM (the symptom stays interpretation-free in
+its own field), a feature's value metric IS `metric` and its success
+threshold IS `threshold`. Three rules are specific to them, and each was
+mandatory in `references/` long before anything checked it: a feature names
+its **kill condition** (R13) and its **alternatives** including the null
+option (R14); a bug names at least one **rival hypothesis** (R15). The point
+of R15 is Mode 4's whole point — never close on the first story that fits.
+
+**The Coverage Ledger lives in the registry (schema 1.5, rule R16).** For a
+phased audit it is the one deliverable that DECIDES a tier — the whole-target
+coverage claim stays `[H]` until the MERGE row is done — and it used to live
+in a Markdown table no check could read. Keeping it in the registry follows
+`code-audit.md`'s own description of it as "the append-only registry used as
+the cross-phase carrier", and it means R4 protects its rows for free: a
+re-scoped slice gets a new row, never an edit that erases the old one.
+
+The validator also has a **non-blocking warning channel** (W1–W4): a missing
+two-sided statement, an entry written with no threshold or refutation and no
+result yet, and a registry where every tiered entry is `[K]`. These advise
+rather than stop, for the same reason R8's flag classes differ in force — a
+checker that can only block teaches people to write around it, which is a
+different skill from writing honestly.
+
 ## Context economy (long audits, long sessions)
 
 An audit's cost grows with the transcript, not with the finding. Every
@@ -299,7 +334,7 @@ from the outside.
   writing entries. Reading everything at the start spends the context
   the audit itself needs.
 - **The scripted part is the part that travels.** `mizan_validate.py`
-  enforces R1–R8 without a model, so it behaves identically in every
+  enforces R1–R16 without a model, so it behaves identically in every
   host. Whatever is enforced only by this prose is negotiable by the
   host's prose. When rigor must survive an unknown setup, put it in the
   validator, not in a paragraph.
@@ -338,7 +373,7 @@ from the outside.
 - `schemas/mizan-registry.yaml` — the machine-readable registry format.
   When the user keeps a registry file (in project knowledge, a repo, or
   uploads one), read it at session start, APPEND rather than overwrite,
-  propose new entries in this schema, and enforce its hard rules R1–R8
+  propose new entries in this schema, and enforce its hard rules R1–R16
   (mandatory baseline, mandatory confound controls, append-only history,
   no K-promotion without controls on surprising positives, and
   producer/auditor separation: propose tier changes, let the owner or a

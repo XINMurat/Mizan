@@ -100,7 +100,7 @@ methodology — the instructions and schema are themselves subject to
 revision (following their own discipline: changes are justified, history
 is never deleted).
 
-## 3. Hard rules (summary — R1–R8 in the schema)
+## 3. Hard rules (summary — R1–R16 in the schema)
 
 1. Threshold + refutation condition before any result (HARKing structurally closed).
 2. Baseline mandatory; a baseline-less result cannot produce `[K]`.
@@ -117,6 +117,55 @@ is never deleted).
    reach `[K]`; with no arbiter (`none`) the threshold is decorative and
    the entry stays `[S]`. This is what keeps the discipline honest outside
    software, where the runtime no longer decides for you.
+
+Four more come in at schema 1.4, and each one closes a place where the
+schema permitted what the prose already forbade:
+
+9.  A `[K]` entry is backed by a result that **met its threshold**, or by a
+    cited external source. Writing the tier is not the same as earning it.
+    Prior art does not count: relatives are context for originality, not
+    evidence for this claim.
+10. Thresholds **name a quantity**. "Improves things" is the guide's own
+    counter-example; there is an explicit escape hatch
+    (`non_numeric_justification`) for the rare categorical verdict.
+11. Every entry **carries a tier**. The old check only validated the
+    spelling of a tier that happened to be there.
+12. The mandatory entry fields exist: `formal`, `metric` with a **named
+    instrument**, `cost`, `status`, and `prior_art` **present** — "no known
+    relatives" is an answer, an absent field is silence.
+
+Three more apply to the specialised blocks, from schema 1.3 onward. A bug
+entry and a feature gate ARE hypotheses — same fields, same rules 1–8 — plus:
+
+13. A feature names its **kill condition**: the post-ship measurement that
+    would justify removing it. Without one it can only accumulate cost,
+    because nothing is defined that would end it.
+14. A feature lists its **alternatives**, including at least one cheaper
+    option and the null alternative ("do nothing"), priced on the same value
+    metric. This is where a feature nobody needs gets killed before it is
+    built.
+15. A bug names at least one **rival hypothesis** — another mechanism that
+    produces the same symptom. A mechanism with no rival is a story: nothing
+    distinguishes it from the first explanation that came to mind.
+
+Registries declaring 1.0–1.2 keep working unenforced; bump the version when
+the entries are ready.
+
+16. A **coverage claim** waits for reconciliation. For a phased audit, the
+    `coverage` block's `claim_tier` may only be `[K]` once every phase row
+    *and* the MERGE row are done. "Each slice fully audited" is not "the
+    target fully audited", and presenting the second as the first is itself
+    a `[Y]`. The ledger lives in the registry rather than beside it, so the
+    append-only rule protects its rows like any other entry.
+
+**Warnings (W1–W4) advise, they do not block.** An entry with no `two_sided`
+statement; an entry with no result yet and no threshold or refutation; a
+registry where every tiered entry sits at `[K]`. Each has a legitimate
+exception — a draft entry, a one-entry registry — which is why none is a
+rule. `--strict` promotes them to failures; CI runs strict on the files whose
+job is to model the discipline (schema, templates, examples) and advisory
+everywhere else, so a warning nobody has acted on yet does not block an
+unrelated change.
 
 ## 4. Common mistakes
 
