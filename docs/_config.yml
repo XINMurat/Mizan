@@ -1,0 +1,6 @@
+title: "Mizan — Evidence-Tiered Auditing & Preregistration"
+description: "A Claude skill that turns an experimental-science discipline into a portable tool for evaluating any claim set and maintaining living hypothesis registries. Bilingual TR/EN."
+theme: jekyll-theme-minimal
+lang: en
+# jekyll-relative-links is enabled by default on GitHub Pages, so links to
+# .md files below resolve on both github.com and the published site.
