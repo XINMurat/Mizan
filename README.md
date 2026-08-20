@@ -96,6 +96,19 @@ the kit's own claims — every "verified" sentence goes through a counter-exampl
 sweep, and every estimate carries a tier instead of the false precision a
 spreadsheet invites. What the audit turns up re-enters the kit as backlog tasks.
 
+### Case study — the skills used on a real problem
+
+[**sieve-to-spectrum**](https://github.com/XINMurat/sieve-to-spectrum) is a
+number-theory project that ran on Mizan: a multiplication table re-derives
+three centuries of results, and along the way 14 claims are audited with
+evidence tiers, with four self-corrections appended.
+
+It is worth reading because it is not a demonstration. The hypotheses were
+preregistered before they were run, **three of the four came back negative**,
+and the negatives are still in the repository — which is the outcome this
+methodology is built to survive and the one a self-made example never
+produces.
+
 ### Documentation
 
 - **⚡ Quickstart:** [`docs/QUICKSTART.md`](docs/QUICKSTART.md) — concrete
@@ -207,6 +220,18 @@ Devir iki yönlüdür: İskele bir kiti bitirdiğinde Mizan kitin kendi iddialar
 denetler — "doğrulandı" diyen her cümle karşı-örnek taramasına girer, her tahmin
 çizelgenin davet ettiği sahte kesinlik yerine bir katman taşır. Denetimin
 bulduğu şey kite backlog görevi olarak geri girer.
+
+### Vaka çalışması — skill'lerin gerçek bir problemde kullanımı
+
+[**sieve-to-spectrum**](https://github.com/XINMurat/sieve-to-spectrum), Mizan
+üzerinde koşan bir sayı-teorisi projesi: bir çarpım tablosundan üç yüzyıllık
+sonuçlar yeniden türetiliyor ve yol boyunca 14 iddia kanıt katmanlarıyla
+denetleniyor, dört öz-düzeltme append edilmiş.
+
+Okumaya değer, çünkü bir gösteri değil. Hipotezler koşulmadan önce önkayıt
+edildi, **dördün üçü negatif döndü**, ve negatifler hâlâ depoda duruyor — bu
+metodolojinin ayakta kalmak için kurulduğu sonuç, ve kendi yaptığın bir
+örneğin asla üretmediği sonuç.
 
 ### Dokümantasyon
 
