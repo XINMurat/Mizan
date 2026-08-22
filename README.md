@@ -98,27 +98,17 @@ spreadsheet invites. What the audit turns up re-enters the kit as backlog tasks.
 
 ### Companion skill — ux-mizan
 
-Mizan weighs claims; **[ux-mizan](https://github.com/XINMurat/ux-mizan)**
-weighs *experience* — the "users get lost / this screen is confusing"
-complaints — by carrying this methodology into a domain where the evidence
-is behavioural rather than documentary. That difference is the whole
-design: a model can read a codebase and audit a claim, but it cannot
-measure what a user does, so ux-mizan splits the work into a structural
-layer that produces `[H]`/`[KKE]` and a behavioural layer that is the only
-source of `[K]`. Its own restatement of R7: **if the referee writes it,
-there is no `[K]`.**
+**[ux-mizan](https://github.com/XINMurat/ux-mizan)** carries this
+methodology into a domain where the evidence is behavioural rather than
+documentary — "users get lost", "this screen is confusing". Its own
+restatement of R7: **if the referee writes it, there is no `[K]`.**
 
-The inheritance is literal — the same six tiers, the same append-only
-registry, the same "the scripted part is the part that travels" — and the
-divergences are the interesting part. Its registry is two linked tables
-(flows as premises, findings bound to them) because a UX defect with no
-task attached is a component scored in isolation. Its severity is computed
-from a human-locked priority weight, so the model cannot re-rank a
-backlog. And its metrics are gated by application type, which is what
-stops a portable method from decaying into the same checklist everywhere.
+What concerns *this* repo: its design hypotheses live in a **Mizan**
+registry, validated by this repo's validator in its own CI — including one
+that is already `[R]`. The tools audit each other rather than only
+describing each other.
 
-Its own design hypotheses live in a **Mizan** registry, validated by this
-repo's validator in its CI — including one that is already `[R]`.
+The four verbs and how they hand off: **[the family page](https://xinmurat.github.io/)**.
 
 ### Case study — the skills used on a real problem
 
@@ -247,26 +237,17 @@ bulduğu şey kite backlog görevi olarak geri girer.
 
 ### Kardeş skill — ux-mizan
 
-Mizan iddiaları tartar; **[ux-mizan](https://github.com/XINMurat/ux-mizan)**
-*deneyimi* tartar — "kullanıcılar kayboluyor", "bu ekran karışık"
-şikâyetlerini — bu metodolojiyi kanıtın belgesel değil **davranışsal**
-olduğu bir alana taşıyarak. Tasarımın tamamı bu farktan çıkar: bir model
-kod tabanını okuyup bir iddiayı denetleyebilir, ama kullanıcının ne
-yaptığını ölçemez. Bu yüzden ux-mizan işi ikiye böler — `[H]`/`[KKE]`
-üreten yapısal katman ve `[K]`'nın tek kaynağı olan davranışsal katman.
-R7'yi kendi cümlesiyle söyler: **hakem yazarsa `[K]` yoktur.**
+**[ux-mizan](https://github.com/XINMurat/ux-mizan)**, bu metodolojiyi
+kanıtın belgesel değil **davranışsal** olduğu bir alana taşır —
+"kullanıcılar kayboluyor", "bu ekran karışık". R7'yi kendi cümlesiyle
+söyler: **hakem yazarsa `[K]` yoktur.**
 
-Devralma birebirdir — aynı altı katman, aynı yalnızca-eklenen registry,
-aynı "kuralı taşıyan şey betiktir" — ve asıl ilginç kısım ayrıldığı
-yerlerdir. Registry'si iki bağlı tablodur (akışlar premis, bulgular onlara
-bağlı), çünkü görevi olmayan bir UX kusuru izole puanlanmış bir
-komponenttir. Severity'si insan-kilitli öncelik ağırlığından hesaplanır,
-böylece model backlog'u yeniden sıralayamaz. Metrikleri uygulama tipine
-kapılıdır — taşınabilir bir yöntemin her yerde aynı kontrol listesine
-çürümesini engelleyen şey budur.
+*Bu* depoyu ilgilendiren kısım: ux-mizan'ın kendi tasarım hipotezleri bir
+**Mizan** registry'sinde tutulur ve bu deponun doğrulayıcısıyla, kendi
+CI'ında denetlenir — biri şimdiden `[R]`. Araçlar birbirini yalnızca
+anlatmıyor, denetliyor.
 
-Kendi tasarım hipotezleri bir **Mizan** registry'sinde tutulur ve bu
-deponun doğrulayıcısıyla, kendi CI'ında denetlenir — biri şimdiden `[R]`.
+Dört fiil ve aralarındaki devir: **[aile sayfası](https://xinmurat.github.io/)**.
 
 ### Vaka çalışması — skill'lerin gerçek bir problemde kullanımı
 
