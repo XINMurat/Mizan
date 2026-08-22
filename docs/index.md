@@ -11,7 +11,8 @@ description: "A Claude skill that turns an experimental-science discipline into 
 [Repository](https://github.com/XINMurat/Mizan) ·
 [Latest release](https://github.com/XINMurat/Mizan/releases/latest) ·
 [Kıyas](https://github.com/XINMurat/Kiyas) ·
-[İskele](https://github.com/XINMurat/Iskele)
+[İskele](https://github.com/XINMurat/Iskele) ·
+[ux-mizan](https://github.com/XINMurat/ux-mizan)
 
 ---
 
