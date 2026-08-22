@@ -13,7 +13,7 @@ description: "A Claude skill that turns an experimental-science discipline into 
 [Kıyas](https://github.com/XINMurat/Kiyas) ·
 [İskele](https://github.com/XINMurat/Iskele) ·
 [ux-mizan](https://github.com/XINMurat/ux-mizan) ·
-[**the family**](https://xinmurat.github.io/)
+[**the family · aile**](https://xinmurat.github.io/)
 
 ---
 
