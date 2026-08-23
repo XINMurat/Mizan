@@ -302,15 +302,7 @@ verirsiniz.
 
 ### Version / Sürüm
 
-**v2.3** — adds R8 (arbiter) and registry schema 1.2: every threshold names
-the judge that returns its verdict, so a self-judged claim is capped at
-`[KKE]` and an unjudged one stays `[S]`. Schema 1.0/1.1 registries remain
-valid and unenforced; migrate by bumping `schema_version` to `"1.2"`. Also
-adds `tools/mizan_export_refuted.py` and wires the loop to the companion
-skill [Kıyas](https://github.com/XINMurat/Kiyas): refuted entries become
-negative constraints the generator consults.
-
-**v2.3** — closes every finding of [`PROSE-SCHEMA-AUDIT.md`](PROSE-SCHEMA-AUDIT.md),
+**v2.4** — closes every finding of [`PROSE-SCHEMA-AUDIT.md`](PROSE-SCHEMA-AUDIT.md),
 the systematic diff between what SKILL.md and `references/` require and what
 the schema enforced. Adds R9–R12 (evidence behind `[K]`, numeric thresholds, a
 tier on every entry, the mandatory entry fields), R13–R15 (features and bugs
@@ -320,6 +312,14 @@ into the registry, so R4 protects its rows), and a non-blocking warning channel
 (W1–W4, `--strict` in CI). R4 (append-only) now actually runs in CI — it never
 had a baseline to compare against before. Registry schema 1.5; files at 1.0–1.4
 stay valid and unenforced.
+
+**v2.3** — adds R8 (arbiter) and registry schema 1.2: every threshold names
+the judge that returns its verdict, so a self-judged claim is capped at
+`[KKE]` and an unjudged one stays `[S]`. Schema 1.0/1.1 registries remain
+valid and unenforced; migrate by bumping `schema_version` to `"1.2"`. Also
+adds `tools/mizan_export_refuted.py` and wires the loop to the companion
+skill [Kıyas](https://github.com/XINMurat/Kiyas): refuted entries become
+negative constraints the generator consults.
 
 **v2.2** — 5 modes + domain-adaptation module (14 domains) + R1–R7 registry
 schema + bilingual docs (TR/EN) + R1–R7 validator & pre-commit hook.
