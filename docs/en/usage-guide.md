@@ -148,8 +148,8 @@ entry and a feature gate ARE hypotheses — same fields, same rules 1–8 — pl
     produces the same symptom. A mechanism with no rival is a story: nothing
     distinguishes it from the first explanation that came to mind.
 
-Registries declaring 1.0–1.2 keep working unenforced; bump the version when
-the entries are ready.
+Registries declaring 1.0–1.4 keep working unenforced; bump the version when
+the entries are ready. The shipped schema is 1.5.
 
 16. A **coverage claim** waits for reconciliation. For a phased audit, the
     `coverage` block's `claim_tier` may only be `[K]` once every phase row

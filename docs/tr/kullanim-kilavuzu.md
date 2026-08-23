@@ -138,8 +138,8 @@ ve bir feature gate'i birer hipotezDİR — aynı alanlar, aynı 1–8 kurallar�
     mekanizma. Rakibi olmayan mekanizma hikâyedir: onu akla ilk gelen
     açıklamadan ayıran hiçbir şey yoktur.
 
-1.0–1.2 beyan eden registry'ler uygulanmadan çalışmaya devam eder; girdiler
-hazır olduğunda sürümü yükseltin.
+1.0–1.4 beyan eden registry'ler uygulanmadan çalışmaya devam eder; girdiler
+hazır olduğunda sürümü yükseltin. Dağıtılan şema 1.5'tir.
 
 16. **Kapsam iddiası** uzlaştırmayı bekler. Fazlı denetimde `coverage`
     bloğunun `claim_tier`'ı ancak her faz satırı *ve* MERGE satırı bittiğinde

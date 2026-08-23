@@ -4,6 +4,7 @@ description: Evidence-tiered claim auditing and preregistered hypothesis registr
 license: MIT
 metadata:
   author: XINMurat
+  schema_version: "1.5"   # pinned to the schema banner by CI
 ---
 
 # Mizan — Evidence-Tiered Auditing & Preregistration Registry
