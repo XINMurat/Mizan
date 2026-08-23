@@ -106,11 +106,17 @@ jobs:
           echo "$out"
           echo "$out" | grep -q "W1:" || { echo "FAIL: W1 did not warn" >&2; exit 1; }
           echo "$out" | grep -q "W2:" || { echo "FAIL: W2 did not warn" >&2; exit 1; }
-          if python tools/mizan_validate.py --strict "$tmp"; then
+          if strict_out="$(python tools/mizan_validate.py --strict "$tmp")"; then
             echo "FAIL: --strict did not promote warnings to failures" >&2
             exit 1
           fi
-          echo "OK: warnings warn by default and fail under --strict."
+          echo "$strict_out"
+          # Same finding both times, by name. A non-zero exit alone would let
+          # --strict "pass" this step while failing on some unrelated rule,
+          # which would prove nothing about the promotion path.
+          echo "$strict_out" | grep -q "W1:" || { echo "FAIL: --strict failed, but W1 is not what it promoted" >&2; exit 1; }
+          echo "$strict_out" | grep -q "W2:" || { echo "FAIL: --strict failed, but W2 is not what it promoted" >&2; exit 1; }
+          echo "OK: warnings warn by default and fail under --strict, on W1 and W2 both times."
 
       - name: Self-test — R16 must reject a coverage claim before reconciliation
         run: |
@@ -254,11 +260,15 @@ jobs:
               decision: "propose H->K"
               honesty_annexes: []        # R5 (empty) + R7 (K without confirmation)
           YAML
-          if python tools/mizan_validate.py "$tmp"; then
-            echo "FAIL: validator passed a registry that violates R5/R7" >&2
-            exit 1
-          fi
-          echo "OK: validator correctly rejected the broken registry."
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          # By name, not by exit code: this fixture is deliberately broken in
+          # two ways at once, and a bare non-zero exit cannot tell whether
+          # both rules still fire or some third rule is covering for them.
+          echo "$out" | grep -q "R5: result R-1" || { echo "FAIL: R5 did not fire on the empty honesty_annexes" >&2; exit 1; }
+          echo "$out" | grep -q "R7: hypothesis H-1" || { echo "FAIL: R7 did not fire on the unconfirmed K promotion" >&2; exit 1; }
+          echo "$out" | grep -q "^2 violation(s) found." || { echo "FAIL: the fixture tripped a rule other than R5/R7; it no longer isolates them." >&2; exit 1; }
+          echo "OK: R5 and R7 both fired, and nothing else did."
 
       - name: Self-test — R8 must reject an arbiter-less 1.2 registry
         run: |
@@ -272,11 +282,11 @@ jobs:
               threshold: {support: ">=1", refute: "<1"}
               refutation: "x"
           YAML
-          if python tools/mizan_validate.py "$tmp"; then
-            echo "FAIL: validator passed a 1.2 registry with no arbiter block" >&2
-            exit 1
-          fi
-          echo "OK: R8 correctly rejected the arbiter-less registry."
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          echo "$out" | grep -q "R8: hypothesis H-1 has no arbiter block" || { echo "FAIL: R8 did not fire on the arbiter-less registry" >&2; exit 1; }
+          echo "$out" | grep -q "^1 violation(s) found." || { echo "FAIL: the fixture tripped a rule other than R8; it no longer isolates R8." >&2; exit 1; }
+          echo "OK: R8, and only R8, rejected the arbiter-less registry."
 
   skill-package-in-sync:
     runs-on: ubuntu-latest
