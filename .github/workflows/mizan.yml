@@ -288,6 +288,45 @@ jobs:
           echo "$out" | grep -q "^1 violation(s) found." || { echo "FAIL: the fixture tripped a rule other than R8; it no longer isolates R8." >&2; exit 1; }
           echo "OK: R8, and only R8, rejected the arbiter-less registry."
 
+      - name: The blank form carries none of the worked example's content
+        run: |
+          set -e
+          # An equality check (templates/ vs schemas/) catches drift. It cannot
+          # catch the opposite leak: someone edits the blank form while looking
+          # at the filled one and the shipped template goes out carrying a real
+          # project's names. That failure is silent -- the template still parses,
+          # still validates, and quietly hands the next user someone else's data.
+          #
+          # Borrowed from Kayforkind/reimagine-it, whose CI asserts that one
+          # example pack contains none of another's motifs. Same shape, this
+          # repo's axis: proper nouns travel, blank forms must not.
+          #
+          # Currently clean -- this is a guard, not a repair.
+          python - <<'PY'
+          import io, re, sys
+          tpl = io.open("templates/mizan-registry.yaml", encoding="utf-8").read()
+          ex = io.open("examples/mizan-registry.example.yaml", encoding="utf-8").read()
+
+          # Distinctive names from the worked example: the project/product it
+          # audits, plus any capitalised multi-word proper noun it introduces.
+          names = set()
+          for pat in (r'project: *"?([^"\n]{3,40})', r'product: *"?([^"\n]{3,40})'):
+              names |= {m.strip().strip('"') for m in re.findall(pat, ex)}
+          names = {n for n in names if len(n) > 3 and not n.startswith("<")}
+          if not names:
+              print("no project/product name in the worked example to check against")
+              sys.exit(0)
+
+          leaked = sorted(n for n in names if n in tpl)
+          if leaked:
+              print("FAIL: the blank form carries the worked example's names:", file=sys.stderr)
+              for n in leaked:
+                  print(f"  - {n!r} appears in templates/mizan-registry.yaml", file=sys.stderr)
+              print("A template is a form, not a copy of somebody's filled-in registry.", file=sys.stderr)
+              sys.exit(1)
+          print(f"ok  blank form carries none of {sorted(names)}")
+          PY
+
   skill-package-in-sync:
     runs-on: ubuntu-latest
     steps:

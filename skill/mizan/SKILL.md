@@ -1,6 +1,9 @@
 ---
 name: mizan
 description: Evidence-tiered claim auditing and preregistered hypothesis registries for documents, codebases, bugs, and features. Use whenever the user asks to evaluate, audit, review, or fact-check any claim set (AI-generated summaries, project reports, self-assessments, research writeups, year-in-reviews), wants honest rigor instead of praise, or mentions evidence tiers, preregistration, refutation conditions, HARKing, confounds, or hit rates. Also use to start or maintain hypothesis registries for experiments, decisions, or predictions. Also use for software work — auditing an existing codebase or repo (what comments, names, docs, and tests claim vs. what code does; generating evidence-tiered docs from undocumented code), tracking bug hypotheses while debugging, and gating new features or PRDs (tiering PRD claims, preregistering success metrics and kill conditions, generating alternatives from gap maps). Triggers include "değerlendir", "denetle", "önkayıt", "audit this repo", "bug hipotezi", "PRD'yi süz".
+license: MIT
+metadata:
+  author: XINMurat
 ---
 
 # Mizan — Evidence-Tiered Auditing & Preregistration Registry
