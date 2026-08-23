@@ -311,8 +311,14 @@ jobs:
               if norm(z.read(name)) != norm(open(src, "rb").read()):
                   bad.append(f"{name}: content differs from skill/{name}")
           # every source file must be packaged
-          for root, _, files in os.walk("skill/mizan"):
+          for root, dirs, files in os.walk("skill/mizan"):
+              # Build artifacts are not source. Iskele's CI went red on
+              # 2026-08-11 because a local __pycache__ reached the package;
+              # the guard it grew then belongs in all four repos, not one.
+              dirs[:] = [d for d in dirs if d != "__pycache__"]
               for f in files:
+                  if f.endswith(".pyc"):
+                      continue
                   rel = os.path.relpath(os.path.join(root, f), "skill").replace(os.sep, "/")
                   if rel not in names:
                       bad.append(f"{rel}: in source but not packaged")
