@@ -26,3 +26,7 @@ scratch/
 
 # Internal roadmap registry — kept private, not published
 mizan-product-registry.yaml
+
+# The forbidden-terms list is names that must never be published. Committing it
+# to a public repository would publish exactly what it exists to keep out.
+.forbidden-terms

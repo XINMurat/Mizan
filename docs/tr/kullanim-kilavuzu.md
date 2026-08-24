@@ -91,7 +91,7 @@ enstrümanlar güvenilir, yanlılık nerede birikiyor. Çıktı metodolojiyi
 besler — talimat ve şema da revizyona tabidir (kendi disiplinlerine
 uyarak: değişiklik gerekçeli, geçmiş silinmez).
 
-## 3. Sert kurallar (özet — şemadaki R1–R16)
+## 3. Sert kurallar (özet — şemadaki R1–R17)
 
 1. Sonuçtan önce eşik + çürütme koşulu (HARKing yapısal olarak kapalı).
 2. Baseline zorunlu; baseline'sız sonuç [K] üretemez.
@@ -147,6 +147,14 @@ hazır olduğunda sürümü yükseltin. Dağıtılan şema 1.5'tir.
     değildir; ikincisini birincisi gibi sunmak başlı başına `[Y]`'dir. Defter
     registry'nin yanında değil **içinde** durur; böylece append-only kuralı
     satırlarını da diğer girdiler gibi korur.
+
+17. **Açık bir hipotez `review_by` tarihi taşır** ve o tarih geçtiğinde bir
+    karar kaydetmek zorundadır: gerekçe ve yeni bir tarihle uzat, beklet
+    (`status: dormant`), ya da kapat. Bu, bir registry'nin en sessiz çürüme
+    biçimine karşı olan kuraldır — kimse sahte bir `[K]` yazmaz, girdiler
+    yalnızca hareket etmeyi bırakır, ve bir yıl sonra önkayıt edilip hiç test
+    edilmemiş bir hipotez yalnızca taslak olarak kalmış olandan ayırt
+    edilemez. Registry hâlâ dolu görünür. Şema 1.6'dan itibaren uygulanır.
 
 **Uyarılar (W1–W4) bloke etmez, tavsiye eder.** `two_sided` beyanı olmayan
 girdi; henüz sonucu olmayan ve eşiği/çürütmesi de bulunmayan girdi; her

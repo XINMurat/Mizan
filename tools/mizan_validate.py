@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mizan registry validator — LLM-free static enforcement of hard rules R1–R16.
+Mizan registry validator — LLM-free static enforcement of hard rules R1–R17.
 
 This is the cheap, judgment-free baseline of feature FEAT-M001 (in the
 project's roadmap registry). It does NOT evaluate the *quality* of a
@@ -40,6 +40,7 @@ Dependency: PyYAML  (pip install pyyaml)
 from __future__ import annotations
 
 import argparse
+import datetime
 import re
 import subprocess
 import sys
@@ -208,6 +209,26 @@ MSG = {
         "R12: {kind} {id} girdisinin metric'i enstrüman adlandırmıyor — sayısını üreten şeyi "
         "adlandırmamış eşik, R8'in ölçüm tarafındaki hâlidir.",
     ),
+    "R17_no_review_by": (
+        "R17: hypothesis {id} is open ({status}) with no review_by date — a preregistration with "
+        "no deadline is not a commitment, it is an intention. Set review_by when you preregister.",
+        "R17: {id} hipotezi açık ({status}) ama review_by tarihi yok — son tarihi olmayan bir "
+        "önkayıt taahhüt değil niyettir. Önkayıt anında review_by yaz.",
+    ),
+    "R17_review_overdue": (
+        "R17: hypothesis {id} passed its review_by ({due}) on {asof} and records no decision. An "
+        "untested [H] that nobody closes becomes permanent by default — decide: extend with a "
+        "reason and a new review_by, park it (status: dormant), or close it.",
+        "R17: {id} hipotezi review_by tarihini ({due}) {asof} itibarıyla geçti ve hiçbir karar "
+        "kaydetmiyor. Kimsenin kapatmadığı, test edilmemiş bir [H] varsayılan olarak kalıcılaşır — "
+        "karar ver: gerekçe ve yeni bir review_by ile uzat, beklet (status: dormant), ya da kapat.",
+    ),
+    "R17_bad_date": (
+        "R17: hypothesis {id} has review_by {due!r}, which is not an ISO date (YYYY-MM-DD). A "
+        "deadline nobody can compare against is not a deadline.",
+        "R17: {id} hipotezinin review_by değeri {due!r} — ISO tarih (YYYY-AA-GG) değil. "
+        "Karşılaştırılamayan bir son tarih, son tarih değildir.",
+    ),
     "R16_coverage_claim_unearned": (
         "R16: coverage claims tier K but {why} — \"each slice fully audited\" is not \"the target "
         "fully audited\", and presenting the second as the first is itself a [Y].",
@@ -241,8 +262,8 @@ MSG = {
         "önlüğü giymiş iltifat problemidir. Meşru olabilir, ama kaynakları kontrol etmeye değer.",
     ),
     "clean": (
-        "OK — {n} entries checked, no R1–R16 violations.",
-        "OK — {n} girdi kontrol edildi, R1–R16 ihlali yok.",
+        "OK — {n} entries checked, no R1–R17 violations.",
+        "OK — {n} girdi kontrol edildi, R1–R17 ihlali yok.",
     ),
     "found": (
         "{n} violation(s) found.",
@@ -313,8 +334,46 @@ def load_git_baseline(ref: str, path: str) -> dict | None:
         return None
 
 
+OPEN_STATUSES = {"preregistered", "testing", "planned", "running", "open", "in_progress"}
+
+
+def _check_review_deadlines(hyps: dict, lang: str, as_of: str) -> list[str]:
+    """R17 — an open entry carries a deadline, and a passed deadline forces a decision.
+
+    Two halves on purpose, because they fail for different reasons and at
+    different times:
+
+      * The STRUCTURAL half (a review_by must exist) is decided by the commit.
+        It cannot start failing on its own.
+      * The TEMPORAL half (the deadline has passed and nothing was decided) is
+        decided by the calendar. It CAN turn a green main red with no commit
+        in between -- and that is the rule working, not the build breaking. An
+        untested [H] that nobody ever closes is how a registry fills with
+        entries that look preregistered and were only ever sketched. A
+        deadline that cannot interrupt you is a reminder, not a gate.
+
+    Recording a decision clears it: a new review_by with a reason, status
+    dormant, or a closed entry.
+    """
+    errs = []
+    for hid, h in hyps.items():
+        status = _s(h.get("status")).lower()
+        if status and status not in OPEN_STATUSES:
+            continue                       # closed / refuted / dormant: settled
+        due = _s(h.get("review_by"))
+        if not due:
+            errs.append(m("R17_no_review_by", lang, id=hid, status=status or "open"))
+            continue
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", due):
+            errs.append(m("R17_bad_date", lang, id=hid, due=due))
+            continue
+        if due < as_of:                    # ISO dates compare as strings
+            errs.append(m("R17_review_overdue", lang, id=hid, due=due, asof=as_of))
+    return errs
+
+
 def check(data: dict, lang: str,
-          baseline: dict | None = None) -> tuple[list[str], list[str]]:
+          baseline: dict | None = None, as_of: str | None = None) -> tuple[list[str], list[str]]:
     """Return (violations, warnings). See the module docstring for why two."""
     errs: list[str] = []
     warns: list[str] = []
@@ -325,6 +384,17 @@ def check(data: dict, lang: str,
     bugs = [b for b in (data.get("bugs") or []) if isinstance(b, dict)]
 
     n_entries = len(hyps) + len(exps) + len(results) + len(features) + len(bugs)
+
+    # R17 — deadlines. Enforced only from schema_version 1.6, the same way R8
+    # waited for 1.2 and R9-R12 for 1.4: a registry written before the field
+    # existed migrates deliberately instead of failing on upgrade. Without
+    # this gate the rule would also fire on every entry that simply omits
+    # `status`, which is not the same as an entry that has stopped moving.
+    # --as-of pins "today" so a run is reproducible; without it the calendar
+    # decides, which is the point of the rule.
+    if _schema_at_least(data, (1, 6)):
+        errs += _check_review_deadlines(
+            hyps, lang, as_of or datetime.date.today().isoformat())
 
     # tier sanity
     for kind, coll in (("hypothesis", hyps.values()), ("feature", features), ("bug", bugs)):
@@ -730,11 +800,14 @@ def _append_only(new: dict, old: dict, lang: str) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(description="Mizan registry R1–R16 validator")
+    ap = argparse.ArgumentParser(description="Mizan registry R1–R17 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
     ap.add_argument("--lang", choices=["en", "tr"], default="en")
     ap.add_argument("--against", metavar="GITREF",
                     help="git ref to diff against for the append-only (R4) check, e.g. HEAD")
+    ap.add_argument("--as-of", metavar="YYYY-MM-DD",
+                    help="treat this as today for R17 deadlines (default: the real date). "
+                         "Pin it to make a run reproducible.")
     ap.add_argument("--strict", action="store_true",
                     help="treat W1-W4 warnings as violations (CI runs strict; local runs do not)")
     args = ap.parse_args(argv)
@@ -754,7 +827,7 @@ def main(argv: list[str]) -> int:
         return 2
 
     baseline = load_git_baseline(args.against, args.registry) if args.against else None
-    errs, warns = check(data, args.lang, baseline)
+    errs, warns = check(data, args.lang, baseline, args.as_of)
     n = getattr(check, "n_entries", 0)
 
     if args.strict and warns:

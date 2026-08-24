@@ -1,5 +1,5 @@
 # =====================================================================
-# Mizan Registry Schema v1.5  (mizan-registry.yaml)
+# Mizan Registry Schema v1.6  (mizan-registry.yaml)
 # =====================================================================
 # Machine-readable research/engineering registry aligned with the Mizan
 # methodology. Human-editable, AI-readable, git-diff friendly.
@@ -76,6 +76,30 @@
 # Tiers: K (proven) | H (plausible hypothesis) | S (speculative)
 #        R (refuted) | KKE (critical control missing) | Y (misleading)
 #
+#   R17. An OPEN hypothesis carries a `review_by` date, and once that date
+#        passes it must record a decision. This is the rule against the
+#        quietest failure mode a registry has: nobody writes a false [K], the
+#        entries simply stop moving. A hypothesis preregistered and never
+#        tested is indistinguishable, a year later, from one that was merely
+#        sketched -- and the registry still looks full.
+#
+#        Adapted from vaddermail/maestro-framework, whose learning ledger
+#        expires a candidate after three rounds or twelve months and forces a
+#        terminal decision: promote, decline with reasons, or mark dormant.
+#        Same shape here: extend with a reason and a new review_by, park it
+#        (status: dormant), or close it. Silence is not one of the options.
+#
+#        The rule has two halves that fail for different reasons:
+#          * structural -- an open entry with no review_by. Decided by the
+#            commit; it cannot start failing on its own.
+#          * temporal -- a review_by that has passed with no decision. Decided
+#            by the CALENDAR, so a green main CAN turn red with no commit in
+#            between. That is the rule working. A deadline that cannot
+#            interrupt you is a reminder, not a gate.
+#        `--as-of YYYY-MM-DD` pins "today" when a run has to be reproducible.
+#
+#        Closed, refuted and dormant entries are settled and exempt.
+#
 # SCHEMA VERSIONS:
 #   1.0 — base format.
 #   1.1 — adds an OPTIONAL result.statistics block (effect_size, n,
@@ -85,6 +109,12 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.6 — adds `review_by` on hypotheses and activates R17: an open entry
+#         carries a deadline, and a passed deadline forces a decision.
+#         MIGRATION: registries at 1.0-1.5 stay valid and unenforced. The bump
+#         costs one date per open entry. Entries already closed pay nothing,
+#         which is the point -- the cost falls exactly on the entries that
+#         have been sitting still.
 #   1.5 — adds the `coverage` block (rule R16): the Coverage Ledger of
 #         references/code-audit.md A5.1 and templates.md §5, moved out of a
 #         Markdown table and into the registry. It belongs here rather than
@@ -163,8 +193,9 @@ hypotheses:
   - id: "H-001"
     version: 1                      # bump on revision; old versions stay in history
     tier: "H"                       # current evidence tier
-    status: "preregistered"         # preregistered | testing | closed
+    status: "preregistered"         # preregistered | testing | closed | dormant
     preregistered: "2026-07-10"
+    review_by: "2026-10-10"         # MANDATORY while open (R17)
     title: "Short name"
     formal: >
       The claim as a precise, testable statement.

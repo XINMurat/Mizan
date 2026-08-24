@@ -327,6 +327,64 @@ jobs:
           print(f"ok  blank form carries none of {sorted(names)}")
           PY
 
+      - name: Self-test — R17 must force a decision on an entry that stopped moving
+        run: |
+          set -e
+          # The quietest way a registry rots: nobody writes a false [K], the
+          # entries just stop moving, and a year later a preregistered-and-
+          # never-tested hypothesis is indistinguishable from a sketch. R17 is
+          # the deadline that makes that visible. --as-of pins the date so this
+          # test does not depend on when CI happens to run.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: t, owner: t, schema_version: "1.6", methodology: m, created: "2026-01-01"}
+          hypotheses:
+            - id: H-1
+              tier: H
+              status: "preregistered"
+              preregistered: "2026-01-05"
+              formal: "a claim"
+              two_sided: "either way it teaches"
+              metric: {name: m, instrument: "eval.py"}
+              arbiter: {class: instrument, who: "eval.py", independent_of_author: true, calibration: "seed-to-seed spread on this script"}
+              threshold: {support: ">=1", refute: "<1"}
+              refutation: "x"
+              prior_art: "no known relatives"
+              cost: "1h"
+          YAML
+
+          # structural half: open, with no deadline at all
+          out="$(python tools/mizan_validate.py --as-of 2026-08-24 "$tmp" || true)"
+          echo "$out"
+          echo "$out" | grep -q "R17: hypothesis H-1 is open" || { echo "FAIL: R17 did not require a review_by on an open entry" >&2; exit 1; }
+
+          # temporal half: a deadline that has passed, with nothing decided
+          sed -i 's|    preregistered: "2026-01-05"|    preregistered: "2026-01-05"\n    review_by: "2026-03-01"|' "$tmp"
+          out="$(python tools/mizan_validate.py --as-of 2026-08-24 "$tmp" || true)"
+          echo "$out"
+          echo "$out" | grep -q "R17: hypothesis H-1 passed its review_by" || { echo "FAIL: a passed deadline with no decision did not fire R17" >&2; exit 1; }
+          echo "OK: R17 fires on a missing deadline and on a passed one."
+
+          # ...and each of the three ways out clears it.
+          for way in 'review_by: "2026-12-31"' 'status: "dormant"' 'status: "closed"'; do
+            cp "$tmp" "$tmp.try"
+            case "$way" in
+              review_by*) sed -i 's|review_by: "2026-03-01"|review_by: "2026-12-31"|' "$tmp.try" ;;
+              *)          sed -i "s|status: \"preregistered\"|${way}|" "$tmp.try" ;;
+            esac
+            out="$(python tools/mizan_validate.py --as-of 2026-08-24 "$tmp.try" || true)"
+            if echo "$out" | grep -q "R17:"; then
+              echo "FAIL: R17 still fires after: $way" >&2; echo "$out" >&2; exit 1
+            fi
+          done
+          echo "OK: extend, park and close each clear R17 — silence is the only thing that does not."
+
+          # A deadline nobody can compare against is not a deadline.
+          sed -i 's|review_by: "2026-03-01"|review_by: "March 2026"|' "$tmp"
+          out="$(python tools/mizan_validate.py --as-of 2026-08-24 "$tmp" || true)"
+          echo "$out" | grep -q "is not an ISO date" || { echo "FAIL: a non-ISO review_by was accepted" >&2; exit 1; }
+          echo "OK: R17 rejects a date it cannot compare."
+
       - name: The declared schema version agrees with the schema itself
         run: |
           set -e
@@ -411,6 +469,26 @@ jobs:
               sys.exit(1)
           print(f"ok  every rule-range claim says R1-R{top}")
           PY
+
+      - name: No real name reaches what gets published
+        env:
+          # Set this repository secret to a newline-separated list of names that
+          # must never be published: clients, internal products, private repos.
+          # Unset, the sweep reports NOT CONFIGURED and passes -- a repository
+          # that has not set this up is not a repository that failed.
+          FORBIDDEN_TERMS: ${{ secrets.FORBIDDEN_TERMS }}
+        run: |
+          set -e
+          # From vaddermail/maestro-framework, check 14. The examples here use
+          # invented names on purpose; that is the discipline, this is the net.
+          # A real name in a tracked file is published the moment it is pushed,
+          # and deleting it afterwards does not un-publish it.
+          #
+          # The tree and the package are swept separately: they are built by
+          # different code, so a clean tree does not prove a clean mizan.skill.
+          # A hit prints the file, the line and the term's index -- never the
+          # term, because this log is public.
+          python tools/leak_check.py --package mizan.skill
 
   skill-package-in-sync:
     runs-on: ubuntu-latest

@@ -100,7 +100,7 @@ methodology — the instructions and schema are themselves subject to
 revision (following their own discipline: changes are justified, history
 is never deleted).
 
-## 3. Hard rules (summary — R1–R16 in the schema)
+## 3. Hard rules (summary — R1–R17 in the schema)
 
 1. Threshold + refutation condition before any result (HARKing structurally closed).
 2. Baseline mandatory; a baseline-less result cannot produce `[K]`.
@@ -157,6 +157,14 @@ the entries are ready. The shipped schema is 1.5.
     target fully audited", and presenting the second as the first is itself
     a `[Y]`. The ledger lives in the registry rather than beside it, so the
     append-only rule protects its rows like any other entry.
+
+17. An **open hypothesis carries a `review_by` date**, and once that date
+    passes it must record a decision: extend it with a reason and a new date,
+    park it (`status: dormant`), or close it. This is the rule against the
+    quietest way a registry rots — nobody writes a false `[K]`, the entries
+    simply stop moving, and a year later a hypothesis that was preregistered
+    and never tested is indistinguishable from one that was only ever
+    sketched. The registry still looks full. Enforced from schema 1.6.
 
 **Warnings (W1–W4) advise, they do not block.** An entry with no `two_sided`
 statement; an entry with no result yet and no threshold or refutation; a
