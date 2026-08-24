@@ -1,4 +1,4 @@
-# Mizan Tooling — R1–R16 Validator
+# Mizan Tooling — R1–R17 Validator
 
 *(Türkçe aşağıda / Turkish below)*
 
@@ -6,12 +6,12 @@
 
 `mizan_validate.py` is a **judgment-free, LLM-free** static validator for
 `mizan-registry.yaml` files. It enforces only the mechanical hard rules
-R1–R16 from the schema — it does **not** evaluate whether a hypothesis is
+R1–R17 from the schema — it does **not** evaluate whether a hypothesis is
 good, only whether the registry is structurally honest.
 
 > This is the cheapest, gate-approved slice of feature **FEAT-M001** in the
 > project's private roadmap registry: "a simple pre-commit hook + schema
-> validator (LLM-free, R1–R16 static checks only)".
+> validator (LLM-free, R1–R17 static checks only)".
 > The semantic auditor (a human or a frontier model) stays separate — that
 > separation is rule **R7** itself. The rest of FEAT-M001 (agentic
 > auto-fix, CI/CD gate) remains **gated**, pending the preregistered
@@ -58,12 +58,12 @@ append-only check against `HEAD`. Set `MIZAN_LANG=tr` for Turkish output.
 
 `mizan_validate.py`, `mizan-registry.yaml` dosyaları için **yargısız,
 LLM'siz** statik bir doğrulayıcıdır. Yalnızca şemadaki mekanik sert
-kuralları (R1–R16) uygular — bir hipotezin *iyi* olup olmadığını değil,
+kuralları (R1–R17) uygular — bir hipotezin *iyi* olup olmadığını değil,
 registry'nin yapısal olarak dürüst olup olmadığını denetler.
 
 > Bu, projenin özel yol haritası registry'sindeki **FEAT-M001**
 > özelliğinin kapıdan onaylı en ucuz dilimidir:
-> "basit pre-commit hook + şema doğrulayıcı (LLM'siz, yalnız R1–R16 statik
+> "basit pre-commit hook + şema doğrulayıcı (LLM'siz, yalnız R1–R17 statik
 > kontrolü)". Anlamsal denetçi (insan veya frontier model) ayrı kalır — bu
 > ayrım zaten **R7** kuralıdır. FEAT-M001'in gerisi (ajan otomatik-düzeltme,
 > CI/CD gate) önkayıtlı başarı/kill kanıtı gelene dek **kapılı** kalır.

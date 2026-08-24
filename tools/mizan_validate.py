@@ -17,7 +17,7 @@ to write registries that do not trigger it, and that is a different skill
 from writing honest ones. Some findings are usually-wrong-but-legitimately-
 right-often-enough that stopping on them would be false precision. So:
 
-  * VIOLATIONS (R1-R15) block. They mark a registry that is incomplete in a
+  * VIOLATIONS (R1-R17) block. They mark a registry that is incomplete in a
     way the prose forbids outright.
   * WARNINGS (W1-W4) do not block by default. They mark shapes worth a
     second look. `--strict` promotes them to violations; CI runs strict,

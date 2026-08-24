@@ -195,7 +195,10 @@ hypotheses:
     tier: "H"                       # current evidence tier
     status: "preregistered"         # preregistered | testing | closed | dormant
     preregistered: "2026-07-10"
-    review_by: "2026-10-10"         # MANDATORY while open (R17)
+    review_by: "2099-01-01"         # MANDATORY while open (R17)
+    # Deliberately far out: this is a blank form, not a live registry, so
+    # its example date must never come due and redden CI on its own. In a
+    # real entry this is weeks or months away, and R17 means it.
     title: "Short name"
     formal: >
       The claim as a precise, testable statement.
