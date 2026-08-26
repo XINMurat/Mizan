@@ -1,8 +1,9 @@
 # Mizan — Kanıt-Katmanlı Denetim ve Önkayıt Registry'si
 ## Türkçe Tam Dokümantasyon (SKILL.md + Şablonlar + Kontrol Listesi)
 
-> Bu belge, `mizan.skill` paketinin içindeki üç dosyanın birebir Türkçe
-> karşılığıdır. Skill'in kendisi İngilizce çalışır (taşınabilirlik için)
+> Bu belge, `mizan.skill` paketinin içindeki dört dosyanın birebir Türkçe
+> karşılığıdır (`SKILL.md`, `references/templates.md`, `references/checklist.md`,
+> `references/recovery.md`). Skill'in kendisi İngilizce çalışır (taşınabilirlik için)
 > ama Claude ile her zaman Türkçe konuşabilirsiniz — skill, kullanıcının
 > dilinde yanıt vermeyi zaten kural olarak içerir.
 
@@ -152,7 +153,13 @@ registry'nin ilk girdileri olarak ekilir.
   kritiklik × (etki / emek).
 - Yeni kanıt kendi önceki denetim çıktınla çelişiyorsa, çelişkiyi açıkça
   kabul et ve katmanı revize et. Kendi önceki çıktıların da
-  denetlenebilir iddialardır.
+  denetlenebilir iddialardır. Düşürmenin yordamı — tarihli, eklenen, yerinde
+  düzenlenmeyen — BÖLÜM 4'te RR-11.
+- **Boş elle soru sorma.** Belirsizliği, açık seçeneği veya tıkanan adımı
+  getiren kendi önerisini ve gerekçesini de getirir: durum, seçenekler, öneri,
+  gerekçe, yanılırsa bedeli. Öneriye bir kelimeyle itiraz edilebilir; çıplak
+  soru işi, denetimi isteyen kişinin sırtına geri yükler. Karar yine onundur —
+  **öneri cevap değildir, cevapsız öneri rıza değildir.**
 - Kullanıcının dilinde yaz; katman etiketlerini tablodaki gibi koru.
 
 ## Anti-örüntüler (kibarca reddedilir)
@@ -401,3 +408,61 @@ kompakt çalışılmış örnek.
   N'i kontrol edilebilirdi, hangi kaynaklar erişilemezdi) ve denetçinin
   önceki çıktılarını da denetlenebilir iddia sayar. Sonraki kanıt daha
   önce verdiğin bir katmanla çeliştiğinde, görünür biçimde revize et.
+
+---
+
+# BÖLÜM 4 — Kurtarma Rampaları (references/recovery.md karşılığı)
+
+Diğer her bölüm yöntemin **çalışan** hâlini anlatır; bu bölüm **bozulan**
+hâlini — daha sık olan ve zararın sessizce verildiği hâl. Yumuşatılmış bir
+denetim hâlâ denetim gibi görünür; sessizce toparlanmış bir koşu ise hiç
+bozulmamış bir koşudan ayırt edilemez. Bu, `[R]` kayıtlarını silmeye yapılan
+itirazın denetçiye çevrilmiş hâlidir.
+
+Rampalar `RR-nn` diye adlandırılır: bu projede `R-nn` zaten bir validator
+kuralıdır, kurtarma rampası ise kural değildir.
+
+Her rampa aynı biçimde: **DURUM · İLK HAMLE · YASAK · ÇIKTI · DAYANAK.** Son
+satır her zaman var olan bir kurala düşer — yalnız düzyazıya yaslanan rampayı
+uzun oturum unutur.
+
+| Kod | Durum | Temel kural | Dayanak |
+|---|---|---|---|
+| **RR-00** | Kendi katmanını onaylamak üzeresin | Geçişi ilan et; hakem `author`, tavan `[KKE]` | Hakem kuralı, üretici/denetçi ayrımı |
+| **RR-01** | Söz verilen artifact üretilemedi | Düzyazıyı artifact yerine koyma; kısıtı kapsam beyanına yaz | Kontrol listesi md. 10, A5 |
+| **RR-02** | Sonuç eşiği tutturamadı | Dörtlü karar: iddia / mekanizma / **enstrüman** / önkoşul — eşiği oynatma | R4, R10, önkoşul kuralı |
+| **RR-03** | Sonuç tekrar etmiyor | Deterministikleştir; uyan koşuyu raporlama | Dürüstlük şerhleri, hakem sınıfı |
+| **RR-04** | "Düzeltme işe yaradı" ve başka şey de kıpırdadı | Sürpriz pozitif: simetrik kontrol; rakip hipotezleri silme | R15, sürpriz-pozitif kuralı |
+| **RR-05** | Karara bağlanamayan iddia | Asgari doğrulama izi; iz yoksa notlu `[H]`, konumlanamıyorsa yazılı kapanış | Denetim adımı 2 |
+| **RR-06** | Bulgu artıyor, hiçbiri çürütülmedi | Üretmeyi bırak çürütmeye başla; her şey düştüyse **kendi eşiğinden şüphelen** | W4, ton kuralları |
+| **RR-07** | Yalnızca kolay iddialar kontrol edildi | M iddiadan N'i — ve kalan **rastgele mi sistematik mi** | A5, R16 |
+| **RR-08** | İddia seti iş ortasında değişti | Hedefi sürümle, yeniden türet; eskiyi yerinde düzenleme | R4, katman kayması |
+| **RR-09** | Oturum bulanıklaştı | Registry hafızadır; faz sınırı temiz kesittir | Bağlam ekonomisi, R16, R17 |
+| **RR-10** | Belirsizlik / artifact'ler çelişiyor | Varsayma, boş elle sorma; çelişkinin kendisi **bulgudur** | İddia-kanıt sıçraması, katman kayması |
+| **RR-11** | Kendi verdiğin katmanı düşürmek | Tarihli düşürme bloğu ekle; eskiyi silme, neyin ona dayandığını yaz | R4, ton kuralı |
+| **RR-12** | Eşik tutmadı, optimize etme dürtüsü | Tek değişiklik, **aynı** enstrüman; önce hakeme bak | R10, hakem kuralı |
+
+**Model hata sınıfları.** Rampalar çare, bunlar hastalık: uydurma · sessiz
+boşluk doldurma · bulgu enflasyonu · **eşik tiyatrosu** (hakemi yazar olan ya da
+hiç olmayan bir iddiaya kesin görünüşlü sayı iliştirmek — *rigor cosplay*) ·
+eşik yumuşatma · kendi çıktısını onaylama · iyimser raporlama · premise esareti
+· kolay-iddia yanlılığı · bağlam çürümesi. Model bunları seçmez; hem üretip hem
+yargılayan bir tarafın işe yarar görünme baskısı altındaki davranışıdır.
+
+**Kapanış çizelgesi.** Bir denetim veya registry döngüsü kapanınca doldurulur.
+Amaç denetimi notlamak değil, **yöntemin nereden sızdırdığını** bulmak:
+
+| Ölçüt | Değer | Okuma |
+|---|---|---|
+| Atomize / kontrol edilebilir iddia | / | Kapsam oranı, çekince değil sayı olarak. Düşükse bu belge hakkında gerçek bir sonuçtur: doğrulanamayacak biçimde yazılmış. |
+| Aday / kayda giren | / | RR-05'ten kaç izlenim geçti. 1.0'a yakınsa hiçbir şey elenmemiş — bulgu enflasyonu. |
+| Çürütülen (`[R]`) | | Test edilen kayıtlara oran. **Sıfır uyarıdır, başarı değil:** hiç yanılmamış registry sınanmamış registry'dir. |
+| Kapanışta açık `[KKE]` | | Hiç koşmamış kontroller. Denetimin **bilmediği** şey, sessizlik değil sayı olarak. |
+| Hakem dağılımı | | `runtime` / `instrument` / `third_party` / `author` / `none`. Son ikisi ağırsa titizlik çoğunlukla biçimdir. |
+| Hedef sürümü | | Denetlenen iddia seti kaç kez kıpırdadı (RR-08). Yüksekse yazar hâlâ ne iddia ettiğine karar veriyor. |
+| Kullanılan rampalar | | Hangi `RR-nn`. Hiçbiri kullanılmadıysa ya kusursuzdu ya fark edilmedi. |
+| **Kaçan** | | Sonradan bulunan, bu denetimin kapsamındaki hata. Dışarıdan gelen ve içeriden manipüle edilemeyen tek ölçü. |
+
+Çizelge de bir iddiadır: denetimi üreten koşu doldurduysa hakem sınıfı `author`
+olur ve kalıcı bir `[KKE]` taşır. Tablonun biçimi aksini ima etmesin diye bunu
+yaz.
