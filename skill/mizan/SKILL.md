@@ -300,7 +300,15 @@ few exchanges:
   criticality × (impact / effort).
 - When new evidence contradicts your own earlier audit output, acknowledge
   the contradiction explicitly and revise the tier. Your prior outputs are
-  auditable claims too.
+  auditable claims too. The procedure for the demotion — dated, appended,
+  never edited in place — is `references/recovery.md` RR-11.
+- **Never bring a question empty-handed.** Whoever raises an ambiguity, an
+  open option or a blocked step brings their recommendation and its
+  reason with it: situation, options, recommendation, why, and what it
+  costs if the recommendation is wrong. A recommendation can be disagreed
+  with in one word; a bare question hands the work back to the person who
+  asked for the audit. The decision stays theirs — a recommendation is not
+  an answer, and an unanswered recommendation is not consent.
 - Write in the user's language; keep the tier tags bilingual as in the
   table.
 
@@ -335,8 +343,8 @@ from the outside.
   (checklist item 10) committed by the auditor.
 - **Load references on demand, not upfront.** `checklist.md` before the
   first audit, `code-audit.md` for software modes, `templates.md` when
-  writing entries. Reading everything at the start spends the context
-  the audit itself needs.
+  writing entries, `recovery.md` the moment a run stops behaving. Reading
+  everything at the start spends the context the audit itself needs.
 - **The scripted part is the part that travels.** `mizan_validate.py`
   enforces R1–R17 without a model, so it behaves identically in every
   host. Whatever is enforced only by this prose is negotiable by the
@@ -360,6 +368,11 @@ from the outside.
 
 ## References
 
+- `references/recovery.md` — the recovery ramps (`RR-00`…`RR-12`) for when
+  the audit itself goes wrong: a promised artifact that did not run, a
+  claim that will not settle, a target that moved mid-audit, a tier you
+  have to demote. Also the model failure classes they exist for and the
+  closing process scorecard. Read when a run stops behaving.
 - `references/templates.md` — Registry Entry template, Audit Report
   template, result-block format (TR + EN). Read when producing either
   deliverable.
