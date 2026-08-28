@@ -1,5 +1,5 @@
 # =====================================================================
-# Mizan Registry Schema v1.6  (mizan-registry.yaml)
+# Mizan Registry Schema v1.7  (mizan-registry.yaml)
 # =====================================================================
 # Machine-readable research/engineering registry aligned with the Mizan
 # methodology. Human-editable, AI-readable, git-diff friendly.
@@ -180,7 +180,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.5"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 adds coverage
+  schema_version: "1.7"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -195,6 +195,26 @@ hypotheses:
     tier: "H"                       # current evidence tier
     status: "preregistered"         # preregistered | testing | closed | dormant
     preregistered: "2026-07-10"
+    # R18 (1.7+) — what the preregistration locked. Required on any entry that
+    # CLAIMS preregistration; the date above IS that claim.
+    data_status: "not_collected"    # not_collected | exists_unseen |
+                                    # exists_partially_seen | exists_seen
+                                    # The last two cannot be preregistered: a
+                                    # hypothesis written against data you have
+                                    # already seen is postdiction. Recording
+                                    # that honestly is the right move, not a
+                                    # failing grade -- what fails is claiming
+                                    # preregistration over it.
+    stopping_rule: >
+      When collection ends: the n, or the condition. Fill this in before the
+      first measurement -- without it, "collect until it crosses" is available
+      and the threshold below decides nothing.
+    exclusion_rule: >
+      Which observations get dropped and by what rule, decided before seeing
+      them. "None" is a valid answer; leaving it blank is not.
+    missing_data: >
+      Optional: what a missing measurement counts as, if the instrument can
+      fail to return.
     review_by: "2099-01-01"         # MANDATORY while open (R17)
     # Deliberately far out: this is a blank form, not a live registry, so
     # its example date must never come due and redden CI on its own. In a
