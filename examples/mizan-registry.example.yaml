@@ -16,7 +16,7 @@
 registry:
   project: "ExampleLM"
   owner: "your-org"
-  schema_version: "1.4"
+  schema_version: "1.7"
   methodology: "mizan-v2.2"
   created: "2026-07-11"
   notes: >
@@ -35,6 +35,19 @@ hypotheses:
       Adding an input-dependent phase term to the projection lowers
       validation perplexity relative to a parameter-matched baseline.
     origin: "user intuition + prior SpectralLM note"
+    # R18 -- what the preregistration actually locked. data_status is the
+    # load-bearing one: this entry claims a date, and a date means nothing if
+    # the numbers were already on screen when it was written.
+    data_status: "not_collected"
+    stopping_rule: >
+      Three seeds per arm, fixed in advance. No "one more seed" -- the spread
+      across those three is what the support bar was calibrated against.
+    exclusion_rule: >
+      None. Every completed run counts, including diverged ones; a diverged run
+      is a result about the method, not a data-quality problem.
+    missing_data: >
+      A crashed run is re-launched once with the same seed; a second crash is
+      recorded as "precondition failed", which is its own outcome and not [R].
     metric:
       name: "perplexity_improvement"
       instrument: "eval/ppl.py on WikiText-2 val"

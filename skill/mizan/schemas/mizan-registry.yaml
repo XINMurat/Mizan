@@ -1,5 +1,5 @@
 # =====================================================================
-# Mizan Registry Schema v1.6  (mizan-registry.yaml)
+# Mizan Registry Schema v1.7  (mizan-registry.yaml)
 # =====================================================================
 # Machine-readable research/engineering registry aligned with the Mizan
 # methodology. Human-editable, AI-readable, git-diff friendly.
@@ -109,6 +109,17 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.7 — adds `data_status`, `stopping_rule` and `exclusion_rule` on
+#         hypotheses and activates R18: a preregistration that does not say
+#         what it locked, locked nothing. `data_status` is the load-bearing
+#         one -- registration against data the author has already seen is
+#         postdiction, and the tag `[önkayıt]` is the whole claim being made.
+#         The three fields come from the open-science preregistration
+#         templates, which ask them before anything else for the same reason.
+#         MIGRATION: registries at 1.0-1.6 stay valid and unenforced. The cost
+#         falls only on entries that CLAIM preregistration; an entry that never
+#         made the claim pays nothing, and one that made it falsely was always
+#         the problem.
 #   1.6 — adds `review_by` on hypotheses and activates R17: an open entry
 #         carries a deadline, and a passed deadline forces a decision.
 #         MIGRATION: registries at 1.0-1.5 stay valid and unenforced. The bump
@@ -180,7 +191,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.5"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 adds coverage
+  schema_version: "1.7"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -195,6 +206,23 @@ hypotheses:
     tier: "H"                       # current evidence tier
     status: "preregistered"         # preregistered | testing | closed | dormant
     preregistered: "2026-07-10"
+    # R18 (schema 1.7+) — what the preregistration actually locked. Required on
+    # any entry that CLAIMS preregistration; the date above is that claim.
+    data_status: "not_collected"    # not_collected | exists_unseen |
+                                    # exists_partially_seen | exists_seen
+                                    # The last two cannot be preregistered:
+                                    # writing a hypothesis against data you have
+                                    # seen is postdiction, and saying so is the
+                                    # honest move, not a failing grade.
+    stopping_rule: >
+      n = 3 seeds per arm, fixed before the first run. No "one more seed":
+      the spread across those three is what the support bar is calibrated on.
+    exclusion_rule: >
+      None. Every completed run counts, diverged ones included — a divergence
+      is a result about the method, not a data-quality problem.
+    missing_data: >
+      A crashed run is relaunched once with the same seed; a second crash is
+      recorded as "precondition failed", which is its own outcome, not [R].
     review_by: "2099-01-01"         # MANDATORY while open (R17)
     # Deliberately far out: this is a blank form, not a live registry, so
     # its example date must never come due and redden CI on its own. In a

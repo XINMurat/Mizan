@@ -52,6 +52,22 @@ prior result, external suggestion. One or two lines.)*
 - **Önkayıtlı öngörü / Preregistered prediction:** (optional but valuable)
   what the author expects, written before the result. A wrong prediction
   honestly recorded is a feature.
+- **Veri durumu / Data status:** `not_collected` / `exists_unseen` /
+  `exists_partially_seen` / `exists_seen`. **Ask this first.** Registration is
+  not preregistration if the data already exists and you have looked at it —
+  that is postdiction, and the difference is the entire claim the tag makes. An
+  honest `exists_seen` entry is worth keeping; it just cannot call itself
+  preregistered. (R18)
+- **Durdurma kuralı / Stopping rule:** the n, or the condition under which
+  collection ends — written now. Without one, "collect until it crosses" is
+  always available and the threshold above stops deciding anything. (R18)
+- **Dışlama kuralı / Exclusion rule:** which observations get dropped and by
+  what rule, decided before seeing them. `none` is a valid answer; silence is
+  not. Dropping a point under a rule invented afterwards is HARKing wearing a
+  data-cleaning hat. (R18)
+- **Eksik veri / Missing data:** (when the measurement can fail to return) what
+  a missing value counts as. Deciding this after the gaps appear is the same
+  move as the exclusion rule, one step later.
 - **Prior art:** known relatives; where the originality claim lives.
 - **Maliyet / Cost:** rough effort so priorities can be ordered.
 - **DURUM / STATUS:** ⏳ preregistered, not run.

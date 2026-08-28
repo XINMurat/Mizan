@@ -91,7 +91,7 @@ enstrümanlar güvenilir, yanlılık nerede birikiyor. Çıktı metodolojiyi
 besler — talimat ve şema da revizyona tabidir (kendi disiplinlerine
 uyarak: değişiklik gerekçeli, geçmiş silinmez).
 
-## 3. Sert kurallar (özet — şemadaki R1–R17)
+## 3. Sert kurallar (özet — şemadaki R1–R18)
 
 1. Sonuçtan önce eşik + çürütme koşulu (HARKing yapısal olarak kapalı).
 2. Baseline zorunlu; baseline'sız sonuç [K] üretemez.

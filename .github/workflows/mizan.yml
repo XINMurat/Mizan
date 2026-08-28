@@ -385,6 +385,89 @@ jobs:
           echo "$out" | grep -q "is not an ISO date" || { echo "FAIL: a non-ISO review_by was accepted" >&2; exit 1; }
           echo "OK: R17 rejects a date it cannot compare."
 
+      - name: Self-test — R18 must reject an incomplete preregistration
+        run: |
+          set -e
+          # A preregistration that does not say what it locked, locked nothing.
+          # The load-bearing field is data_status: a date in `preregistered`
+          # means nothing if the numbers were already on screen when it was
+          # written, and that date is the whole claim the entry makes.
+          #
+          # The first draft of this rule read only a BOOLEAN `preregistered`
+          # and so never fired on the worked example, which writes a date --
+          # the rule was blind to exactly the entries it exists for. That is
+          # why this runs against the shipped example rather than a fixture
+          # written to match the code.
+          python - <<'PY'
+          import io, subprocess, sys
+
+          SRC = "examples/mizan-registry.example.yaml"
+          base = io.open(SRC, encoding="utf-8").read()
+
+          def drop_line(text, needle):
+              keep = [l for l in text.splitlines(keepends=True) if needle not in l]
+              assert len(keep) < len(text.splitlines()), "fixture line not found: " + needle
+              return "".join(keep)
+
+          def run(text, name):
+              p = "/tmp/r18-" + name + ".yaml"
+              io.open(p, "w", encoding="utf-8").write(text)
+              r = subprocess.run([sys.executable, "tools/mizan_validate.py", p],
+                                 capture_output=True, text=True)
+              return r.returncode, r.stdout + r.stderr
+
+          code, out = run(base, "clean")
+          if code != 0:
+              print("FAIL: the shipped example does not pass R18")
+              print(out)
+              sys.exit(1)
+          print("ok  the worked example passes")
+
+          cases = {
+              "no-data-status": (
+                  drop_line(base, 'data_status:'),
+                  "does not say whether the data already exists"),
+              "seen-data": (
+                  base.replace('data_status: "not_collected"',
+                               'data_status: "exists_seen"'),
+                  "cannot be preregistered"),
+              "bad-value": (
+                  base.replace('data_status: "not_collected"',
+                               'data_status: "maybe"'),
+                  "which is not one of"),
+              "no-stopping-rule": (
+                  base.replace("    stopping_rule: >", "    _was_stopping: >"),
+                  "no stopping rule"),
+              "no-exclusion-rule": (
+                  base.replace("    exclusion_rule: >", "    _was_exclusion: >"),
+                  "names no exclusion rule"),
+          }
+          for name, pair in cases.items():
+              text, expect = pair
+              code, out = run(text, name)
+              if code == 0:
+                  print("FAIL: R18 passed an incomplete preregistration: " + name)
+                  sys.exit(1)
+              if expect not in out:
+                  print("FAIL: " + name + " failed, but not for the stated reason.")
+                  print("expected to see: " + expect)
+                  print(out)
+                  sys.exit(1)
+              print("ok  fires on: " + name)
+
+          # The migration gate: the same broken registry at 1.6 must PASS, the
+          # way R17 waited for 1.6 and R8 for 1.2. A rule that fires on every
+          # registry written before it existed is a rule people delete.
+          old = drop_line(base.replace('schema_version: "1.7"',
+                                       'schema_version: "1.6"'), 'data_status:')
+          code, out = run(old, "migration")
+          if code != 0:
+              print("FAIL: R18 fired on a 1.6 registry; the migration gate is not holding")
+              print(out)
+              sys.exit(1)
+          print("ok  R18 waits for schema 1.7, the way R17 waited for 1.6")
+          PY
+
       - name: The declared schema version agrees with the schema itself
         run: |
           set -e

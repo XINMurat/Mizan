@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mizan registry validator — LLM-free static enforcement of hard rules R1–R17.
+Mizan registry validator — LLM-free static enforcement of hard rules R1–R18.
 
 This is the cheap, judgment-free baseline of feature FEAT-M001 (in the
 project's roadmap registry). It does NOT evaluate the *quality* of a
@@ -17,7 +17,7 @@ to write registries that do not trigger it, and that is a different skill
 from writing honest ones. Some findings are usually-wrong-but-legitimately-
 right-often-enough that stopping on them would be false precision. So:
 
-  * VIOLATIONS (R1-R17) block. They mark a registry that is incomplete in a
+  * VIOLATIONS (R1-R18) block. They mark a registry that is incomplete in a
     way the prose forbids outright.
   * WARNINGS (W1-W4) do not block by default. They mark shapes worth a
     second look. `--strict` promotes them to violations; CI runs strict,
@@ -209,6 +209,46 @@ MSG = {
         "R12: {kind} {id} girdisinin metric'i enstrüman adlandırmıyor — sayısını üreten şeyi "
         "adlandırmamış eşik, R8'in ölçüm tarafındaki hâlidir.",
     ),
+    "R18_no_data_status": (
+        "R18: hypothesis {id} is marked preregistered but does not say whether the data already "
+        "exists. Registration is not preregistration if the data exists and you have seen it -- "
+        "that is postdiction, and the difference is the whole claim. Add data_status: "
+        "not_collected / exists_unseen / exists_partially_seen / exists_seen.",
+        "R18: {id} hipotezi önkayıtlı işaretli ama verinin zaten var olup olmadığını söylemiyor. "
+        "Veri varsa ve görüldüyse bu önkayıt değil sonradan-tahmindir; iddianın tamamı bu farkta "
+        "durur. data_status ekle: not_collected / exists_unseen / exists_partially_seen / "
+        "exists_seen.",
+    ),
+    "R18_bad_data_status": (
+        "R18: hypothesis {id} has data_status '{value}', which is not one of "
+        "not_collected / exists_unseen / exists_partially_seen / exists_seen.",
+        "R18: {id} hipotezinin data_status değeri '{value}' — şu dördünden biri olmalı: "
+        "not_collected / exists_unseen / exists_partially_seen / exists_seen.",
+    ),
+    "R18_seen_data_preregistered": (
+        "R18: hypothesis {id} declares data_status '{value}' AND claims to be preregistered. "
+        "A hypothesis written against data its author has already seen cannot be preregistered; "
+        "record it honestly as post-hoc and drop the preregistration claim.",
+        "R18: {id} hipotezi data_status '{value}' diyor ve aynı anda önkayıtlı olduğunu iddia "
+        "ediyor. Yazarının gördüğü veriye karşı yazılmış bir hipotez önkayıtlı olamaz; dürüstçe "
+        "post-hoc olarak kaydet ve önkayıt iddiasını düşür.",
+    ),
+    "R18_no_stopping_rule": (
+        "R18: hypothesis {id} is preregistered with a threshold but no stopping rule. Without one, "
+        "'collect until it crosses' is available and the threshold stops deciding anything. State "
+        "stopping_rule: the n, or the condition under which collection ends.",
+        "R18: {id} hipotezi eşikli ve önkayıtlı ama durdurma kuralı yok. O olmadan 'geçene kadar "
+        "topla' mümkündür ve eşik hiçbir şeye karar vermez. stopping_rule yaz: n, ya da toplamanın "
+        "biteceği koşul.",
+    ),
+    "R18_no_exclusion_rule": (
+        "R18: hypothesis {id} is preregistered with a threshold but names no exclusion rule. "
+        "Dropping a point under a rule invented after seeing it is HARKing wearing a data-cleaning "
+        "hat. Write exclusion_rule now -- 'none' is a valid answer, silence is not.",
+        "R18: {id} hipotezi eşikli ve önkayıtlı ama dışlama kuralı yok. Bir noktayı, gördükten "
+        "sonra icat edilmiş bir kuralla atmak, veri temizliği kılığında HARKing'dir. exclusion_rule "
+        "şimdi yazılır — 'yok' geçerli bir cevaptır, sessizlik değildir.",
+    ),
     "R17_no_review_by": (
         "R17: hypothesis {id} is open ({status}) with no review_by date — a preregistration with "
         "no deadline is not a commitment, it is an intention. Set review_by when you preregister.",
@@ -262,8 +302,8 @@ MSG = {
         "önlüğü giymiş iltifat problemidir. Meşru olabilir, ama kaynakları kontrol etmeye değer.",
     ),
     "clean": (
-        "OK — {n} entries checked, no R1–R17 violations.",
-        "OK — {n} girdi kontrol edildi, R1–R17 ihlali yok.",
+        "OK — {n} entries checked, no R1–R18 violations.",
+        "OK — {n} girdi kontrol edildi, R1–R18 ihlali yok.",
     ),
     "found": (
         "{n} violation(s) found.",
@@ -337,6 +377,66 @@ def load_git_baseline(ref: str, path: str) -> dict | None:
 OPEN_STATUSES = {"preregistered", "testing", "planned", "running", "open", "in_progress"}
 
 
+DATA_STATUS = ("not_collected", "exists_unseen", "exists_partially_seen",
+               "exists_seen")
+# Seeing the data is what separates a prediction from a description of what
+# already happened. OSF asks this first for the same reason.
+SEEN_STATUS = ("exists_partially_seen", "exists_seen")
+
+
+def _is_preregistered(h):
+    """Does this entry CLAIM to be preregistered?
+
+    The claim can live in an explicit boolean or in the prose tag the template
+    uses. Both are read, because the rule has to bite on the entry as written
+    rather than on the one field a careful author remembered to set.
+    """
+    pre = h.get("preregistered")
+    if isinstance(pre, bool):
+        return pre
+    # The canonical field holds a DATE, not a boolean -- `preregistered:
+    # "2026-07-11"` is how the worked example writes the claim, and an earlier
+    # draft of this rule read only the boolean and so never fired on the very
+    # entries it was written for. A truthy value here is the claim.
+    if pre not in (None, "", False):
+        return True
+    blob = " ".join(_s(h.get(k)) for k in ("id", "name", "status", "origin", "note"))
+    return "önkayıt" in blob.lower() or "prereg" in blob.lower()
+
+
+def _check_preregistration(hyps, lang):
+    """R18 — a preregistration that does not say what it locked, locked nothing.
+
+    Three fields, each closing a door that the rest of this file already argues
+    should be shut: data_status (is this a prediction or a description?),
+    stopping_rule (can you collect until it crosses?), exclusion_rule (can you
+    drop the inconvenient point afterwards?). Prose said all three long before
+    anything checked them.
+    """
+    errs = []
+    for hid, h in hyps.items():
+        if not _is_preregistered(h):
+            continue
+
+        ds = _s(h.get("data_status"))
+        if not ds:
+            errs.append(m("R18_no_data_status", lang, id=hid))
+        elif ds not in DATA_STATUS:
+            errs.append(m("R18_bad_data_status", lang, id=hid, value=ds))
+        elif ds in SEEN_STATUS:
+            errs.append(m("R18_seen_data_preregistered", lang, id=hid, value=ds))
+
+        # The stopping and exclusion rules only bite where a threshold exists:
+        # an entry with no numeric decision rule has nothing to stop or clean
+        # around, and firing there would train people to write "none" twice.
+        if h.get("threshold"):
+            if not _s(h.get("stopping_rule")):
+                errs.append(m("R18_no_stopping_rule", lang, id=hid))
+            if not _s(h.get("exclusion_rule")):
+                errs.append(m("R18_no_exclusion_rule", lang, id=hid))
+    return errs
+
+
 def _check_review_deadlines(hyps: dict, lang: str, as_of: str) -> list[str]:
     """R17 — an open entry carries a deadline, and a passed deadline forces a decision.
 
@@ -395,6 +495,12 @@ def check(data: dict, lang: str,
     if _schema_at_least(data, (1, 6)):
         errs += _check_review_deadlines(
             hyps, lang, as_of or datetime.date.today().isoformat())
+
+    # R18 — preregistration completeness, gated at 1.7 the way R17 waited for
+    # 1.6. An older registry migrates on purpose rather than failing the day
+    # someone upgrades the skill.
+    if _schema_at_least(data, (1, 7)):
+        errs += _check_preregistration(hyps, lang)
 
     # tier sanity
     for kind, coll in (("hypothesis", hyps.values()), ("feature", features), ("bug", bugs)):
@@ -800,7 +906,7 @@ def _append_only(new: dict, old: dict, lang: str) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(description="Mizan registry R1–R17 validator")
+    ap = argparse.ArgumentParser(description="Mizan registry R1–R18 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
     ap.add_argument("--lang", choices=["en", "tr"], default="en")
     ap.add_argument("--against", metavar="GITREF",

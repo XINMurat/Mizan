@@ -117,7 +117,14 @@ registry'nin ilk girdileri olarak ekilir.
 1. **Her hipoteze bir girdi** (Bölüm 2'deki şablonla). Girdi test
    koşulmadan ÖNCE yazılır.
 2. **Eşikleri sayısal kilitle.** "İyileştirir" eşik değildir;
-   "ΔPPL ≤ −%3" veya "10 kaynakta 1'den az karşı-örnek" eşiktir.
+   "ΔPPL ≤ −%3" veya "10 kaynakta 1'den az karşı-örnek" eşiktir. Eşik tek
+   başına, kararlı bir yazarla temasa dayanmaz; yanında üç alan daha kilitlenir
+   ve **R18** bunları denetler: **veri durumu** (veri zaten var mı, gördün mü —
+   görülmüş veriye karşı yazılan kayıt önkayıt değil sonradan-tahmindir),
+   **durdurma kuralı** (n ya da toplamayı bitiren koşul; olmadan "geçene kadar
+   topla" her zaman mümkündür) ve **dışlama kuralı** (hangi gözlemler düşer,
+   görülmeden önce kararlaştırılmış; `yok` cevaptır, sessizlik değil). Açık
+   bilim önkayıt şablonları bu üçünü her şeyden önce sorar.
 3. **Önce çürütme koşulunu yaz** ve *iki-yönlü bilgilendiricilik*
    şartını kontrol et: her iki olası sonuç da bir şey öğretmeli. Yalnız
    başarı bilgilendiriciyse testi yeniden tasarla.
@@ -189,6 +196,20 @@ dış öneri. Bir-iki satır.)*
 - **Formel:** iddianın kesin, test edilebilir ifadesi.
 - **Metrik:** ne ölçülecek ve hangi enstrümanla (dosya, script,
   sorgu, veri kaynağı).
+- **Veri durumu:** `not_collected` / `exists_unseen` / `exists_partially_seen`
+  / `exists_seen`. **Önce bunu sor.** Veri zaten varsa ve ona baktıysan, kayıt
+  önkayıt değildir — sonradan-tahmindir, ve `[önkayıt]` etiketinin iddiası tam
+  olarak budur. Dürüst bir `exists_seen` kaydı değerlidir; yalnızca kendine
+  önkayıtlı diyemez. (R18)
+- **Durdurma kuralı:** n, ya da toplamanın biteceği koşul — şimdi yazılır.
+  Olmadan "geçene kadar topla" hep mümkündür ve üstteki eşik hiçbir şeye karar
+  vermez. (R18)
+- **Dışlama kuralı:** hangi gözlemler hangi kuralla düşer, **görülmeden önce**
+  kararlaştırılmış. `yok` geçerli cevaptır; sessizlik değildir. Sonradan icat
+  edilmiş bir kuralla nokta atmak, veri temizliği kılığında HARKing'dir. (R18)
+- **Eksik veri:** (ölçüm dönmeyebiliyorsa) eksik değer ne sayılır. Bunu
+  boşluklar ortaya çıktıktan sonra kararlaştırmak, dışlama kuralının aynı
+  hamlesidir, bir adım sonra.
 - **Eşik:** sayısal karar kuralı, ŞİMDİ kilitlenir.
   "X ≥ N → destekli; X < M → çürüdü; arası → yetersiz-güçlü, bir tekrar."
 - **Çürütme:** hangi sonuç hipotezi öldürür. İki-yönlü bilgilendiricilik
