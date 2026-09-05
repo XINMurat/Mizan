@@ -91,7 +91,7 @@ enstrümanlar güvenilir, yanlılık nerede birikiyor. Çıktı metodolojiyi
 besler — talimat ve şema da revizyona tabidir (kendi disiplinlerine
 uyarak: değişiklik gerekçeli, geçmiş silinmez).
 
-## 3. Sert kurallar (özet — şemadaki R1–R18)
+## 3. Sert kurallar (özet — şemadaki R1–R21)
 
 1. Sonuçtan önce eşik + çürütme koşulu (HARKing yapısal olarak kapalı).
 2. Baseline zorunlu; baseline'sız sonuç [K] üretemez.
@@ -139,7 +139,7 @@ ve bir feature gate'i birer hipotezDİR — aynı alanlar, aynı 1–8 kurallar�
     açıklamadan ayıran hiçbir şey yoktur.
 
 1.0–1.4 beyan eden registry'ler uygulanmadan çalışmaya devam eder; girdiler
-hazır olduğunda sürümü yükseltin. Dağıtılan şema 1.5'tir.
+hazır olduğunda sürümü yükseltin. Dağıtılan şema 1.8'dir.
 
 16. **Kapsam iddiası** uzlaştırmayı bekler. Fazlı denetimde `coverage`
     bloğunun `claim_tier`'ı ancak her faz satırı *ve* MERGE satırı bittiğinde
@@ -156,9 +156,48 @@ hazır olduğunda sürümü yükseltin. Dağıtılan şema 1.5'tir.
     edilmemiş bir hipotez yalnızca taslak olarak kalmış olandan ayırt
     edilemez. Registry hâlâ dolu görünür. Şema 1.6'dan itibaren uygulanır.
 
-**Uyarılar (W1–W4) bloke etmez, tavsiye eder.** `two_sided` beyanı olmayan
+18. **Önkayıt ne kilitlediğini söyler.** `[önkayıt]` etiketi taşıyan girdi üç
+    şeyi yazar: **veri durumu** (veri henüz yok / var ama görülmedi / görüldü —
+    son ikisi önkayıt edilemez, görülmüş veriye hipotez yazmak *postdiction*'dır
+    ve bunu dürüstçe söylemek doğru hamledir), **durdurma kuralı** (toplama ne
+    zaman biter) ve **dışlama kuralı** (hangi gözlem, hangi kuralla düşer —
+    "hiçbiri" geçerli cevaptır, boş bırakmak değil). Ne kilitlediğini söylemeyen
+    önkayıt hiçbir şey kilitlememiştir. Şema 1.7'den itibaren.
+
+Şema 1.8 üç kural daha ekliyor. Diğer her kural birinin **yazdığı bir
+cümleden** başlar; bu üçünün girdisi metin değildir, bu yüzden bir alan onları
+istemedikçe geriye hiçbir iz bırakmazlar — koşulmalarıyla atlanmaları ayırt
+edilemez:
+
+19. **Alan probu kaydedilir** (`probes.domain`): her senaryo bir durum ve bir
+    sonuç taşır. Tier-K bir kapsam iddiası bu bloğu **şart koşar** — en az bir
+    senaryo, hiçbiri `unchecked` değil, `written_before_work: true`, ve
+    `supplied_by` `auditor`/`none` dışında. Bu, R8'in hakem mantığının bir üst
+    seviyesi: denetçinin kendi uydurduğu senaryo listesi, kendi kendini
+    yargılayan eşikle aynı şeydir. Boşluk bulunduktan sonra yazılan senaryo ise
+    HARKing'dir ve kapsam hakkında hiçbir şey kanıtlamaz.
+20. **Bileşim pası kaydedilir** (`probes.conjunction`): tier-K kapsam iddiası
+    en az bir çift ister ve hiçbiri `unchecked` kalamaz; her çift bir özelliği
+    ve dokunabildiği **mevcut garantiyi** adlandırır. Atomize etmek, yalnızca
+    bileşimde var olan kusuru yok eder; yeniden birleştirme pası kaydedilmezse
+    hiç koşulmamış sayılır. Yeşil test paketi karşı kanıt değildir.
+21. **Her kaçak bir sınıf adlandırır** (`probes.escaped`): ya `class_ref` —
+    ateşlemesi gereken kontrol — ya da `class_new`, bu kaçak sayesinde artık
+    var olan prob; ve `in_scope` cevaplanır. Puan kartı kaçakları zaten
+    sayıyordu ve o sayıyı "denetimin içinden oynanamayacak tek ölçü" diye
+    adlandırıyordu. Sayı, döngü değildir: kaçak bir sınıfa dönüşene kadar bir
+    sonrakini hiçbir şey yakalamaz. Rampası **RR-13**'tür.
+
+1.0–1.7 beyan eden registry'ler yükseltmede kırılmaz: yapısal yarı yalnızca
+yazdığın prob satırlarına bakar, kapı yarısı yalnızca `[K]` **iddia eden** bir
+`coverage` bloğunda ateşlenir.
+
+**Uyarılar (W1–W5) bloke etmez, tavsiye eder.** `two_sided` beyanı olmayan
 girdi; henüz sonucu olmayan ve eşiği/çürütmesi de bulunmayan girdi; her
-etiketli girdisi `[K]` olan registry. Her birinin meşru istisnası var — taslak
+etiketli girdisi `[K]` olan registry; MERGE satırı olmayan kapsam defteri; ve
+`coverage` bloğu olup alan ya da bileşim probu bulunmayan registry — tier-K
+iddiasının altında R19/R20 ateşlenmez, ve bu ikisi testlerin göremediğini bulan
+paslar olduğu için sessizce atlanması da en kolay olanlardır. Her birinin meşru istisnası var — taslak
 girdi, tek girdili registry — bu yüzden hiçbiri kural değil. `--strict` onları
 hataya yükseltir; CI, disiplini **modellemekle yükümlü** dosyalarda (şema,
 şablon, örnekler) strict, diğerlerinde tavsiye kipinde koşar; böylece henüz

@@ -100,7 +100,7 @@ methodology — the instructions and schema are themselves subject to
 revision (following their own discipline: changes are justified, history
 is never deleted).
 
-## 3. Hard rules (summary — R1–R18 in the schema)
+## 3. Hard rules (summary — R1–R21 in the schema)
 
 1. Threshold + refutation condition before any result (HARKing structurally closed).
 2. Baseline mandatory; a baseline-less result cannot produce `[K]`.

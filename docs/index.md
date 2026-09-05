@@ -44,7 +44,7 @@ that test whether the discipline survives a hostile setup, and
 [auditing a document whose source you cannot reach](https://github.com/XINMurat/Mizan/blob/main/examples/unverifiable-source-audit.md) —
 where the failure mode is not refusal but **tier laundering**.
 
-The registry schema has an LLM-free validator (rules R1–R18, plus a
+The registry schema has an LLM-free validator (rules R1–R21, plus a
 non-blocking warning channel). It enforces the mechanical invariants and
 nothing else: semantic judgement stays with a human or a frontier model, which
 is rule R7 itself.

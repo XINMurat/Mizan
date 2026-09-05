@@ -1,5 +1,5 @@
 # =====================================================================
-# Mizan Registry Schema v1.7  (mizan-registry.yaml)
+# Mizan Registry Schema v1.8  (mizan-registry.yaml)
 # =====================================================================
 # Machine-readable research/engineering registry aligned with the Mizan
 # methodology. Human-editable, AI-readable, git-diff friendly.
@@ -73,6 +73,37 @@
 #         class none    -> the threshold is decorative; tier stays S
 #       Enforced from schema_version 1.2 onward (see SCHEMA VERSIONS).
 #
+#   R19. If a `probes.domain` block exists, every scenario carries a
+#        `situation` and an `outcome`; and a `coverage` block claiming tier K
+#        REQUIRES that block: at least one scenario, none left `unchecked`,
+#        `written_before_work: true`, and `supplied_by` outside
+#        {auditor, none}. This is R8's arbiter logic one level up. Checklist
+#        item 12 is the only item whose evidence is an ABSENCE -- an absent
+#        capability makes no claim, so no amount of atomizing reaches it, and
+#        SKILL.md audit step 7 says plainly that the auditor cannot write the
+#        scenario list alone. Scenarios the auditor invented are self-report
+#        in the same way a threshold judged by its own author is; scenarios
+#        written AFTER a gap was found are HARKing (item 1) and prove nothing
+#        about coverage, which is what `written_before_work` records.
+#
+#   R20. If a `coverage` block claims tier K, a `probes.conjunction` block
+#        must exist with at least one pair and no `unchecked` outcome; every
+#        pair names a `feature` and the `guarantee` it can reach. Checklist
+#        item 13: atomizing DESTROYS any defect that exists only in a
+#        conjunction, so the re-assembly pass (SKILL.md audit step 8) leaves
+#        no trace unless it is recorded. A green test suite is not
+#        counter-evidence -- tests are written per feature and are silent
+#        about the pair.
+#
+#   R21. Every `probes.escaped` entry names either `class_ref` -- the
+#        checklist item, probe or registry entry that SHOULD have caught it --
+#        or `class_new`, a written probe that now exists because of it; and
+#        says `in_scope` true/false. The scorecard in references/recovery.md
+#        already counts escapes and calls that count "the only measure that
+#        cannot be gamed from inside the audit". A count is not a loop: until
+#        an escape is converted into a class, the method learns nothing from
+#        the one signal that comes from outside it.
+#
 # Tiers: K (proven) | H (plausible hypothesis) | S (speculative)
 #        R (refuted) | KKE (critical control missing) | Y (misleading)
 #
@@ -109,6 +140,19 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.8 — adds the `probes` block (rules R19-R21): the domain probe of
+#         checklist item 12, the conjunction pass of item 13, and the escaped
+#         -> class loop the scorecard was missing. These three are the only
+#         passes in the method whose input is NOT a sentence someone wrote,
+#         which is exactly why nothing could check them: they leave no
+#         artifact unless one is demanded. Items 12 and 13 were each written
+#         after a real escape, and neither escape is recorded anywhere -- R21
+#         exists so the next one is.
+#         MIGRATION: registries at 1.0-1.7 stay valid and unenforced. The
+#         structural half (a probe entry must be filled in) costs nothing to
+#         anyone who writes no probes; the gating half fires only on a
+#         `coverage` block that CLAIMS tier K, i.e. exactly on the audit that
+#         says it covered the target.
 #   1.7 — adds `data_status`, `stopping_rule` and `exclusion_rule` on
 #         hypotheses and activates R18: a preregistration that does not say
 #         what it locked, locked nothing. `data_status` is the load-bearing
@@ -174,6 +218,11 @@
 #       starts once a result references it, but the entry is written BEFORE
 #       the test, so the gap is worth naming early.
 #   W3. every tiered entry in the registry sitting at [K].
+#   W5. a registry with a `coverage` block and no `probes.domain`, or none
+#       with `probes.conjunction`. Below a tier-K claim R19/R20 do not fire,
+#       and the two passes that find what tests cannot are the two easiest to
+#       skip silently -- a warning is the honest weight for "you may simply
+#       not have run them yet".
 # Each has a legitimate exception -- a draft entry, a one-entry registry --
 # which is why none is a rule. Blocking on them would teach authors to shape
 # registries around the checker instead of around the claim.
@@ -191,7 +240,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.7"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18
+  schema_version: "1.8"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -542,3 +591,107 @@ coverage:
       findings: "tier drift across slices; cross-slice hops; duplicates"
       date: ""
       history: []
+# ---------------------------------------------------------------------
+# PROBES (schema 1.8+, rules R19-R21) — the passes whose input is not text
+# ---------------------------------------------------------------------
+# Every other block in this file starts from a sentence someone wrote. These
+# three do not, which is why they leave no trace unless a field demands one:
+#
+#   domain      — checklist item 12 / SKILL.md audit step 7. Situations that
+#                 occur in the FIELD, tested against the model. An absent
+#                 capability makes no claim, so claim-auditing is structurally
+#                 blind to it. The auditor cannot write this list alone; who
+#                 supplied it is part of the coverage statement, not a detail.
+#   conjunction — checklist item 13 / audit step 8. Atomizing takes claims
+#                 apart, so a defect that exists only when two features hold
+#                 AT ONCE is destroyed by step 1 of the audit. This is the
+#                 re-assembly pass, written down.
+#   escaped     — what got out. The scorecard in references/recovery.md counts
+#                 these and calls the count the only measure that cannot be
+#                 gamed from inside the audit. R21 turns each count into a
+#                 class, so the method learns from the one signal that comes
+#                 from outside it.
+#
+# Rows here are appended, never rewritten (R4). A scenario that turns out to
+# be wrong gets an outcome and stays.
+probes:
+  domain:
+    supplied_by: "domain_owner"     # domain_owner | user | third_party | auditor | none
+                                    # auditor / none = the list is self-report:
+                                    # invented plausible-sounding scenarios are
+                                    # fiction wearing an evidence tag, and R19
+                                    # blocks a tier-K coverage claim over them.
+    supplier_note: >
+      Who this actually was, in one line. "The ops lead who runs the process
+      daily" and "someone on the team" are different coverage statements.
+    phase: "P1"                     # which coverage phase / scope these cover
+    written_before_work: true       # false = retrospective. Scenarios written
+                                    # AFTER a gap was found are HARKing and say
+                                    # nothing about coverage. Recording that is
+                                    # the honest move; hiding it is item 1.
+    scenarios:
+      - id: "DS-01"
+        situation: >
+          A situation that actually occurs in this field, stated the way the
+          person who lives it would say it. "Can two people work the same step
+          at the same time?" — not "concurrency handling".
+        outcome: "finding"          # expressible | boundary_recorded | finding
+                                    #             | unchecked
+                                    # expressible       -> the model covers it
+                                    # boundary_recorded -> it cannot, and that
+                                    #                      was a written
+                                    #                      decision. Fine.
+                                    # finding           -> it cannot, and
+                                    #                      nobody chose that.
+                                    # unchecked         -> not yet run. Blocks
+                                    #                      a tier-K coverage
+                                    #                      claim (R19).
+        evidence: "src/steps/claim.py:88 — no lock; second writer overwrites"
+        entry_ref: "BUG-H007"       # optional: the entry this finding became
+        history:
+          - { date: "2026-09-05", event: "scenario supplied, before P1 began" }
+
+  conjunction:
+    phase: "P1"
+    pairs:
+      - id: "CJ-01"
+        feature: "pause"            # the feature under test
+        guarantee: "staleness flag on untouched work"
+                                    # the EXISTING guarantee it can reach.
+                                    # Two classes are especially fragile:
+                                    # derived signals (anything computed from
+                                    # an absence changes meaning the moment a
+                                    # new state exists) and guarantees enforced
+                                    # call-site by call-site (any new bulk
+                                    # surface bypasses them wholesale).
+        order_sensitive: false      # true = the pair is safe in one order
+                                    # only; then say which, in `required_order`.
+        required_order: ""
+        outcome: "breaks"           # holds | breaks | unchecked
+        evidence: >
+          Pausing is correct, flagging untouched work is correct; together,
+          pausing is the cheap way to hide stuck work and the flag dies of
+          noise. A green suite is not counter-evidence: tests are written per
+          feature and are silent about the pair.
+        entry_ref: ""
+        history: []
+
+  escaped:
+    # R21. One row per defect that got out — found by a user, in production,
+    # or by anyone after this audit closed. `in_scope: true` is the expensive
+    # one: the audit covered that ground and its checks missed.
+    - id: "ESC-01"
+      found: "2026-09-05"
+      found_by: "user"              # user | production | later_audit | third_party
+      symptom: "what was observed, verbatim, no interpretation"
+      in_scope: true                # was this inside the audit's declared scope?
+      class_ref: "checklist item 12"
+                                    # the item / probe / entry that SHOULD have
+                                    # caught it. Empty only if class_new is set.
+      class_new: >
+        If no existing class covers it: the probe that now exists because of
+        this escape, written as a question someone can ask next time. This
+        field is how the method grows — items 12 and 13 were each born this
+        way, from an escape nobody recorded.
+      history:
+        - { date: "2026-09-05", event: "escape recorded" }

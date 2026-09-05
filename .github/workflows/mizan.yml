@@ -1,6 +1,6 @@
 name: CI
 
-# Runs the LLM-free R1–R16 registry validator and checks that the shipped
+# Runs the LLM-free R1–R21 registry validator and checks that the shipped
 # mizan.skill stays in sync with skill/mizan/. This is the static-check
 # automation of the already-shipped tool (FEAT-M001's cheap alternative) —
 # NOT the "full CI/CD gate with an LLM auditor", which stays gated.
@@ -55,7 +55,7 @@ jobs:
             echo "::warning::No baseline commit reachable — R4 (append-only) did NOT run."
           fi
 
-      - name: Validate every registry (R1–R16, R4 against the baseline)
+      - name: Validate every registry (R1–R21, R4 against the baseline)
         run: |
           set -e
           base="${{ steps.baseline.outputs.base }}"
@@ -216,6 +216,57 @@ jobs:
           sed -i 's/schema_version: "1.3"/schema_version: "1.2"/' "$tmp"
           python tools/mizan_validate.py "$tmp"
           echo "OK: the same registry at 1.2 stays valid and unenforced."
+
+      - name: Self-test — R19/R20/R21 must reject an unprobed coverage claim
+        run: |
+          set -e
+          # Checklist items 12 and 13 are the only passes whose input is not a
+          # sentence someone wrote: item 12's evidence is an ABSENCE, and item
+          # 13's defect is destroyed by the atomizing that step 1 performs. So
+          # neither leaves an artifact unless a field demands one, and until
+          # schema 1.8 both could be skipped in total silence.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.8"}
+          hypotheses: []
+          coverage:
+            target: "big repo"
+            claim_tier: "K"
+            phases:
+              - {id: "P0", slice: "scoping", status: "done"}
+              - {id: "MERGE", slice: "recon", status: "done"}
+          probes:
+            domain:
+              supplied_by: "auditor"
+              written_before_work: true
+              scenarios:
+                - {id: "DS-01", situation: "two people on one step", outcome: "finding"}
+            conjunction:
+              pairs:
+                - {id: "CJ-01", feature: "pause", guarantee: "staleness flag", outcome: "unchecked"}
+            escaped:
+              - {id: "ESC-01", found_by: "user", symptom: "second signature silently overwrote the first"}
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          # scenarios the auditor invented are self-report, the same way a
+          # threshold judged by its own author is (R8)
+          echo "$out" | grep -q "R19:" || { echo "FAIL: R19 accepted auditor-supplied scenarios under a tier-K claim" >&2; exit 1; }
+          # a pair listed but never checked is a plan, not a pass
+          echo "$out" | grep -q "R20:" || { echo "FAIL: R20 accepted an unchecked conjunction pair" >&2; exit 1; }
+          # an escape counted but never turned into a class teaches nothing
+          echo "$out" | grep -q "R21:" || { echo "FAIL: R21 accepted an escape with no class" >&2; exit 1; }
+          # ...and the honest version passes
+          sed -i -e 's/supplied_by: "auditor"/supplied_by: "domain_owner"/' \
+                 -e 's/outcome: "unchecked"/outcome: "breaks"/' \
+                 -e 's/symptom: "second signature silently overwrote the first"/symptom: "second signature silently overwrote the first", class_ref: "checklist item 12"/' "$tmp"
+          python tools/mizan_validate.py "$tmp"
+          echo "OK: R19, R20 and R21 fired, and the filled-in version passes."
+          # migration: the same file at 1.7 is unenforced, so registries
+          # written before the fields existed do not break on upgrade.
+          sed -i 's/schema_version: "1.8"/schema_version: "1.7"/' "$tmp"
+          python tools/mizan_validate.py "$tmp"
+          echo "OK: R19-R21 wait for schema 1.8, the way R18 waited for 1.7."
 
       - name: Self-test — R4 must catch a deleted entry
         run: |

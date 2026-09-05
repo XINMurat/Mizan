@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mizan registry validator — LLM-free static enforcement of hard rules R1–R18.
+Mizan registry validator — LLM-free static enforcement of hard rules R1–R21.
 
 This is the cheap, judgment-free baseline of feature FEAT-M001 (in the
 project's roadmap registry). It does NOT evaluate the *quality* of a
@@ -17,7 +17,7 @@ to write registries that do not trigger it, and that is a different skill
 from writing honest ones. Some findings are usually-wrong-but-legitimately-
 right-often-enough that stopping on them would be false precision. So:
 
-  * VIOLATIONS (R1-R18) block. They mark a registry that is incomplete in a
+  * VIOLATIONS (R1-R21) block. They mark a registry that is incomplete in a
     way the prose forbids outright.
   * WARNINGS (W1-W4) do not block by default. They mark shapes worth a
     second look. `--strict` promotes them to violations; CI runs strict,
@@ -275,6 +275,64 @@ MSG = {
         "R16: coverage tier K iddia ediyor ama {why} — \"her dilim tam denetlendi\", \"hedef tam "
         "denetlendi\" demek değildir; ikincisini birincisi gibi sunmak başlı başına [Y]'dir.",
     ),
+    "R19_scenario_incomplete": (
+        "R19: domain probe scenario {id} is missing {missing} — a scenario with no situation is not "
+        "a probe, and one with no outcome was not run.",
+        "R19: alan probu senaryosu {id} eksik: {missing} — durumu yazılmamış bir senaryo prob "
+        "değildir; sonucu yazılmamış olan ise koşulmamıştır.",
+    ),
+    "R19_bad_outcome": (
+        "R19: domain probe scenario {id} has outcome {got!r}; expected one of {allowed}.",
+        "R19: alan probu senaryosu {id} sonucu {got!r}; beklenen: {allowed}.",
+    ),
+    "R19_coverage_unprobed": (
+        "R19: coverage claims tier K but {why} — checklist item 12 is the only pass whose evidence "
+        "is an ABSENCE: an unclaimed capability produces no claim to tier, so no amount of "
+        "atomizing reaches it. A coverage claim made without it covers the document, not the domain.",
+        "R19: coverage tier K iddia ediyor ama {why} — kontrol listesi madde 12, kanıtı bir YOKLUK "
+        "olan tek pas: iddia edilmemiş bir yetenek katmanlanacak iddia üretmez, atomize etmek ona "
+        "asla ulaşmaz. Bu pas olmadan yapılan kapsam iddiası alanı değil, dokümanı kapsar.",
+    ),
+    "R20_pair_incomplete": (
+        "R20: conjunction pair {id} is missing {missing} — a pair is a feature AND the existing "
+        "guarantee it can reach; either one alone is just a feature review.",
+        "R20: bileşim çifti {id} eksik: {missing} — çift, bir özellik VE onun dokunabildiği mevcut "
+        "garantidir; tek başına biri yalnızca özellik incelemesidir.",
+    ),
+    "R20_bad_outcome": (
+        "R20: conjunction pair {id} has outcome {got!r}; expected one of {allowed}.",
+        "R20: bileşim çifti {id} sonucu {got!r}; beklenen: {allowed}.",
+    ),
+    "R20_coverage_unpaired": (
+        "R20: coverage claims tier K but {why} — atomizing is the act of taking claims apart, so a "
+        "defect that exists only when two features hold AT ONCE was destroyed by step 1 of the "
+        "audit and cannot reappear later. A green test suite is not counter-evidence: tests are "
+        "written per feature and are silent about the pair.",
+        "R20: coverage tier K iddia ediyor ama {why} — atomize etmek, iddiaları parçalara ayırma "
+        "eylemidir; yalnızca iki özellik AYNI ANDA geçerliyken var olan kusur, denetimin 1. "
+        "adımında yok edilir ve sonraki adımlarda geri gelmez. Yeşil test paketi karşı kanıt "
+        "değildir: testler özellik başına yazılır ve çift hakkında sessizdir.",
+    ),
+    "R21_escape_unclassed": (
+        "R21: escape {id} names neither class_ref nor class_new — the scorecard already counts "
+        "escapes and calls that count the only measure that cannot be gamed from inside the audit. "
+        "A count is not a loop: until the escape becomes a class, nothing catches the next one.",
+        "R21: {id} kaçağı ne class_ref ne class_new belirtiyor — puan kartı kaçakları zaten sayıyor "
+        "ve o sayıyı, denetimin içinden oynanamayacak tek ölçü diye adlandırıyor. Sayı, döngü "
+        "değildir: kaçak bir sınıfa dönüşene kadar bir sonrakini hiçbir şey yakalamaz.",
+    ),
+    "R21_escape_incomplete": (
+        "R21: escape {id} is missing {missing}.",
+        "R21: {id} kaçağı eksik: {missing}.",
+    ),
+    "W5_no_probe": (
+        "W5: the registry has a coverage block but no {which} probe — below a tier-K claim R19/R20 "
+        "do not fire, and these are the two passes that find what tests cannot, so they are also "
+        "the two easiest to skip in silence.",
+        "W5: kayıt defterinde coverage bloğu var ama {which} probu yok — tier-K iddiası altında "
+        "R19/R20 devreye girmez; bunlar testlerin göremediğini bulan iki pas olduğu için sessizce "
+        "atlanması da en kolay olanlardır.",
+    ),
     "W4_no_merge_row": (
         "W4: the coverage ledger has phase rows but no MERGE row — reconciliation is where a phased "
         "audit is weakest (a claim in one slice verified only by evidence in another), so it is "
@@ -302,8 +360,8 @@ MSG = {
         "önlüğü giymiş iltifat problemidir. Meşru olabilir, ama kaynakları kontrol etmeye değer.",
     ),
     "clean": (
-        "OK — {n} entries checked, no R1–R18 violations.",
-        "OK — {n} girdi kontrol edildi, R1–R18 ihlali yok.",
+        "OK — {n} entries checked, no R1–R21 violations.",
+        "OK — {n} girdi kontrol edildi, R1–R21 ihlali yok.",
     ),
     "found": (
         "{n} violation(s) found.",
@@ -501,6 +559,12 @@ def check(data: dict, lang: str,
     # someone upgrades the skill.
     if _schema_at_least(data, (1, 7)):
         errs += _check_preregistration(hyps, lang)
+
+    # R19-R21 — the probe block, gated at 1.8. Same migration shape as 1.6/1.7:
+    # a registry written before the fields existed does not fail on upgrade.
+    if _schema_at_least(data, (1, 8)):
+        errs += _check_probes(data.get("probes"), data.get("coverage"), lang)
+        warns += _probe_warnings(data.get("probes"), data.get("coverage"), lang)
 
     # tier sanity
     for kind, coll in (("hypothesis", hyps.values()), ("feature", features), ("bug", bugs)):
@@ -732,6 +796,116 @@ def _check_arbiters(entries: Any, lang: str, kind: str = "hypothesis") -> list[s
     return errs
 
 
+DOMAIN_OUTCOMES = ("expressible", "boundary_recorded", "finding", "unchecked")
+PAIR_OUTCOMES = ("holds", "breaks", "unchecked")
+# supplied_by classes that make the scenario list self-report. Same shape as
+# R8's arbiter classes: a list the auditor invented is evidence about the
+# auditor's imagination, not about the domain.
+SELF_SUPPLIED = ("auditor", "none", "")
+
+
+def _check_probes(probes: Any, cov: Any, lang: str) -> list[str]:
+    """R19-R21 — the three passes whose input is not a sentence someone wrote.
+
+    Structural checks run whenever a probe block exists; the gating half fires
+    only on a coverage block CLAIMING tier K. Like every other rule here this
+    checks completeness, never quality: that a scenario was supplied by someone
+    who knows the field and got an outcome, not that it was a good scenario.
+    """
+    errs: list[str] = []
+    if not isinstance(probes, dict):
+        probes = {}
+
+    dom = probes.get("domain") if isinstance(probes.get("domain"), dict) else {}
+    scenarios = [x for x in (dom.get("scenarios") or []) if isinstance(x, dict)]
+    for sc in scenarios:
+        sid = _s(sc.get("id")) or "?"
+        missing = [k for k in ("situation", "outcome") if not _s(sc.get(k))]
+        if missing:
+            errs.append(m("R19_scenario_incomplete", lang, id=sid,
+                          missing=" / ".join(missing)))
+        out = _s(sc.get("outcome")).lower()
+        if out and out not in DOMAIN_OUTCOMES:
+            errs.append(m("R19_bad_outcome", lang, id=sid, got=out,
+                          allowed=", ".join(DOMAIN_OUTCOMES)))
+
+    conj = probes.get("conjunction") if isinstance(probes.get("conjunction"), dict) else {}
+    pairs = [x for x in (conj.get("pairs") or []) if isinstance(x, dict)]
+    for pr in pairs:
+        pid = _s(pr.get("id")) or "?"
+        missing = [k for k in ("feature", "guarantee", "outcome") if not _s(pr.get(k))]
+        if missing:
+            errs.append(m("R20_pair_incomplete", lang, id=pid,
+                          missing=" / ".join(missing)))
+        out = _s(pr.get("outcome")).lower()
+        if out and out not in PAIR_OUTCOMES:
+            errs.append(m("R20_bad_outcome", lang, id=pid, got=out,
+                          allowed=", ".join(PAIR_OUTCOMES)))
+
+    for esc in [x for x in (probes.get("escaped") or []) if isinstance(x, dict)]:
+        eid = _s(esc.get("id")) or "?"
+        missing = [k for k in ("symptom", "found_by") if not _s(esc.get(k))]
+        if missing:
+            errs.append(m("R21_escape_incomplete", lang, id=eid,
+                          missing=" / ".join(missing)))
+        if not (_s(esc.get("class_ref")) or _s(esc.get("class_new"))):
+            errs.append(m("R21_escape_unclassed", lang, id=eid))
+
+    if not isinstance(cov, dict) or _s(cov.get("claim_tier")).upper() != "K":
+        return errs
+
+    # --- the gating half: a coverage block that says it covered the target ---
+    why = None
+    if not scenarios:
+        why = "there is no domain probe" if lang != "tr" else "hiç alan probu yok"
+    elif _s(dom.get("supplied_by")).lower() in SELF_SUPPLIED:
+        who = _s(dom.get("supplied_by")) or "—"
+        why = ((f"the scenarios are supplied_by {who!r} — self-report") if lang != "tr"
+               else f"senaryoları veren {who!r} — kendi beyanı")
+    elif _s(dom.get("written_before_work")).lower() not in ("true", "yes", "1"):
+        why = ("the scenarios are not marked written_before_work — scenarios written after a gap "
+               "was found are HARKing and prove nothing about coverage" if lang != "tr"
+               else "senaryolar written_before_work olarak işaretli değil — bir boşluk bulunduktan "
+                    "sonra yazılan senaryo HARKing'dir ve kapsam hakkında hiçbir şey kanıtlamaz")
+    else:
+        unchecked = [_s(sc.get("id")) or "?" for sc in scenarios
+                     if _s(sc.get("outcome")).lower() == "unchecked"]
+        if unchecked:
+            why = (("these scenarios were never run: " if lang != "tr"
+                    else "şu senaryolar hiç koşulmamış: ") + ", ".join(unchecked))
+    if why:
+        errs.append(m("R19_coverage_unprobed", lang, why=why))
+
+    why = None
+    if not pairs:
+        why = "there is no conjunction pass" if lang != "tr" else "hiç bileşim pası yok"
+    else:
+        unchecked = [_s(pr.get("id")) or "?" for pr in pairs
+                     if _s(pr.get("outcome")).lower() == "unchecked"]
+        if unchecked:
+            why = (("these pairs were never checked: " if lang != "tr"
+                    else "şu çiftler hiç kontrol edilmemiş: ") + ", ".join(unchecked))
+    if why:
+        errs.append(m("R20_coverage_unpaired", lang, why=why))
+    return errs
+
+
+def _probe_warnings(probes: Any, cov: Any, lang: str) -> list[str]:
+    """W5 — a coverage block with a pass missing. Advisory: it may simply not
+    have run yet, and blocking would teach authors to write an empty block."""
+    if not isinstance(cov, dict):
+        return []
+    p = probes if isinstance(probes, dict) else {}
+    warns = []
+    dom = p.get("domain") if isinstance(p.get("domain"), dict) else {}
+    conj = p.get("conjunction") if isinstance(p.get("conjunction"), dict) else {}
+    if not [x for x in (dom.get("scenarios") or []) if isinstance(x, dict)]:
+        warns.append(m("W5_no_probe", lang, which="domain"))
+    if not [x for x in (conj.get("pairs") or []) if isinstance(x, dict)]:
+        warns.append(m("W5_no_probe", lang, which="conjunction"))
+    return warns
+
+
 def _check_coverage(cov: Any, lang: str) -> list[str]:
     """R16 — a whole-target coverage claim waits for reconciliation.
 
@@ -906,7 +1080,7 @@ def _append_only(new: dict, old: dict, lang: str) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(description="Mizan registry R1–R18 validator")
+    ap = argparse.ArgumentParser(description="Mizan registry R1–R21 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
     ap.add_argument("--lang", choices=["en", "tr"], default="en")
     ap.add_argument("--against", metavar="GITREF",

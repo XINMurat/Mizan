@@ -73,6 +73,25 @@
 #         class none    -> the threshold is decorative; tier stays S
 #       Enforced from schema_version 1.2 onward (see SCHEMA VERSIONS).
 #
+#   R19. If a `probes.domain` block exists, every scenario carries a
+#        `situation` and an `outcome`; and a `coverage` block claiming tier K
+#        REQUIRES that block: >=1 scenario, none `unchecked`,
+#        `written_before_work: true`, `supplied_by` outside {auditor, none}.
+#        Checklist item 12: an absent capability makes no claim, so atomizing
+#        never reaches it, and the auditor cannot write the scenario list
+#        alone. Invented scenarios are self-report; retrospective ones are
+#        HARKing.
+#
+#   R20. If a `coverage` block claims tier K, `probes.conjunction` must exist
+#        with >=1 pair and no `unchecked` outcome; each pair names a `feature`
+#        and the `guarantee` it can reach. Checklist item 13: atomizing
+#        destroys any defect that lives only in a conjunction, so the
+#        re-assembly pass leaves no trace unless it is recorded.
+#
+#   R21. Every `probes.escaped` entry names `class_ref` or `class_new`, and
+#        says `in_scope`. The scorecard already counts escapes; a count is not
+#        a loop until each one becomes a class.
+#
 # Tiers: K (proven) | H (plausible hypothesis) | S (speculative)
 #        R (refuted) | KKE (critical control missing) | Y (misleading)
 #
@@ -109,6 +128,12 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.8 — adds the `probes` block (R19-R21): domain probe (item 12),
+#         conjunction pass (item 13), escaped -> class loop. The three passes
+#         whose input is not a sentence someone wrote, and so the three that
+#         left no artifact until a field demanded one.
+#         MIGRATION: 1.0-1.7 stay valid and unenforced. The gating half fires
+#         only on a `coverage` block that CLAIMS tier K.
 #   1.6 — adds `review_by` on hypotheses and activates R17: an open entry
 #         carries a deadline, and a passed deadline forces a decision.
 #         MIGRATION: registries at 1.0-1.5 stay valid and unenforced. The bump
@@ -163,6 +188,9 @@
 #       starts once a result references it, but the entry is written BEFORE
 #       the test, so the gap is worth naming early.
 #   W3. every tiered entry in the registry sitting at [K].
+#   W5. a `coverage` block with no `probes.domain` or no `probes.conjunction`.
+#       Below a tier-K claim R19/R20 do not fire, and these are the two passes
+#       easiest to skip silently.
 # Each has a legitimate exception -- a draft entry, a one-entry registry --
 # which is why none is a rule. Blocking on them would teach authors to shape
 # registries around the checker instead of around the claim.
@@ -180,7 +208,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.7"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18
+  schema_version: "1.8"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -534,3 +562,69 @@ coverage:
       findings: "tier drift across slices; cross-slice hops; duplicates"
       date: ""
       history: []
+# ---------------------------------------------------------------------
+# PROBES (1.8+, R19-R21) — the passes whose input is not text
+# ---------------------------------------------------------------------
+# domain      — situations that occur in the FIELD, tested against the model
+#               (item 12). You cannot write this list alone: ask, and record
+#               who answered.
+# conjunction — feature x existing guarantee, asked as a pair (item 13).
+#               Atomizing destroyed it; this puts it back.
+# escaped     — what got out, and which class now catches it (R21).
+# Appended, never rewritten (R4).
+probes:
+  domain:
+    supplied_by: ""                 # domain_owner | user | third_party | auditor | none
+                                    # auditor / none = the list is self-report; R19 blocks
+                                    # a tier-K coverage claim over it, the same way R8
+                                    # blocks a threshold judged by its own author.
+    supplier_note: ""               # who, in one line — this IS the coverage statement.
+                                    # "the ops lead who runs the process daily" and
+                                    # "someone on the team" are different statements.
+    phase: ""
+    written_before_work: true       # false = retrospective. Scenarios written AFTER a gap
+                                    # was found are HARKing and say nothing about coverage.
+                                    # Recording that is honest; hiding it is item 1.
+    scenarios:
+      - id: "DS-01"
+        situation: "Replace with a situation that actually occurs in this field."
+                                    # stated the way the person who lives it would say it:
+                                    # "can two people work the same step at once?" — not
+                                    # "concurrency handling".
+        outcome: "unchecked"        # expressible | boundary_recorded | finding | unchecked
+                                    # expressible       -> the model covers it
+                                    # boundary_recorded -> it cannot, and that was a
+                                    #                      written decision. Fine.
+                                    # finding           -> it cannot, and nobody chose that
+                                    # unchecked         -> not run yet; blocks a tier-K
+                                    #                      coverage claim (R19)
+        evidence: ""
+        entry_ref: ""               # the entry this finding became
+        history: []
+
+  conjunction:
+    phase: ""
+    pairs:
+      - id: "CJ-01"
+        feature: "Replace with the feature under test."
+        guarantee: "Replace with an EXISTING guarantee that feature can reach."
+                                    # Fragile classes: derived signals (anything computed
+                                    # from an absence changes meaning the moment a new
+                                    # state exists) and guarantees enforced call-site by
+                                    # call-site (any bulk surface bypasses them wholesale).
+        order_sensitive: false      # true -> name the safe order in required_order
+        required_order: ""
+        outcome: "unchecked"        # holds | breaks | unchecked
+        evidence: ""
+        entry_ref: ""
+        history: []
+
+  escaped: []
+  # - id: "ESC-01"
+  #   found: "YYYY-MM-DD"
+  #   found_by: ""                    # user | production | later_audit | third_party
+  #   symptom: ""                     # verbatim, no interpretation
+  #   in_scope: true                  # was it inside the audit's declared scope?
+  #   class_ref: ""                   # the item/probe that SHOULD have caught it
+  #   class_new: ""                   # or the probe that now exists because of it
+  #   history: []

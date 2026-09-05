@@ -145,6 +145,13 @@ it lists the failure modes to hunt for and worked examples.
    plausible-sounding scenarios are fiction wearing an evidence tag.
    Scenarios written after a gap was found are HARKing and prove nothing
    about coverage — say which ones were retrospective.
+   **Record it:** `probes.domain` in the registry schema — the scenarios,
+   `supplied_by` (auditor or none = self-report, and R19 refuses a tier-K
+   coverage claim over it), and `written_before_work`. `checklist.md` item 12
+   carries an eight-class seed list for the *asking* — two at once, end of
+   life, crossing a boundary, the person leaves, zero/one/many, undo and
+   exit, out of order, who may see it. It is a prompt for the interview, not
+   a list you may fill in alone.
    (Checklist item 12.)
 8. **Re-assemble — audit the conjunctions, not only the claims.**
    Step 1 took the document apart; a defect that exists **only when two
@@ -159,6 +166,10 @@ it lists the failure modes to hunt for and worked examples.
    in one direction only, and the required order is part of the finding.
    A green test suite is not counter-evidence here: tests are written per
    feature, so they attest to the parts and are silent about the pair.
+   **Record it:** `probes.conjunction.pairs` — feature, the guarantee it can
+   reach, the order if the pair is asymmetric, and the outcome. A pair left
+   `unchecked` blocks a tier-K coverage claim (R20); a pass that leaves no
+   row cannot be told apart from one that never ran.
    (Checklist item 13.)
 9. **Close the loop — for an ongoing target, CREATE the registry, do not
    offer it.** When the audited thing is a living project (a repo, a
@@ -172,6 +183,12 @@ it lists the failure modes to hunt for and worked examples.
    closing tasks, and the next audit arrives only after a user stumbles
    on a gap. If the user declines the registry, record the refusal in the
    report so the absence of continuity is itself on the record.
+   The registry is also where escapes land: when a defect surfaces later on
+   ground this audit covered, RR-13 turns it into a class — `probes.escaped`
+   with `class_ref` (the check that should have fired) or `class_new` (the
+   probe that now exists because of it), which R21 requires. The scorecard
+   already counted escapes; counting is not learning, and items 12 and 13
+   above were each born from an escape nobody recorded as one.
 10. **Declare the HARKing status.** Retrospective analysis selected its
    examples after seeing outcomes. Say this plainly in the report header —
    including about your own audit, which is also retrospective.
@@ -355,7 +372,7 @@ from the outside.
   writing entries, `recovery.md` the moment a run stops behaving. Reading
   everything at the start spends the context the audit itself needs.
 - **The scripted part is the part that travels.** `mizan_validate.py`
-  enforces R1–R18 without a model, so it behaves identically in every
+  enforces R1–R21 without a model, so it behaves identically in every
   host. Whatever is enforced only by this prose is negotiable by the
   host's prose. When rigor must survive an unknown setup, put it in the
   validator, not in a paragraph.
@@ -377,7 +394,7 @@ from the outside.
 
 ## References
 
-- `references/recovery.md` — the recovery ramps (`RR-00`…`RR-12`) for when
+- `references/recovery.md` — the recovery ramps (`RR-00`…`RR-13`) for when
   the audit itself goes wrong: a promised artifact that did not run, a
   claim that will not settle, a target that moved mid-audit, a tier you
   have to demote. Also the model failure classes they exist for and the
@@ -399,7 +416,7 @@ from the outside.
 - `schemas/mizan-registry.yaml` — the machine-readable registry format.
   When the user keeps a registry file (in project knowledge, a repo, or
   uploads one), read it at session start, APPEND rather than overwrite,
-  propose new entries in this schema, and enforce its hard rules R1–R18
+  propose new entries in this schema, and enforce its hard rules R1–R21
   (mandatory baseline, mandatory confound controls, append-only history,
   no K-promotion without controls on surprising positives, and
   producer/auditor separation: propose tier changes, let the owner or a

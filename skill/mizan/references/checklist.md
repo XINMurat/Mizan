@@ -155,6 +155,35 @@ and a compact worked example.
   the only item whose evidence is an **absence**, which is why it must be
   driven by an external list prepared in advance (see SKILL.md audit
   step 7) rather than by reading harder.
+- **Seed list — how to ask, when the domain owner is in the room.** The
+  constraint above stands: you cannot write the scenarios. You *can* write
+  the prompts that make someone else's knowledge surface, and asking "what
+  situations occur in your field?" cold reliably produces nothing. These
+  eight classes are domain-independent because they are properties of any
+  system with state, people and time in it — every one of them has produced a
+  real finding in this checklist's own examples. Turn each into a question in
+  the owner's vocabulary, ask it, and record the answer as a scenario:
+  1. **Two at once** — can two people do this to the same thing at the same
+     time? (The concurrent-signature overwrite.)
+  2. **End of life** — what happens when this thing is finished, retired,
+     cancelled, archived? (The `archived` status no endpoint ever wrote.)
+  3. **Crossing a boundary** — how does work move between two units, teams,
+     departments, tenants? (The handoff the model had no concept for.)
+  4. **The person leaves** — who holds this when its owner is gone, on leave,
+     deactivated? (The task claimed by someone who will never return.)
+  5. **Zero, one, very many** — the empty case, the single case, and ten
+     thousand. Which of the three did nobody try?
+  6. **Undo and exit** — reversing it, deleting it, taking the data out.
+     Exits are designed last and used first when things go wrong.
+  7. **Out of order, half-done** — the step done twice, done backwards, or
+     interrupted midway. What state does that leave?
+  8. **Who may see it** — the same object seen by a different role, an
+     outside party, an auditor, a bulk export.
+  The list is a **prompt for the asking, never a substitute for it**: the
+  answers are the evidence, and an auditor who fills these in alone has
+  written eight plausible fictions instead of one. Record the answers as
+  `probes.domain.scenarios` with `supplied_by` naming who actually spoke, and
+  add each phase's scenarios before that phase begins (below).
 - **Preregistration rule:** scenarios written *after* a gap is found are
   HARKing (item 1) and prove nothing about coverage. Their value is
   entirely in the gaps not yet known, so each new phase must add its
@@ -203,6 +232,9 @@ and a compact worked example.
   the same structural reason item 10 survives, one level up. Tests
   inherit the flaw: they are written per feature, so a green suite is
   evidence about the parts and says nothing about the pair.
+- **Where it is recorded:** `probes.conjunction.pairs` in the registry
+  schema (R20). A pass that leaves no row is indistinguishable from a
+  pass that was skipped, and this one is skipped by default.
 - **Cost of finding it late:** cheap on paper, expensive in code. These
   are model-level conflicts; discovered during design they are one
   decision, discovered after shipping they are a migration.

@@ -10,11 +10,11 @@ loads. This page is a map. The Turkish full-text mirrors are in
 | Methodology / core skill (Modes 1–2) | [`skill/mizan/SKILL.md`](../../skill/mizan/SKILL.md) | [`docs/tr/metodoloji.md`](../tr/metodoloji.md) |
 | Templates (registry entry, result block, audit report) | [`skill/mizan/references/templates.md`](../../skill/mizan/references/templates.md) | [`docs/tr/metodoloji.md` §2](../tr/metodoloji.md) |
 | Failure-mode checklist (HARKing, tier drift, …) | [`skill/mizan/references/checklist.md`](../../skill/mizan/references/checklist.md) | [`docs/tr/metodoloji.md` §3](../tr/metodoloji.md) |
-| Recovery ramps (RR-00…RR-12), model failure classes, closing scorecard | [`skill/mizan/references/recovery.md`](../../skill/mizan/references/recovery.md) | — (not yet mirrored) |
+| Recovery ramps (RR-00…RR-13), model failure classes, closing scorecard | [`skill/mizan/references/recovery.md`](../../skill/mizan/references/recovery.md) | [`docs/tr/metodoloji.md` §4](../tr/metodoloji.md) — ramp table and failure classes; the per-ramp long form stays English-only |
 | Software modes 3–4 (code audit, bug registry) | [`skill/mizan/references/code-audit.md`](../../skill/mizan/references/code-audit.md) | [`docs/tr/yazilim-modlari.md`](../tr/yazilim-modlari.md) |
 | Software mode 5 (feature / PRD gate) | [`skill/mizan/references/feature-gate.md`](../../skill/mizan/references/feature-gate.md) | [`docs/tr/yazilim-modlari.md`](../tr/yazilim-modlari.md) |
 | Domain adaptation (14 domains beyond software) | [`skill/mizan/references/domain-adaptation.md`](../../skill/mizan/references/domain-adaptation.md) | [`docs/tr/alan-uyarlama.md`](../tr/alan-uyarlama.md) |
-| Machine-readable registry schema (R1–R18) | [`skill/mizan/schemas/mizan-registry.yaml`](../../skill/mizan/schemas/mizan-registry.yaml) | same file (comments EN) |
+| Machine-readable registry schema (R1–R21) | [`skill/mizan/schemas/mizan-registry.yaml`](../../skill/mizan/schemas/mizan-registry.yaml) | same file (comments EN) |
 
 ## English-only long-form docs
 

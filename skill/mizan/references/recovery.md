@@ -46,6 +46,7 @@ they are properties of a producer that is also the judge.
 | **Premise capture** | The audited document changed and the old findings were carried forward as if it hadn't | RR-08 |
 | **Easy-claim bias** | Only the checkable claims were checked, and the result was presented as a full audit | RR-07 |
 | **Context decay** | Hour three: tags in place, format intact, judgment gone; everything reads `[H]` by habit | RR-09 |
+| **Escape without a class** | A defect got out, the fix went in, and nothing changed about what the next audit checks. The scorecard counts it; the count is not a loop | RR-13 |
 
 None of these is chosen. They are what a producer-judge does under
 pressure to look useful, which is why each row points at a ramp and nearly
@@ -425,6 +426,50 @@ surprising-positive rule, the threshold-theatre anti-pattern.
 
 ---
 
+## RR-13 — Something got out, and the method has not moved
+
+**TRIGGER.** A defect surfaced after this audit closed — a user hit it, it
+broke in production, a later pass found it — and the ground it stands on was
+inside the declared scope. Also fires on the softer version: a lesson written
+down as a class candidate ("checklist adayı", "worth adding to the list")
+that no list ever received.
+
+**FIRST MOVE.** Record it as an escape (`probes.escaped`, R21) before
+diagnosing it. The temptation is to fix the defect and move on; the fix
+belongs to the product, the escape belongs to the method, and only one of
+those two is normally written down.
+
+Then answer one question and refuse to skip it: **which check should have
+caught this?**
+
+- **A class exists and did not fire.** `class_ref` names it. The finding is
+  about the run, not the method: the pass was skipped, or scoped out, or run
+  and misread. Say which — "we did not run item 12 on this phase" is a real
+  answer and a better one than a new rule nobody needs.
+- **No class covers it.** `class_new` is mandatory, written as a question
+  someone can ask on the next run, not as a description of what went wrong.
+  "Can two people work the same step at once?" is a probe. "We should think
+  about concurrency" is a mood.
+
+**FORBIDDEN.** Closing an escape with the fix alone. Writing `class_new` as a
+restatement of the symptom — a class that only matches this bug catches this
+bug and nothing else. Backdating the new class into the closed audit's
+coverage: the escape proves the coverage claim was wrong, and revising the
+claim visibly (RR-11) is the honest move.
+
+**OUTPUT.** One escape row with `in_scope` answered and a class named, plus —
+if the class is new — the checklist item or probe question it became. Items 12
+and 13 of `checklist.md` were each born exactly this way, from an escape that
+nobody recorded as one. That is the evidence for this ramp and also the
+indictment: the method has learned twice from escapes, and both times by
+accident.
+
+**BACKED BY.** R21, the scorecard's **Escaped** row (the only measure that
+comes from outside the audit), checklist items 12 and 13, RR-11 (demoting a
+tier you already promoted).
+
+---
+
 ## Closing a run: the process scorecard
 
 Fill this in when an audit or a registry cycle closes. Its purpose is
@@ -441,7 +486,7 @@ hidden number is.
 | **Arbiter distribution** | | How many entries are `runtime` / `instrument` / `third_party` / `author` / `none`. Heavy on the last two means the rigor is mostly form. |
 | **Target versions** | | How many times the audited claim set moved (RR-08). High → the author is still deciding what they claim. |
 | **Ramps used** | | Which `RR-nn` fired. A run that used none either went perfectly or did not notice. |
-| **Escaped** | | Errors found later that this audit's scope covered and its checks missed. The only measure that comes from outside the audit, and the only one that cannot be gamed from inside it. |
+| **Escaped** | | Errors found later that this audit's scope covered and its checks missed. The only measure that comes from outside the audit, and the only one that cannot be gamed from inside it. Each one goes through RR-13 and comes out as a class (`probes.escaped`, R21) — a number here that never became a probe is the method watching itself fail. |
 
 **Reading:** two or three sentences. Not "the audit went well" — what
 would change on the next run, and which number says so.

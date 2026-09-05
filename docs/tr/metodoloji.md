@@ -103,11 +103,54 @@ registry'nin ilk girdileri olarak ekilir.
    dışarıda bırakır (başarısızlıklar, ertelemeler, terk edilen hatlar,
    maliyetler). Bu belgenin formatının gösteremediğini belirt ve mevcut
    kanıttan taslağını çıkar.
-7. **HARKing durumunu beyan et.** Retrospektif analiz örneklerini
+7. **Belgeyi değil alanı probla.** Yukarıdaki her adım birinin yazdığı bir
+   cümleden başlar; bu yüzden hiçbiri **hiç iddia edilmemiş** bir yeteneği
+   bulamaz — yokluk, katmanlanacak iddia üretmez. Bu alanda gerçekten
+   yaşanan durumların listesini **edin** ve her birini modele karşı sına:
+   ifade edilebiliyor (sorun yok) · edilemiyor **ve bilinçli sınır olarak
+   yazılmış** (sorun yok, bu bir karardır) · edilemiyor ve **hiçbir yerde
+   yazılı değil** (bulgu). **Bu listeyi tek başına yazamazsın ve yazmış gibi
+   yapmamalısın:** alan sahibine sor, senaryoları kimin verdiğini kapsam
+   beyanının parçası olarak kaydet. Uydurulmuş makul senaryolar, kanıt
+   etiketi takılmış kurgudur. Boşluk bulunduktan sonra yazılan senaryo
+   HARKing'dir ve kapsam hakkında hiçbir şey kanıtlamaz — hangilerinin
+   geriye dönük olduğunu söyle. Sormayı başlatacak sekiz sınıflık tohum
+   listesi madde 3.12'dedir. **Kaydı:** `probes.domain` (R19).
+8. **Yeniden birleştir — yalnız iddiaları değil bileşimleri de denetle.**
+   1. adım belgeyi parçalarına ayırdı; **iki özellik aynı anda geçerliyken**
+   var olan bir kusur tam da o eylemle yok edildi ve sonraki hiçbir adımda
+   geri gelmez. O yüzden bilerek geri birleştir: her özellik için
+   dokunabildiği mevcut garantileri listele ve her çift için sor —
+   **"bu garanti, bu özellik etkinken hâlâ geçerli mi?"** Önceliklendir:
+   (a) **türetilmiş sinyaller** — bir yokluktan hesaplanan her şey, yeni bir
+   durum var olduğu anda anlam değiştirir; (b) **tek tek çağrı yerinde
+   uygulanan garantiler** — yeni bir toplu yüzey bunları toptan baypas eder.
+   Sırayı da kontrol et: bazı çiftler yalnız tek yönde güvenlidir ve gerekli
+   sıra bulgunun parçasıdır. Yeşil test paketi burada karşı kanıt değildir:
+   testler özellik başına yazılır, parçalara tanıklık eder, çift hakkında
+   susar. **Kaydı:** `probes.conjunction` (R20).
+9. **Döngüyü kapat — yaşayan bir hedef için registry'yi ÖNER değil KUR.**
+   Denetlenen şey bitmiş bir belge değil de yaşayan bir proje ise (bir repo,
+   bir backlog, bir program), tek seferlik denetim kendisinden sonra doğan
+   boşlukları göremez. Denetimin son eylemi bu yüzden registry dosyasını
+   **yazmaktır** (ayakta kalan `[H]` iddialar ve bulunan her tekrarlayan hata
+   sınıfıyla tohumlanmış) ve denetimi yeniden tetikleyecek eşiği
+   adlandırmaktır — bir faz sınırı, bir sürüm, sabit bir kadans. *"İstersen
+   takip kurayım mı?"* diye bitirmek bu skill'in bilinen bir hatasıdır:
+   öneri ertelenir, proje görev kapatmaya devam eder, sonraki denetim ancak
+   bir kullanıcı boşluğa çarptığında gelir. Kullanıcı reddederse reddi
+   rapora yaz; sürekliliğin yokluğu da kayda geçsin.
+   Kaçaklar da buraya düşer: denetimin kapsadığı bir zeminde sonradan bir
+   kusur çıktığında **RR-13** onu bir sınıfa çevirir — `probes.escaped`,
+   `class_ref` (ateşlemesi gereken kontrol) ya da `class_new` (bu kaçak
+   sayesinde artık var olan prob), ki R21 bunu şart koşar. Puan kartı
+   kaçakları zaten sayıyordu; saymak öğrenmek değildir, ve madde 3.12 ile
+   3.13'ün ikisi de kimsenin kaçak diye kaydetmediği birer kaçaktan doğdu.
+10. **HARKing durumunu beyan et.** Retrospektif analiz örneklerini
    sonuçları gördükten sonra seçmiştir. Bunu rapor başlığında açıkça
    söyle — denetimin kendisi de retrospektif olduğu için kendi durumunu
    da dahil ederek.
-8. **Mekanizmayı niyetten ayır.** Bir belgenin neden çarpık olduğunu
+11. **Mekanizmayı niyetten ayır.** Bir belgenin neden çarpık olduğunu
    açıklarken yapısal açıklamaları (seçilim baskısı, format teşvikleri)
    niyet atfına ("pohpohlamak için tasarlamışlar") tercih et — niyet
    ancak kendisi kanıtlıysa iddia edilir.
@@ -334,6 +377,64 @@ MERGE satırı `✅ tamam` olana dek `[H]` kalır — bkz. §A5.1 adım 3.
 
 ---
 
+## 2.6 Prob blokları (madde 3.12 ve 3.13'ün kaydı)
+
+Bölüm 2'nin diğer her şablonu birinin **yazdığı** bir şeyi biçimlendirir.
+Bu üçünün girdisi metin değildir — alanda yaşanan bir durum, iki özelliğin
+kesişimi, ve dışarıda patlayan bir kusur — bu yüzden bir alan istemedikçe
+geriye iz bırakmazlar ve koşuldukları, atlandıklarından ayırt edilemez.
+Şema 1.8'de `probes` bloğu bunun içindir (R19–R21).
+
+```yaml
+probes:
+  domain:                          # madde 3.12 — alan probu
+    supplied_by: "domain_owner"    # domain_owner | user | third_party | auditor | none
+                                   # auditor / none = kendi beyanı; R19 bunun
+                                   # üstüne kurulan tier-K kapsam iddiasını reddeder
+    supplier_note: "süreci her gün işleten operasyon sorumlusu"
+    phase: "P1"
+    written_before_work: true      # false = geriye dönük; sakla değil, söyle
+    scenarios:
+      - id: "DS-01"
+        situation: "Aynı adımda iki kişi aynı anda çalışabilir mi?"
+        outcome: "finding"         # expressible | boundary_recorded | finding | unchecked
+        evidence: "src/steps/claim.py:88 — kilit yok; ikinci yazan eziyor"
+        entry_ref: "BUG-H007"
+        history:
+          - { date: "2026-09-05", event: "senaryo alındı, P1 başlamadan önce" }
+
+  conjunction:                     # madde 3.13 — bileşim pası
+    phase: "P1"
+    pairs:
+      - id: "CJ-01"
+        feature: "duraklatma"
+        guarantee: "dokunulmamış iş için bayatlama bayrağı"
+        order_sensitive: false     # true ise güvenli sırayı required_order'a yaz
+        required_order: ""
+        outcome: "breaks"          # holds | breaks | unchecked
+        evidence: >
+          İkisi de tek başına doğru; birlikte duraklatma, tıkanmış işi
+          saklamanın ucuz yolu olur ve bayrak gürültüden ölür.
+        entry_ref: ""
+        history: []
+
+  escaped:                         # RR-13 — kaçak, ve artık onu yakalayan sınıf
+    - id: "ESC-01"
+      found: "2026-09-05"
+      found_by: "user"             # user | production | later_audit | third_party
+      symptom: "ikinci imza birincinin üstüne sessizce yazıldı"
+      in_scope: true               # denetimin beyan ettiği kapsamın içinde miydi?
+      class_ref: "kontrol listesi madde 3.12"
+      class_new: ""                # hiçbir sınıf kapsamıyorsa: bir sonraki koşuda
+                                   # sorulabilecek soru olarak yazılmış yeni prob
+      history:
+        - { date: "2026-09-05", event: "kaçak kaydedildi" }
+```
+
+**Satırlar eklenir, yeniden yazılmaz (R4).** Yanlış çıkan bir senaryo bir
+sonuç alır ve kalır. Tier-K bir kapsam iddiası bu blokları şart koşar; onsuz
+yapılan kapsam iddiası alanı değil, dokümanı kapsar.
+
 # BÖLÜM 3 — Hata-Modu Kontrol Listesi (references/checklist.md karşılığı)
 
 Her denetimde bunlar avlanır. Her madde: nedir, nasıl tespit edilir,
@@ -430,6 +531,151 @@ kompakt çalışılmış örnek.
   önceki çıktılarını da denetlenebilir iddia sayar. Sonraki kanıt daha
   önce verdiğin bir katmanla çeliştiğinde, görünür biçimde revize et.
 
+
+## 3.11 Üretici-tarafı iddia (erişilemeyen yetenek)
+- **Nedir:** iddia doğrudur ve yetenek yoktur. Bir değer tabloya yazılır,
+  bir olay yayılır, bir satır loglanır — kullanıcının işlettiği hiçbir yüzey
+  onu okumuyorsa teslim edilmiş yetenek yoktur. `[K]` değil `[Y]`: kabul
+  kriteri geçti, vaat geçmedi.
+- **Tespit:** her "X üretiliyor / kaydediliyor / saklanıyor / yayılıyor"
+  için sor: **X'i hangi yüzeyden biri okuyor ve o yüzey koşuldu mu?**
+  Yazılımda iki ucuz diff: endpoint listesi ↔ istemcinin gerçekten yaptığı
+  çağrılar; tablo listesi ↔ her tablonun okuma yolu. İki paydayı da raporla
+  ("61 route'un 57'si erişilebilir, 20 tablonun 17'si okunuyor") — oran,
+  istisna mı örüntü mü bulduğunu söyleyen şeydir.
+- **Örnek:** *"bildirimler (uygulama içi + e-posta) tamam"* diye kapanan bir
+  görev; kriter *"ilgili olay bir bildirim üretir"*. Endpoint'ler ve on iki
+  test yerindeydi, ön yüzde tek bir bildirim çağrısı yoktu. Testlerden biri
+  `read_all_clears_the_badge` adını taşıyordu — **var olmayan bir rozeti**
+  koruyordu. Aynı sınıf o projede dört kez tekrarladı (denetim izi, silme
+  ucu, parola değiştirme, bildirimler) ve **dördü de plandan çıkmadı**;
+  hepsi tesadüfen fark edildi.
+- **Neden incelemeden sağ çıkar:** kabul kriterini üreten katman yazar ve
+  **o katman için doğrudur**. Boşluk görevlerin *arasında* yaşar; hiçbir tek
+  görevin kendi listesi oraya bakamaz. Backlog'u katmana göre (BE/FE) kesmek
+  bu hatayı varsayılan hâline getirir.
+
+## 3.12 Hiç iddia edilmemiş yetenek (model–gerçeklik boşluğu)
+- **Nedir:** denetim hiçbir şey bulamaz, çünkü **belgede** bulunacak bir şey
+  yoktur. Her iddia tutar, her katman dürüsttür — ve alanda rutin olarak
+  yaşanan bir durum sistemde hiç ifade edilemez. **Var olmayan yetenek iddia
+  üretmez, iddia denetimi de bu yüzden ona yapısal olarak kördür.** Madde
+  3.11 komşusudur ama aynısı değil: orada vaat verilmiş, yarısı teslim
+  edilmiştir; burada vaat hiç verilmemiştir, dolayısıyla belgeyi ne kadar
+  atomize edersen et yüzeye çıkmaz.
+- **Tespit:** bu probun girdisi **alan**, belge değil. Bu alanda gerçekten
+  yaşanan durumları listele, her birini modele sor. Üç sonuç: (a) ifade
+  edilebiliyor → sorun yok; (b) edilemiyor **ve bilinçli bir sınır olarak
+  yazılmış** → sorun yok, bu bir karardır; (c) edilemiyor **ve hiçbir yerde
+  yazılı değil** → bulgu. Yazılmamış boşluk, kararlaştırılmış sınırdan her
+  zaman kötüdür: kimse onu seçmemiştir.
+- **Dürüst kısıt — bu listeyi tek başına üretemezsin.** Denetçi artefaktı
+  bilir; alanda ne olduğunu yalnız o alanı bilen bilir. **Sor.** Sormayı
+  atlayıp makul görünen senaryolar uyduran denetim, kanıt etiketi takılmış
+  kurgu üretiyordur. Senaryoları kimin verdiğini kaydet; bu bilgi kapsam
+  beyanının parçasıdır.
+- **Sormanın aracı — sekiz sınıflık tohum listesi.** Yukarıdaki kısıt
+  geçerli: senaryoları sen yazamazsın. Ama karşındakinin bilgisini yüzeye
+  çıkaracak soruları yazabilirsin; "alanınızda hangi durumlar oluyor?" diye
+  soğuk sormak güvenilir biçimde hiçbir şey üretmez. Bu sekiz sınıf
+  alan-bağımsızdır, çünkü durumu, insanı ve zamanı olan her sistemin
+  özelliğidir — ve her biri bu listenin kendi örneklerinde gerçek bir bulgu
+  üretmiştir:
+  1. **Aynı anda iki kişi** — ikisi aynı şeye aynı anda dokunabilir mi?
+     (Sessizce üzerine yazılan ikinci imza.)
+  2. **Yaşamın sonu** — bu şey bittiğinde, emekliye ayrıldığında, iptal
+     edildiğinde, arşivlendiğinde ne olur? (Hiçbir endpoint'in yazmadığı
+     `archived` durumu.)
+  3. **Sınır geçişi** — iş iki birim, ekip, departman, kiracı arasında nasıl
+     hareket eder? (Modelde karşılığı hiç olmayan devir.)
+  4. **Kişi ayrılıyor** — sahibi gittiğinde, izne çıktığında, pasife
+     alındığında bunu kim tutar? (Asla dönmeyecek birinin üstlendiği görev.)
+  5. **Sıfır, bir, çok fazla** — boş hâl, tek hâl ve on bin. Üçünden
+     hangisini kimse denemedi?
+  6. **Geri alma ve çıkış** — iptal, silme, veriyi dışarı çıkarma. Çıkışlar
+     en son tasarlanır ve işler kötüye gittiğinde ilk kullanılır.
+  7. **Sırasız, yarım kalmış** — iki kez yapılan, ters sırada yapılan ya da
+     ortasında kesilen adım. Geriye hangi durumu bırakır?
+  8. **Kim görebilir** — aynı nesneyi başka bir rol, dışarıdan biri, bir
+     denetçi, bir toplu dışa aktarım gördüğünde.
+  Liste **sormanın aracıdır, sormanın yerine geçmez**: kanıt, alınan
+  cevaplardır; bunları tek başına dolduran denetçi bir bulgu yerine sekiz
+  makul kurgu yazmıştır.
+- **Örnek:** bir süreç-hafızası uygulaması tam iddia denetiminden geçti (61
+  endpoint, 20 tablo, üretici/tüketici diff'i, madde 3.11 taraması).
+  On tasarım boşluğu *sonradan* bulundu; hiçbiri o denetimden çıkmadı,
+  hepsi alan sahibinin sıradan sorularından: *"aynı adımda iki kişi
+  çalışabilir mi?"* (kilit yoktu; ikinci yazan, birincinin imzasını sessizce
+  eziyordu), *"iş iki departman arasında nasıl geçiyor?"* (modelde süreç
+  başına tek birim vardı, kavram ne kuruldu ne reddedildi), *"süreç emekliye
+  ayrılınca ne olur?"* (tanımlı ama hiçbir endpoint'in yazmadığı `archived`
+  durumu — arayüz kullanıcıya aktif olarak arşivlemesini söylerken). Denetim
+  kendi sınırını doğru da beyan etmişti: *"bilmediğim sınıfları bulamadım ve
+  bulamadığımı sayamam."* O beyan doğruydu ve **bir yöntem değildi**.
+- **Neden incelemeden sağ çıkar:** diğer her madde birinin yazdığı bir
+  cümleden başlar. Bunun başlayacak cümlesi yoktur. Kanıtı bir **yokluk**
+  olan tek maddedir; bu yüzden daha dikkatli okumakla değil, **önceden
+  hazırlanmış dış bir listeyle** sürülmesi gerekir.
+- **Önkayıt kuralı:** boşluk bulunduktan *sonra* yazılan senaryo HARKing'dir
+  (madde 3.1) ve kapsam hakkında hiçbir şey kanıtlamaz. Değeri tamamen henüz
+  bilinmeyen boşluklardadır; bu yüzden her yeni faz kendi senaryolarını
+  **faz başlamadan önce** ekler ve rapor hangilerinin geriye dönük olduğunu
+  açıkça söyler.
+- **Nereye kaydedilir:** şemadaki `probes.domain` — senaryolar,
+  `supplied_by` (denetçi ya da yoksa: kendi beyanı; R19 bunun üzerine
+  kurulan tier-K kapsam iddiasını reddeder) ve `written_before_work`.
+
+## 3.13 Denetlenmemiş bileşim (her özellik doğru, çift bozuk)
+- **Nedir:** her özellik tek tek doğru, tek tek test edilmiş, tek tek `[K]`
+  — ve ikisi **aynı anda** geçerliyken hiçbirinin sahibi olmadığı bir garanti
+  kırılıyor. Madde 3.11 ve 3.12 tek bir şey hakkındadır (yarım teslim, ya da
+  hiç kurulmamış). Bu ise bir **çift** hakkındadır ve atomize eden her
+  prosedüre görünmezdir: atomize etmek tam olarak iddiaları parçalara ayırma
+  eylemidir, dolayısıyla yalnızca bileşimde var olan kusur denetimin 1.
+  adımında yok edilir.
+- **Tespit:** "bu özellik doğru mu?" diye sorma — **"bu özellik hangi mevcut
+  garantiye dokunabilir ve o garanti bu özellik etkinken hâlâ geçerli mi?"**
+  diye sor. Çift listesini bilerek kur: yeni özellik × dokunabildiği her
+  garanti. İki sınıf özellikle kırılgan:
+  - **Türetilmiş sinyaller.** Bir yokluktan hesaplanan her şey ("3 gündür
+    kimse dokunmadı", "atanmamış", "henüz okunmadı") yeni bir durum
+    eklendiği anda sessizce anlam değiştirir.
+  - **Tek tek çağrı yerinde uygulanan garantiler.** Beş çağrı yerinde
+    doğru uygulanan bir gizlilik kuralı, onu baypas eden altıncı bir yüzeyle
+    toptan geçersizleşir — klasiği toplu dışa aktarımdır.
+- **Sıra önemlidir.** Bazı bileşimler simetrik değildir: çift bir sırada
+  güvenli, diğerinde bozuktur. Gerekli sırayı uygulama detayı olarak değil,
+  bulgunun parçası olarak yaz.
+- **Örnekler (tek oturum, beş bulgu, hiçbiri iddia denetiminden çıkmadı):**
+  *duraklatma × bayatlama sinyali* — işi duraklatmak doğru, dokunulmamış işi
+  işaretlemek doğru; birlikte, duraklatma tıkanmış işi saklamanın ucuz yolu
+  olur ve bayrak gürültüden ölür. *sessize alma × devir bildirimi* — bildirim
+  tercihleri doğru, ekipler arası devir uyarısı doğru; birlikte devir
+  susturulabilir ve sistem kimseye haber vermeden başarı raporlar.
+  *üstlenme × ayrılma* — görevi üstlenmek doğru, ayrılanı pasife almak doğru;
+  birlikte görev asla dönmeyecek birinde kalır ve "meşgul" varsayan bir
+  zaman aşımı bunu "gitmiş"ten ayırt edemez. *dışa aktarım × özel notlar* —
+  rapor üreteci doğru, not bazında gizlilik doğru; tek düğme diğerini
+  geçersiz kılar. *anonimleştirme × açık işler* — ikisi de doğru, ama yalnız
+  tek sırada: önce anonimleştir, yeniden atanacak işin sahibi artık
+  okunamaz.
+- **Neden incelemeden sağ çıkar:** her özelliğin kabul kriterini o özelliğin
+  sahibi yazar ve **o özellik için doğrudur**. Kusur iki sahibin arasında
+  yaşar; madde 3.11'in bir seviye üstündeki aynı yapısal sebep. Testler
+  kusuru miras alır: özellik başına yazıldıkları için yeşil paket parçalar
+  hakkında kanıttır ve çift hakkında sessizdir.
+- **Geç bulmanın bedeli:** kâğıtta ucuz, kodda pahalı. Bunlar model
+  düzeyinde çatışmalardır; tasarımda bulunursa tek karar, sevkten sonra
+  bulunursa bir migrasyondur.
+- **Nereye kaydedilir:** `probes.conjunction.pairs` (R20). Satır bırakmayan
+  bir pas, hiç koşulmamış pastan ayırt edilemez — ve bu pas varsayılan
+  olarak atlanır.
+
+> **Numaralandırma notu.** İngilizce `checklist.md` dosyasında madde 10
+> üretici-tarafı iddia, madde 11 denetçinin kör noktasıdır; buradaki 3.10 ve
+> 3.11 bu ikisinin yeri değişmiş hâlidir. 12 ve 13 iki dilde aynı numarayı
+> taşır — kurallar (R19/R20) ve rampalar onlara numarayla atıf yapar.
+
 ---
 
 # BÖLÜM 4 — Kurtarma Rampaları (references/recovery.md karşılığı)
@@ -450,7 +696,7 @@ uzun oturum unutur.
 | Kod | Durum | Temel kural | Dayanak |
 |---|---|---|---|
 | **RR-00** | Kendi katmanını onaylamak üzeresin | Geçişi ilan et; hakem `author`, tavan `[KKE]` | Hakem kuralı, üretici/denetçi ayrımı |
-| **RR-01** | Söz verilen artifact üretilemedi | Düzyazıyı artifact yerine koyma; kısıtı kapsam beyanına yaz | Kontrol listesi md. 10, A5 |
+| **RR-01** | Söz verilen artifact üretilemedi | Düzyazıyı artifact yerine koyma; kısıtı kapsam beyanına yaz | Kontrol listesi md. 3.11, A5 |
 | **RR-02** | Sonuç eşiği tutturamadı | Dörtlü karar: iddia / mekanizma / **enstrüman** / önkoşul — eşiği oynatma | R4, R10, önkoşul kuralı |
 | **RR-03** | Sonuç tekrar etmiyor | Deterministikleştir; uyan koşuyu raporlama | Dürüstlük şerhleri, hakem sınıfı |
 | **RR-04** | "Düzeltme işe yaradı" ve başka şey de kıpırdadı | Sürpriz pozitif: simetrik kontrol; rakip hipotezleri silme | R15, sürpriz-pozitif kuralı |
@@ -462,12 +708,13 @@ uzun oturum unutur.
 | **RR-10** | Belirsizlik / artifact'ler çelişiyor | Varsayma, boş elle sorma; çelişkinin kendisi **bulgudur** | İddia-kanıt sıçraması, katman kayması |
 | **RR-11** | Kendi verdiğin katmanı düşürmek | Tarihli düşürme bloğu ekle; eskiyi silme, neyin ona dayandığını yaz | R4, ton kuralı |
 | **RR-12** | Eşik tutmadı, optimize etme dürtüsü | Tek değişiklik, **aynı** enstrüman; önce hakeme bak | R10, hakem kuralı |
+| **RR-13** | Bir şey kaçtı, yöntem kıpırdamadı | Kaçağı **kaydet**, sonra teşhis et; "hangi kontrol bunu yakalamalıydı?" — varsa `class_ref`, yoksa `class_new` | R21, puan kartındaki *Kaçan* satırı, md. 3.12-3.13 |
 
 **Model hata sınıfları.** Rampalar çare, bunlar hastalık: uydurma · sessiz
 boşluk doldurma · bulgu enflasyonu · **eşik tiyatrosu** (hakemi yazar olan ya da
 hiç olmayan bir iddiaya kesin görünüşlü sayı iliştirmek — *rigor cosplay*) ·
 eşik yumuşatma · kendi çıktısını onaylama · iyimser raporlama · premise esareti
-· kolay-iddia yanlılığı · bağlam çürümesi. Model bunları seçmez; hem üretip hem
+· kolay-iddia yanlılığı · bağlam çürümesi · **sınıfsız kaçak** (hata çıktı, düzeltme girdi, bir sonraki denetimin neye baktığı değişmedi). Model bunları seçmez; hem üretip hem
 yargılayan bir tarafın işe yarar görünme baskısı altındaki davranışıdır.
 
 **Kapanış çizelgesi.** Bir denetim veya registry döngüsü kapanınca doldurulur.
