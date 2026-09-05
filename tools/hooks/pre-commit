@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Mizan pre-commit hook — runs the R1–R18 validator on staged registry files.
-# Mizan pre-commit kancası — hazırlanmış registry dosyalarını R1–R18 denetler.
+# Mizan pre-commit hook — runs the R1–R21 validator on staged registry files.
+# Mizan pre-commit kancası — hazırlanmış registry dosyalarını R1–R21 denetler.
 #
 # Install / Kurulum:
 #   cp tools/hooks/pre-commit .git/hooks/pre-commit
@@ -53,8 +53,8 @@ done
 
 if [ "$fail" -ne 0 ]; then
   echo ""
-  echo "mizan: commit blocked — registry violates a hard rule (R1–R18)."
-  echo "mizan: commit engellendi — registry bir sert kuralı (R1–R18) ihlal ediyor."
+  echo "mizan: commit blocked — registry violates a hard rule (R1–R21)."
+  echo "mizan: commit engellendi — registry bir sert kuralı (R1–R21) ihlal ediyor."
   echo "       Fix the entry or, if this is a deliberate exception, document it."
   exit 1
 fi
