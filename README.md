@@ -302,6 +302,23 @@ verirsiniz.
 
 ### Version / Sürüm
 
+**v2.5** — the passes whose input is not a sentence someone wrote. Adds the
+`probes` block and R19–R21: the domain probe of checklist item 12 (situations
+that occur in the field, who supplied them, and whether they were written
+before the work — a tier-K coverage claim now requires them, and
+auditor-invented scenarios are refused the way a self-judged threshold is),
+the conjunction pass of item 13 (feature × the guarantee it can reach, because
+atomizing destroys any defect that lives only in a pair), and the escape→class
+loop (every escape names the check that should have fired, or the check that
+now exists because of it). Also R17 (an open hypothesis carries a deadline, and
+a passed deadline forces a decision), R18 (a preregistration states its data
+status, stopping rule and exclusion rule), the recovery ramps `RR-00`…`RR-13`
+for when the audit itself goes wrong, the warning W5, and a Turkish mirror that
+catches up with checklist items 10, 12 and 13 and with the audit procedure's
+steps 7–9. Registry schema 1.8; files at 1.0–1.7 stay valid and unenforced.
+This release also carries the v2.4 work below, which was documented but never
+tagged.
+
 **v2.4** — closes every finding of [`PROSE-SCHEMA-AUDIT.md`](PROSE-SCHEMA-AUDIT.md),
 the systematic diff between what SKILL.md and `references/` require and what
 the schema enforced. Adds R9–R12 (evidence behind `[K]`, numeric thresholds, a
