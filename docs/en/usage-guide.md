@@ -100,7 +100,7 @@ methodology — the instructions and schema are themselves subject to
 revision (following their own discipline: changes are justified, history
 is never deleted).
 
-## 3. Hard rules (summary — R1–R21 in the schema)
+## 3. Hard rules (summary — R1–R22 in the schema)
 
 1. Threshold + refutation condition before any result (HARKing structurally closed).
 2. Baseline mandatory; a baseline-less result cannot produce `[K]`.
@@ -166,9 +166,50 @@ the entries are ready. The shipped schema is 1.5.
     and never tested is indistinguishable from one that was only ever
     sketched. The registry still looks full. Enforced from schema 1.6.
 
-**Warnings (W1–W4) advise, they do not block.** An entry with no `two_sided`
+18. **A preregistration says what it locked.** An entry carrying the
+    `[önkayıt]` tag states three things: its **data status** (does the data
+    exist yet, and have you seen it — the last two cannot be preregistered,
+    because a hypothesis written against data you have already seen is
+    postdiction, and saying so is the honest move), its **stopping rule** (when
+    collection ends) and its **exclusion rule** (which observations get dropped
+    and by what rule — "none" is a valid answer, blank is not). Schema 1.7.
+
+19. **The domain probe is recorded** (`probes.domain`): the situations that
+    actually occur in the field, who supplied them, and whether they were
+    written before the work. A tier-`[K]` coverage claim requires them — at
+    least one scenario, none left unchecked, and `supplied_by` outside
+    {auditor, none}. That gate is R8's arbiter logic one level up: a scenario
+    list the auditor invented is self-report, exactly like a threshold judged
+    by its own author.
+
+20. **The conjunction pass is recorded** (`probes.conjunction`): feature ×
+    the existing guarantee it can reach, with the safe order when the pair is
+    asymmetric. Atomizing destroys any defect that lives only in a pair, so a
+    pass that leaves no row cannot be told apart from one that never ran. A
+    green test suite is not counter-evidence: tests are written per feature.
+
+21. **Every escape names a class** (`probes.escaped`): `class_ref`, the check
+    that should have fired, or `class_new`, the check that now exists because
+    of it. The scorecard already counted escapes and called that count the only
+    measure that cannot be gamed from inside the audit. A count is not a loop.
+
+22. **A cost claim states its arm.** `cost_actual` names the **instrument**
+    that produced the numbers (a script, an invoice, a dashboard — "the model
+    estimated it" is not one), the measurement **window**, the **attribution**
+    (how spend was mapped to this entry, and by whom — a human judgement by
+    construction), and `baseline.kind`: `none` · `internal-phase` ·
+    `parallel-arm` · `historical`. **`none` is legal, honest, and caps the
+    entry below `[K]`.** What the work cost is a measurement; that the tool
+    *caused* the difference is a claim, and with no comparison arm nothing
+    separates it from the boring explanations that produce the same number —
+    a codebase the team now knows, a smaller backlog, a second attempt at a
+    problem already solved. R2, pointed at the claim teams most often make
+    without a control. Schema 1.9.
+
+**Warnings (W1–W5) advise, they do not block.** An entry with no `two_sided`
 statement; an entry with no result yet and no threshold or refutation; a
-registry where every tiered entry sits at `[K]`. Each has a legitimate
+registry where every tiered entry sits at `[K]`; a coverage ledger with no
+MERGE row; a coverage block with no domain or conjunction probe. Each has a legitimate
 exception — a draft entry, a one-entry registry — which is why none is a
 rule. `--strict` promotes them to failures; CI runs strict on the files whose
 job is to model the discipline (schema, templates, examples) and advisory

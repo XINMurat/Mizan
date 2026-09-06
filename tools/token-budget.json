@@ -6,7 +6,7 @@
   "budgets": {
     "T0": 300,
     "T1": 7400,
-    "T2": 32000
+    "T2": 33700
   },
   "runs": {
     "audit": {
@@ -22,7 +22,7 @@
         "skill/mizan/references/templates.md",
         "skill/mizan/schemas/mizan-registry.yaml"
       ],
-      "ceiling": 21200
+      "ceiling": 22400
     },
     "code-audit": {
       "files": [
@@ -39,5 +39,6 @@
       ],
       "ceiling": 14200
     }
-  }
+  },
+  "_raised": "1.9 (R22): the cost_actual block adds eight fields a writer needs in front of them while filling the form. The RATIONALE for the rule moved to references/feature-gate.md Step 6 -- loaded only in Mode 5 instead of on every registry write -- which returned ~500 tokens; the rest is the block itself and is content, not commentary. Raised deliberately: T2 32000->33700, registry-write 21200->22400, each ~3% above the new measurement."
 }

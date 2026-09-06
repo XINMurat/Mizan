@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mizan registry validator — LLM-free static enforcement of hard rules R1–R21.
+Mizan registry validator — LLM-free static enforcement of hard rules R1–R22.
 
 This is the cheap, judgment-free baseline of feature FEAT-M001 (in the
 project's roadmap registry). It does NOT evaluate the *quality* of a
@@ -17,7 +17,7 @@ to write registries that do not trigger it, and that is a different skill
 from writing honest ones. Some findings are usually-wrong-but-legitimately-
 right-often-enough that stopping on them would be false precision. So:
 
-  * VIOLATIONS (R1-R21) block. They mark a registry that is incomplete in a
+  * VIOLATIONS (R1-R22) block. They mark a registry that is incomplete in a
     way the prose forbids outright.
   * WARNINGS (W1-W4) do not block by default. They mark shapes worth a
     second look. `--strict` promotes them to violations; CI runs strict,
@@ -333,6 +333,38 @@ MSG = {
         "R19/R20 devreye girmez; bunlar testlerin göremediğini bulan iki pas olduğu için sessizce "
         "atlanması da en kolay olanlardır.",
     ),
+    "R22_missing_field": (
+        "R22: feature {id} declares cost_actual with no {missing}. A cost number whose "
+        "instrument, window or attribution is unstated reads as though it had been counted "
+        "rather than assigned — and the assigning is the part a reader has to be able to check.",
+        "R22: {id} feature'ı cost_actual beyan ediyor ama {missing} yok. Enstrümanı, penceresi "
+        "ya da atıfı yazılmamış bir maliyet sayısı, atanmış değil sayılmış gibi okunur — ve okurun "
+        "kontrol edebilmesi gereken kısım tam da o atamadır.",
+    ),
+    "R22_bad_baseline": (
+        "R22: feature {id} has cost_actual.baseline.kind {got!r}; expected one of {allowed}.",
+        "R22: {id} feature'ının cost_actual.baseline.kind değeri {got!r}; beklenen: {allowed}.",
+    ),
+    "R22_baseless_K": (
+        "R22: feature {id} sits at [K] on a cost claim whose baseline.kind is 'none'. What the "
+        "work cost is a measurement; that the tool CAUSED the difference is a claim, and without "
+        "a comparison arm nothing separates it from the boring explanations — a familiar "
+        "codebase, a smaller backlog, a team that has done it once. This is R2 one level up: a "
+        "baseline-less experiment never promotes to [K]. Tier it [KKE] and say which arm is "
+        "missing.",
+        "R22: {id} feature'ı, baseline.kind'ı 'none' olan bir maliyet iddiasıyla [K]'da. İşin ne "
+        "kadara mal olduğu bir ölçümdür; farkı aracın YARATTIĞI ise bir iddiadır ve "
+        "karşılaştırma kolu olmadan onu sıkıcı açıklamalardan ayıran hiçbir şey yoktur — "
+        "tanıdık bir kod tabanı, küçülmüş bir backlog, işi bir kez yapmış bir ekip. Bu, R2'nin bir "
+        "üst seviyesidir: baseline'ı olmayan deney asla [K]'ya terfi etmez. [KKE] ver ve hangi "
+        "kolun eksik olduğunu yaz.",
+    ),
+    "R22_no_baseline_note": (
+        "R22: feature {id} names baseline.kind {kind!r} with no note. An arm nobody described is "
+        "an arm nobody can check — say what it is and what it does NOT control for.",
+        "R22: {id} feature'ı baseline.kind {kind!r} diyor ama not yok. Tarif edilmemiş bir kol, "
+        "kontrol edilemeyen bir koldur — ne olduğunu ve neyi kontrol ETMEDİĞİNİ yaz.",
+    ),
     "W4_no_merge_row": (
         "W4: the coverage ledger has phase rows but no MERGE row — reconciliation is where a phased "
         "audit is weakest (a claim in one slice verified only by evidence in another), so it is "
@@ -360,8 +392,8 @@ MSG = {
         "önlüğü giymiş iltifat problemidir. Meşru olabilir, ama kaynakları kontrol etmeye değer.",
     ),
     "clean": (
-        "OK — {n} entries checked, no R1–R21 violations.",
-        "OK — {n} girdi kontrol edildi, R1–R21 ihlali yok.",
+        "OK — {n} entries checked, no R1–R22 violations.",
+        "OK — {n} girdi kontrol edildi, R1–R22 ihlali yok.",
     ),
     "found": (
         "{n} violation(s) found.",
@@ -565,6 +597,12 @@ def check(data: dict, lang: str,
     if _schema_at_least(data, (1, 8)):
         errs += _check_probes(data.get("probes"), data.get("coverage"), lang)
         warns += _probe_warnings(data.get("probes"), data.get("coverage"), lang)
+
+    # R22 — what it cost, and against what. Gated at 1.9; an entry with no
+    # cost_actual pays nothing, so the rule falls exactly on the entries that
+    # make a cost claim.
+    if _schema_at_least(data, (1, 9)):
+        errs += _check_cost_actual(features, lang)
 
     # tier sanity
     for kind, coll in (("hypothesis", hyps.values()), ("feature", features), ("bug", bugs)):
@@ -793,6 +831,51 @@ def _check_arbiters(entries: Any, lang: str, kind: str = "hypothesis") -> list[s
             errs.append(m("R8_no_calibration", lang, kind=label, id=hid, cls=cls))
         if cls in {"author", "none"} and arb.get("independent_of_author") is True:
             errs.append(m("R8_independence_contradiction", lang, kind=label, id=hid, cls=cls))
+    return errs
+
+
+BASELINE_KINDS = ("none", "internal-phase", "parallel-arm", "historical")
+
+
+def _check_cost_actual(features: list[dict], lang: str) -> list[str]:
+    """R22 — a cost claim states its instrument, its window, its attribution
+    and its comparison arm.
+
+    The split this rule is built on: the cost side is a MEASUREMENT and is
+    usually already on disk; the attribution of that spend to this feature is a
+    human judgement; and the claim that the tool CAUSED the difference needs an
+    arm. The validator checks that all three are written down and never judges
+    any of them — whether the arm is a good arm is not a thing a script knows.
+    """
+    errs: list[str] = []
+    for f in features:
+        ca = f.get("cost_actual")
+        if not isinstance(ca, dict):
+            continue
+        fid = f.get("id")
+        missing = []
+        if not _s(ca.get("instrument")):
+            missing.append("instrument")
+        window = ca.get("window")
+        if not (isinstance(window, dict) and _s(window.get("from")) and _s(window.get("to"))):
+            missing.append("window.from/to")
+        if not _s(ca.get("attribution")):
+            missing.append("attribution")
+        base = ca.get("baseline") if isinstance(ca.get("baseline"), dict) else {}
+        kind = _s(base.get("kind")).lower()
+        if not kind:
+            missing.append("baseline.kind")
+        if missing:
+            errs.append(m("R22_missing_field", lang, id=fid,
+                          missing=" / ".join(missing)))
+        if kind and kind not in BASELINE_KINDS:
+            errs.append(m("R22_bad_baseline", lang, id=fid, got=kind,
+                          allowed=", ".join(BASELINE_KINDS)))
+            continue
+        if kind and kind != "none" and not _s(base.get("note")):
+            errs.append(m("R22_no_baseline_note", lang, id=fid, kind=kind))
+        if kind == "none" and _s(f.get("tier")).upper() == "K":
+            errs.append(m("R22_baseless_K", lang, id=fid))
     return errs
 
 
@@ -1080,7 +1163,7 @@ def _append_only(new: dict, old: dict, lang: str) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(description="Mizan registry R1–R21 validator")
+    ap = argparse.ArgumentParser(description="Mizan registry R1–R22 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
     ap.add_argument("--lang", choices=["en", "tr"], default="en")
     ap.add_argument("--against", metavar="GITREF",

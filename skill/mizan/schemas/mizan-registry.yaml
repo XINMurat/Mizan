@@ -1,5 +1,5 @@
 # =====================================================================
-# Mizan Registry Schema v1.8  (mizan-registry.yaml)
+# Mizan Registry Schema v1.9  (mizan-registry.yaml)
 # =====================================================================
 # Machine-readable research/engineering registry aligned with the Mizan
 # methodology. Human-editable, AI-readable, git-diff friendly.
@@ -104,6 +104,26 @@
 #        an escape is converted into a class, the method learns nothing from
 #        the one signal that comes from outside it.
 #
+#   R22. WHAT IT COST, AND AGAINST WHAT. A feature entry may carry
+#        `cost_actual`: what the work actually consumed, as opposed to `cost`,
+#        which is an estimate written before it started. It states its
+#        `instrument` (what produced the numbers), its `window`, its
+#        `attribution` (how spend was mapped here, and by whom -- a human
+#        judgement by construction) and `baseline.kind`, one of
+#        none | internal-phase | parallel-arm | historical.
+#
+#        `none` is legal and honest, and it CAPS THE TIER: an entry resting on
+#        cost_actual with no comparison arm may not sit at [K]. What the work
+#        cost is a measurement; that the tool CAUSED the difference is a claim,
+#        and R2 has refused baseline-less promotion since it was written.
+#
+#        The reasoning, the four arms and what each fails to control for are in
+#        references/feature-gate.md Step 6 -- one file away, because this one is
+#        loaded on every registry write and that one only in Mode 5.
+#
+#        Enforced from schema_version 1.9. An entry with no cost_actual pays
+#        nothing.
+#
 # Tiers: K (proven) | H (plausible hypothesis) | S (speculative)
 #        R (refuted) | KKE (critical control missing) | Y (misleading)
 #
@@ -140,6 +160,14 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.9 — adds `cost_actual` on features and activates R22: an entry that says
+#         what the work cost also says which instrument produced the number,
+#         over which window, how the spend was attributed, and against what
+#         baseline -- with `baseline.kind: none` capping the entry below [K].
+#         This is R2's rule (a baseline-less experiment can never promote to K)
+#         applied to the one claim teams most often make without a control arm.
+#         MIGRATION: 1.0-1.8 unaffected; an entry with no cost_actual pays
+#         nothing.
 #   1.8 — adds the `probes` block (rules R19-R21): the domain probe of
 #         checklist item 12, the conjunction pass of item 13, and the escaped
 #         -> class loop the scorecard was missing. These three are the only
@@ -240,7 +268,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.8"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21
+  schema_version: "1.9"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21; 1.9 R22
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -541,6 +569,35 @@ features:
     prior_art:
       - "Has this been tried here or elsewhere, and how did it go? Name it, or say 'no known relatives'."
     cost: "build + maintenance estimate"
+    # ---- What it ACTUALLY cost (1.9+, R22). Optional; omit for an entry that
+    # makes no cost claim. `cost` above is an estimate written before the work;
+    # this is the measurement taken after it.
+    cost_actual:
+      instrument: "tools/session_cost.py over the local transcripts, 2026-09"
+                                    # what PRODUCED the numbers. A script, an
+                                    # invoice, a dashboard. "The model
+                                    # estimated it" is not an instrument.
+      window: { from: "2026-09-01", to: "2026-09-30" }
+      tokens: { input: 41000, output: 96000, cache_write: 210000, cache_read: 3100000 }
+      money: { amount: null, currency: "USD", rates_source: "" }
+                                    # optional. Null is honest when nobody
+                                    # converted; 0 would be a lie with the
+                                    # same number of characters.
+      human_hours: 6.5              # optional, and worth more than it looks:
+                                    # the tokens are rarely the expensive half.
+      attribution: >
+        HOW the spend was mapped here, and by whom. "The four sessions on
+        branch feat/x, mapped by the author." A judgement, not a count.
+      baseline:
+        kind: "internal-phase"      # none | internal-phase | parallel-arm
+                                    #      | historical
+                                    # `none` is legal and honest, and it caps
+                                    # the entry below [K]: a cost claim with
+                                    # no comparison arm is a number, not a
+                                    # result (R22, and R2 one level up).
+        note: >
+          What the arm is and what it does NOT control for. (feature-gate.md
+          Step 6 lists the usual confounds per arm.)
     history:
       - { date: "2026-08-20", event: "gated, not started" }
 

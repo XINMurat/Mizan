@@ -114,6 +114,51 @@ While building, PRD claims meet reality. Rules:
   BEFORE the demo, and they are subject to Mode 3's test-quality rule
   (a test that cannot fail is decoration).
 
+## Step 6 — what it cost, and against what (R22)
+
+`cost` is an estimate written before the work. `cost_actual` is the
+measurement taken after it, and the gate asks for it because "we cannot
+measure the return on our tooling" is two problems wearing one sentence, only
+one of which is hard.
+
+**The cost side is measurable and usually already on disk.** Token usage per
+session is written by the tool that spent it; invoices exist; hours are
+tracked. Nobody totals them, which is not the same as nobody being able to.
+Name the **instrument** that produced the number — a script, an invoice, a
+dashboard. "The model estimated it" is not an instrument.
+
+**The attribution is a judgement, and saying so is the point.** Which sessions
+advanced which feature is decided by a person, not counted by a system. The
+`attribution` field exists so a number cannot read as though it had been
+counted when it was assigned.
+
+**The return side needs the value metric you already named** in `metric`, and
+one more thing the schema cannot supply for you:
+
+### The arm, or the cap
+
+`baseline.kind` is mandatory and blunt:
+
+| kind | what it is | what it costs you |
+|---|---|---|
+| `none` | no comparison exists | legal, honest, and it **caps the entry below `[K]`** |
+| `internal-phase` | an earlier phase of the same project | cheap; confounded by everything else that changed |
+| `parallel-arm` | the same work done both ways at once | expensive; the only one that isolates the tool |
+| `historical` | a comparable past project | confounded by the years in between |
+
+What the work cost is a measurement. That **the tool caused the difference**
+is a claim, and with no arm nothing separates it from the boring explanations
+that produce the same number: a codebase the team now knows, a backlog that
+shrank, a second attempt at a problem already solved once. This is R2 —
+a baseline-less experiment never promotes to `[K]` — pointed at the claim
+teams most often make without a control.
+
+The honest majority case is `internal-phase` with a `note` that lists what it
+does not control for. That is worth more than a `parallel-arm` nobody ran and
+far more than a `none` presented as a result.
+
+---
+
 ## Large PRDs and feature portfolios — phase the gate
 
 A single epic PRD or a whole roadmap of features is too large to atomize

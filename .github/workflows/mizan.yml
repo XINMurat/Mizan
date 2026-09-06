@@ -1,6 +1,6 @@
 name: CI
 
-# Runs the LLM-free R1–R21 registry validator and checks that the shipped
+# Runs the LLM-free R1–R22 registry validator and checks that the shipped
 # mizan.skill stays in sync with skill/mizan/. This is the static-check
 # automation of the already-shipped tool (FEAT-M001's cheap alternative) —
 # NOT the "full CI/CD gate with an LLM auditor", which stays gated.
@@ -55,7 +55,7 @@ jobs:
             echo "::warning::No baseline commit reachable — R4 (append-only) did NOT run."
           fi
 
-      - name: Validate every registry (R1–R21, R4 against the baseline)
+      - name: Validate every registry (R1–R22, R4 against the baseline)
         run: |
           set -e
           base="${{ steps.baseline.outputs.base }}"
@@ -267,6 +267,84 @@ jobs:
           sed -i 's/schema_version: "1.8"/schema_version: "1.7"/' "$tmp"
           python tools/mizan_validate.py "$tmp"
           echo "OK: R19-R21 wait for schema 1.8, the way R18 waited for 1.7."
+
+      - name: Self-test — R22 must reject a cost claim with no arm
+        run: |
+          set -e
+          # "We cannot measure the return on our AI spend" is two problems in
+          # one sentence. The cost side is a measurement and is usually already
+          # on disk. The causal side needs a comparison arm, and without one the
+          # boring explanations produce the same number: a codebase the team now
+          # knows, a smaller backlog, a second attempt at a solved problem. R2
+          # has refused baseline-less promotion since v2.2; this is R2 pointed
+          # at the claim teams most often make without a control.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.9"}
+          hypotheses: []
+          experiments: []
+          results: []
+          features:
+            - id: "FEAT-001"
+              tier: "K"
+              formal: "Ship the thing"
+              metric: {name: "adoption", instrument: "telemetry"}
+              cost: "3 days"
+              status: "shipped"
+              prior_art: []
+              threshold: {support: ">= 30%", refute: "< 10%"}
+              refutation: "below 10%"
+              two_sided: "either outcome teaches"
+              kill_condition: "under 5% at 12 weeks, remove"
+              arbiter: {class: instrument, who: "telemetry query", calibration: "pre-launch baseline"}
+              alternatives:
+                - {kind: proposed, option: "as specified", cost: "3 days"}
+                - {kind: cheaper, option: "config flag", cost: "0.5 days"}
+                - {kind: "null", option: "do nothing", cost: "0"}
+              cost_actual:
+                tokens: {input: 41000, output: 96000}
+                baseline: {kind: "none"}
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          # a number with no instrument, window or attribution reads as counted
+          # when it was assigned
+          echo "$out" | grep -q "R22: feature FEAT-001 declares cost_actual with no" || { echo "FAIL: R22 accepted an unsourced cost number" >&2; exit 1; }
+          # and no arm means no [K]
+          echo "$out" | grep -q "R22: feature FEAT-001 sits at \[K\]" || { echo "FAIL: R22 let a baseline-less cost claim sit at [K]" >&2; exit 1; }
+          echo "OK: R22 refused the unsourced number and the armless [K]."
+
+          # filled in and honestly tiered, it passes -- `none` is legal, it just
+          # cannot be [K]
+          python - "$tmp" <<'PY'
+          import io, sys
+          p = sys.argv[1]
+          s = io.open(p, encoding="utf-8").read()
+          s = s.replace('tier: "K"', 'tier: "KKE"')
+          s = s.replace("      baseline: {kind: \"none\"}",
+                        '      instrument: "tools/session_cost.py over local transcripts"\n'
+                        '      window: {from: "2026-09-01", to: "2026-09-30"}\n'
+                        '      attribution: "the four sessions on feat/x, mapped by the author"\n'
+                        '      baseline: {kind: "none"}')
+          io.open(p, "w", encoding="utf-8").write(s)
+          PY
+          python tools/mizan_validate.py "$tmp"
+          echo "OK: a sourced cost claim with no arm is legal at [KKE]."
+
+          # an arm nobody described is an arm nobody can check
+          sed -i 's/baseline: {kind: "none"}/baseline: {kind: "internal-phase"}/' "$tmp"
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out" | grep -q "with no note" || { echo "FAIL: R22 accepted an undescribed arm" >&2; exit 1; }
+          echo "OK: R22 asks what the arm is and what it does not control for."
+
+          # migration: the same entry at 1.8 is unenforced
+          sed -i -e 's/schema_version: "1.9"/schema_version: "1.8"/' "$tmp"
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          if echo "$out" | grep -q "R22:"; then
+            echo "FAIL: R22 fired on a 1.8 registry; the migration gate is not holding" >&2
+            exit 1
+          fi
+          echo "OK: R22 waits for schema 1.9, the way R19-R21 waited for 1.8."
 
       - name: Self-test — R4 must catch a deleted entry
         run: |

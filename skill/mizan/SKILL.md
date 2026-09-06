@@ -4,7 +4,7 @@ description: Evidence-tiered claim auditing and preregistered hypothesis registr
 license: MIT
 metadata:
   author: XINMurat
-  schema_version: "1.8"   # pinned to the schema banner by CI
+  schema_version: "1.9"   # pinned to the schema banner by CI
 ---
 
 # Mizan — Evidence-Tiered Auditing & Preregistration Registry
@@ -372,7 +372,7 @@ from the outside.
   writing entries, `recovery.md` the moment a run stops behaving. Reading
   everything at the start spends the context the audit itself needs.
 - **The scripted part is the part that travels.** `mizan_validate.py`
-  enforces R1–R21 without a model, so it behaves identically in every
+  enforces R1–R22 without a model, so it behaves identically in every
   host. Whatever is enforced only by this prose is negotiable by the
   host's prose. When rigor must survive an unknown setup, put it in the
   validator, not in a paragraph.
@@ -416,7 +416,7 @@ from the outside.
 - `schemas/mizan-registry.yaml` — the machine-readable registry format.
   When the user keeps a registry file (in project knowledge, a repo, or
   uploads one), read it at session start, APPEND rather than overwrite,
-  propose new entries in this schema, and enforce its hard rules R1–R21
+  propose new entries in this schema, and enforce its hard rules R1–R22
   (mandatory baseline, mandatory confound controls, append-only history,
   no K-promotion without controls on surprising positives, and
   producer/auditor separation: propose tier changes, let the owner or a

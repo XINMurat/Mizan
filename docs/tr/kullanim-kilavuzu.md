@@ -91,7 +91,7 @@ enstrümanlar güvenilir, yanlılık nerede birikiyor. Çıktı metodolojiyi
 besler — talimat ve şema da revizyona tabidir (kendi disiplinlerine
 uyarak: değişiklik gerekçeli, geçmiş silinmez).
 
-## 3. Sert kurallar (özet — şemadaki R1–R21)
+## 3. Sert kurallar (özet — şemadaki R1–R22)
 
 1. Sonuçtan önce eşik + çürütme koşulu (HARKing yapısal olarak kapalı).
 2. Baseline zorunlu; baseline'sız sonuç [K] üretemez.
@@ -188,7 +188,20 @@ edilemez:
     adlandırıyordu. Sayı, döngü değildir: kaçak bir sınıfa dönüşene kadar bir
     sonrakini hiçbir şey yakalamaz. Rampası **RR-13**'tür.
 
-1.0–1.7 beyan eden registry'ler yükseltmede kırılmaz: yapısal yarı yalnızca
+22. **Maliyet iddiası kolunu söyler.** `cost_actual`, sayıları üreten
+    **enstrümanı** (bir script, bir fatura, bir gösterge paneli — "model tahmin
+    etti" enstrüman değildir), ölçüm **penceresini**, **atfı** (harcamanın bu
+    girdiye nasıl ve kim tarafından eşlendiği — yapısı gereği insan hükmü) ve
+    `baseline.kind`'ı adlandırır: `none` · `internal-phase` · `parallel-arm` ·
+    `historical`. **`none` meşrudur, dürüsttür ve girdiyi `[K]`'nın altında
+    tavanlar.** İşin ne kadara mal olduğu bir ölçümdür; farkı aracın
+    *yarattığı* ise bir iddiadır ve karşılaştırma kolu olmadan onu aynı sayıyı
+    üreten sıkıcı açıklamalardan ayıran hiçbir şey yoktur — ekibin artık
+    tanıdığı bir kod tabanı, küçülmüş bir backlog, bir kez çözülmüş bir probleme
+    ikinci deneme. R2'nin, ekiplerin en sık kontrolsüz yaptığı iddiaya
+    çevrilmiş hâli. Şema 1.9.
+
+1.0–1.8 beyan eden registry'ler yükseltmede kırılmaz: yapısal yarı yalnızca
 yazdığın prob satırlarına bakar, kapı yarısı yalnızca `[K]` **iddia eden** bir
 `coverage` bloğunda ateşlenir.
 

@@ -1,5 +1,5 @@
 # =====================================================================
-# Mizan Registry Schema v1.8  (mizan-registry.yaml)
+# Mizan Registry Schema v1.9  (mizan-registry.yaml)
 # =====================================================================
 # Machine-readable research/engineering registry aligned with the Mizan
 # methodology. Human-editable, AI-readable, git-diff friendly.
@@ -92,6 +92,13 @@
 #        says `in_scope`. The scorecard already counts escapes; a count is not
 #        a loop until each one becomes a class.
 #
+#   R22. A cost claim states its instrument, its window, how spend was
+#        attributed to this entry, and its comparison arm. `baseline.kind` is
+#        one of none | internal-phase | parallel-arm | historical, and `none`
+#        CAPS THE TIER below [K]: what the work cost is a measurement, but
+#        that the tool caused the difference is a claim, and with no arm
+#        nothing separates it from the boring explanations. R2, one level up.
+#
 # Tiers: K (proven) | H (plausible hypothesis) | S (speculative)
 #        R (refuted) | KKE (critical control missing) | Y (misleading)
 #
@@ -128,6 +135,9 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.9 — adds `cost_actual` on features and activates R22. An entry with no
+#         cost_actual pays nothing; the rule falls on the ones making a cost
+#         claim.
 #   1.8 — adds the `probes` block (R19-R21): domain probe (item 12),
 #         conjunction pass (item 13), escaped -> class loop. The three passes
 #         whose input is not a sentence someone wrote, and so the three that
@@ -208,7 +218,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.8"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21
+  schema_version: "1.9"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21; 1.9 R22
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -511,7 +521,29 @@ features:
       as S — and say which.
     prior_art:
       - "Has this been tried here or elsewhere, and how did it go? Name it, or say 'no known relatives'."
-    cost: "build + maintenance estimate"
+    cost: "build + maintenance estimate"   # an ESTIMATE, written before the work
+    # ---- What it ACTUALLY cost (1.9+, R22). Omit for an entry making no cost
+    # claim. Filling it in commits you to four things, and the fourth is the
+    # one that decides whether any of it means anything.
+    cost_actual: null
+    # cost_actual:
+    #   instrument: ""              # what PRODUCED the numbers. A script, an
+    #                               # invoice, a dashboard. "The model
+    #                               # estimated it" is not an instrument.
+    #   window: { from: "", to: "" }
+    #   tokens: { input: 0, output: 0, cache_write: 0, cache_read: 0 }
+    #   money: { amount: null, currency: "", rates_source: "" }
+    #   human_hours: null           # often the expensive half; null is honest
+    #   attribution: ""             # HOW the spend was mapped here, and by
+    #                               # whom. A human judgement by construction.
+    #   baseline:
+    #     kind: ""                  # none | internal-phase | parallel-arm
+    #                               #      | historical
+    #                               # `none` is legal and caps the entry below
+    #                               # [K] -- a cost claim with no comparison
+    #                               # arm is a number, not a result.
+    #     note: ""                  # what the arm is, and what it does NOT
+    #                               # control for
     history:
       - { date: "2026-08-20", event: "gated, not started" }
 
