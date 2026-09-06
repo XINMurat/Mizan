@@ -88,14 +88,24 @@ Kıyas supplies what Mizan weighs; **[İskele](https://github.com/XINMurat/Iskel
 supplies the structure both of them operate on — a domain model, a phased
 roadmap with go/no-go gates, an atomic backlog with executable acceptance
 criteria, and a progress report computed from a tracker rather than estimated
-by hand. The three verbs are deliberately kept in three tools:
+by hand. The verbs are deliberately kept in separate tools:
 
-> **İskele builds · Mizan weighs · Kıyas generates**
+> **İskele builds · Mizan weighs · Kıyas generates · ux-mizan measures experience**
 
-The handoff runs in both directions: when İskele finishes a kit, Mizan audits
-the kit's own claims — every "verified" sentence goes through a counter-example
-sweep, and every estimate carries a tier instead of the false precision a
-spreadsheet invites. What the audit turns up re-enters the kit as backlog tasks.
+**Where Mizan starts:** with something you already have — an AI conversation, an
+article, an old note, a rough idea. It is the family's entry point, and the
+audit is the first thing that happens to loose material.
+
+**Mizan and Kıyas then turn between themselves.** The gap map and the refuted
+entries become Kıyas's brief and its constraints; Kıyas's surviving seeds come
+back as preregistered entries. That pair can go round many times with no project
+in sight. İskele is entered when something survives and is worth building — a
+branch off that loop, not a station on it — and when a kit is finished Mizan
+audits the kit's own claims: every "verified" sentence goes through a
+counter-example sweep, and every estimate carries a tier instead of the false
+precision a spreadsheet invites.
+
+[All four, and how they hand off →](https://xinmurat.github.io/)
 
 ### Companion skill — ux-mizan
 
@@ -232,14 +242,23 @@ python tools/kiyas_validate.py --refuted refuted-patterns.yaml tohumlar.yaml
 ### Kardeş skill — İskele
 
 Kıyas, Mizan'ın tartacağını üretir; **[İskele](https://github.com/XINMurat/Iskele)**
-ise ikisinin üzerinde çalıştığı yapıyı kurar — alan modeli, go/no-go kapılı
+ise diğerlerinin üzerinde çalıştığı yapıyı kurar — alan modeli, go/no-go kapılı
 fazlı yol haritası, çalıştırılabilir kabul kriterli atomik backlog ve el
-yordamıyla tahmin edilmek yerine çizelgeden **hesaplanan** ilerleme raporu. Üç
-fiil bilinçli olarak üç araçta tutulur:
+yordamıyla tahmin edilmek yerine çizelgeden **hesaplanan** ilerleme raporu.
+Fiiller bilinçli olarak ayrı araçlarda tutulur:
 
-> **İskele kurar · Mizan tartar · Kıyas üretir**
+> **İskele kurar · Mizan tartar · Kıyas üretir · ux-mizan deneyimi ölçer**
 
-Devir iki yönlüdür: İskele bir kiti bitirdiğinde Mizan kitin kendi iddialarını
+**Mizan nereden başlar:** elinizde zaten olan bir şeyle — bir YZ sohbeti, bir
+makale, eski bir not, ham bir fikir. Ailenin giriş kapısı burasıdır; dağınık
+malzemeye ilk olan şey denetimdir.
+
+**Sonra Mizan ile Kıyas kendi aralarında döner.** Boşluk haritası ve çürütülen
+kayıtlar Kıyas'ın brief'i ve negatif kısıtları olur; Kıyas'ın sağ kalan tohumları
+önkayıt girdisi olarak geri döner. Bu çift, ortada hiçbir proje yokken defalarca
+dönebilir. İskele, sağ kalan bir şey inşa edilmeye değdiğinde devreye girer —
+döngüden çıkan bir *dal*, üstünde bir durak değil. Devir iki yönlüdür: İskele
+bir kiti bitirdiğinde Mizan kitin kendi iddialarını
 denetler — "doğrulandı" diyen her cümle karşı-örnek taramasına girer, her tahmin
 çizelgenin davet ettiği sahte kesinlik yerine bir katman taşır. Denetimin
 bulduğu şey kite backlog görevi olarak geri girer.
