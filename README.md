@@ -93,8 +93,13 @@ by hand. The verbs are deliberately kept in separate tools:
 > **İskele builds · Mizan weighs · Kıyas generates · ux-mizan measures experience**
 
 **Where Mizan starts:** with something you already have — an AI conversation, an
-article, an old note, a rough idea. It is the family's entry point, and the
-audit is the first thing that happens to loose material.
+article, an old note, a rough idea, and equally a repository, a legacy codebase
+or a project already under way (modes 3–5 exist for exactly those). The output
+of an earlier mode — a gap map, a bug registry, a gated PRD — is legitimate
+input for the next one. It is the family's entry point, and the audit is the
+first thing that happens to loose material. **The entry is not one-time
+either:** while the loop turns, new material can enter at Mizan on any turn, and
+the append-only registry is what lets it join rather than restart.
 
 **Mizan and Kıyas then turn between themselves.** The gap map and the refuted
 entries become Kıyas's brief and its constraints; Kıyas's surviving seeds come
@@ -250,8 +255,13 @@ Fiiller bilinçli olarak ayrı araçlarda tutulur:
 > **İskele kurar · Mizan tartar · Kıyas üretir · ux-mizan deneyimi ölçer**
 
 **Mizan nereden başlar:** elinizde zaten olan bir şeyle — bir YZ sohbeti, bir
-makale, eski bir not, ham bir fikir. Ailenin giriş kapısı burasıdır; dağınık
-malzemeye ilk olan şey denetimdir.
+makale, eski bir not, ham bir fikir, ve aynı ölçüde bir repo, bir legacy kod
+tabanı ya da süren bir proje (3–5. modlar tam bunlar için). Önceki bir modun
+çıktısı — boşluk haritası, bug registry'si, kapıdan geçmiş PRD — bir sonrakinin
+meşru girdisidir. Ailenin giriş kapısı burasıdır; dağınık malzemeye ilk olan şey
+denetimdir. **Giriş de tek seferlik değildir:** döngü dönerken yeni malzeme her
+turda Mizan'a girebilir; yalnızca-eklenir registry, onun sıfırlamak yerine
+katılmasını sağlayan şeydir.
 
 **Sonra Mizan ile Kıyas kendi aralarında döner.** Boşluk haritası ve çürütülen
 kayıtlar Kıyas'ın brief'i ve negatif kısıtları olur; Kıyas'ın sağ kalan tohumları

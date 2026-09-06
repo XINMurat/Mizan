@@ -104,8 +104,16 @@ the same discipline into experience, where the evidence is behavioural rather
 than documentary — the loop closes.
 
 **Where it starts:** with something you already have. A document, an AI
-conversation, an article, a rough idea — Mizan is the entry, and everything
-after it is the loop.
+conversation, an article, a rough idea — but equally a repository, a legacy
+codebase, or a project already under way: modes 3–5 exist for exactly those, and
+in an undocumented project the audit report *is* the documentation. What an
+earlier mode produced — a gap map, a bug registry, a gated PRD — re-enters the
+same way.
+
+**And the entry is not a one-time event.** While the loop is turning, a new
+idea, a new document, a fresh piece of code can enter at Mizan on any turn; the
+registry is append-only so that late material joins what is there instead of
+restarting it. Mizan is the entry, and everything after it is the loop.
 
 [All four, and how they hand off →](https://xinmurat.github.io/)
 
@@ -124,7 +132,16 @@ olarak Kıyas'a geri akar. [ux-mizan](https://github.com/XINMurat/ux-mizan) ayn�
 disiplini kanıtın belgesel değil davranışsal olduğu alana taşır — döngü kapanır.
 
 **Nereden başlar:** elinizde zaten olan bir şeyle. Bir doküman, bir YZ sohbeti,
-bir makale, ham bir fikir — giriş Mizan'dır, ondan sonrası döngüdür.
+bir makale, ham bir fikir — ama aynı ölçüde bir repo, bir legacy kod tabanı ya
+da hâlihazırda süren bir proje: 3–5. modlar tam bunlar için var ve dokümansız
+bir projede denetim raporunun kendisi *dokümantasyondur*. Önceki bir modun
+ürettiği şey — boşluk haritası, bug registry'si, kapıdan geçmiş bir PRD — aynı
+yoldan yeniden girer.
+
+**Giriş de tek seferlik değildir.** Döngü dönerken yeni bir fikir, yeni bir
+doküman, taze bir kod parçası her turda Mizan'a girebilir; registry'nin
+yalnızca-eklenir olmasının sebebi budur — sonradan gelen malzeme var olanı
+sıfırlamaz, ona katılır. Giriş Mizan'dır, ondan sonrası döngüdür.
 
 [Dördü ve nasıl devrettikleri →](https://xinmurat.github.io/)
 
