@@ -7,7 +7,7 @@ denetiminden ayakta kalan mimariye dayanır — gerisi atılmıştır:
 | Katman | Bileşen | Sorumluluğu | Nerede yaşar |
 |---|---|---|---|
 | Davranış | userPreferences + Mizan Proje Talimatı | AI nasıl davranır | Claude ayarları + Project instructions |
-| Denetim | Mizan skill (v2.1) | Bir iddia nasıl değerlendirilir | Skill olarak yüklü |
+| Denetim | Mizan skill (v2.6) | Bir iddia nasıl değerlendirilir | Skill olarak yüklü |
 | Veri | mizan-registry.yaml | Araştırma bilgisi nasıl saklanır | Proje bilgisi / repo |
 
 Üç katman bağımsız çalışır: skill'siz şema da okunur, şemasız skill de
@@ -19,7 +19,7 @@ denetler. Birlikte tam sistemdir.
 
 1. **Skill:** `mizan.skill` dosyasını Claude'a yükleyin (Ayarlar →
    Capabilities → Skills). Güncellemelerde eski sürümün üzerine yenisini
-   yükleyin — otomatik güncellenmez. Şu anki sürüm: v2.1 (5 mod + şema).
+   yükleyin — otomatik güncellenmez. Şu anki sürüm: v2.6 (5 mod + şema).
 2. **Proje talimatı:** `Mizan_Proje_Talimati.md` içindeki bloğu, Mizan
    ile çalışacağınız her Claude Project'in "Project instructions"
    alanına yapıştırın.
@@ -245,7 +245,7 @@ sonuçtur.
 
 | Dosya | İçerik |
 |---|---|
-| mizan.skill | Skill paketi v2.1 (5 mod + şema gömülü) |
+| mizan.skill | Skill paketi v2.6 (5 mod + şema gömülü) |
 | mizan-registry.yaml | Şema şablonu (bağımsız kopya) |
 | Mizan_Proje_Talimati.md | Project instructions bloğu + fark analizi |
 | Mizan_TR_Dokumantasyon.md | Mod 1–2 tam Türkçe referans |

@@ -4,6 +4,7 @@ description: Evidence-tiered claim auditing and preregistered hypothesis registr
 license: MIT
 metadata:
   author: XINMurat
+  version: "2.6"         # the skill's own version; the prose is pinned to it by CI
   schema_version: "1.9"   # pinned to the schema banner by CI
 ---
 

@@ -1,5 +1,5 @@
 # Mizan — Alan Uyarlama: Mod 3/4/5 Yazılımın Ötesinde
-## Türkçe Dokümantasyon Eki (references/domain-adaptation.md karşılığı, v2.2)
+## Türkçe Dokümantasyon Eki (references/domain-adaptation.md karşılığı)
 
 Mod 3, 4 ve 5 üç evrensel örüntünün yazılım kılığıdır:
 

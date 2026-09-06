@@ -1,0 +1,16 @@
+{
+  "_comment": "Where the version is decided, and which prose repeats it. Only the number is pinned; the wording around it is left alone, so the map names the markers that introduce a claim rather than a whole sentence.",
+  "source_file": "skill/mizan/SKILL.md",
+  "version_key": "version",
+  "markers": [
+    "Current version:",
+    "Şu anki sürüm:",
+    "Mizan skill (v",
+    "Skill package v",
+    "Skill paketi v"
+  ],
+  "files": [
+    "docs/en/usage-guide.md",
+    "docs/tr/kullanim-kilavuzu.md"
+  ]
+}
