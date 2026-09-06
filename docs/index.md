@@ -103,6 +103,10 @@ negative constraints. [ux-mizan](https://github.com/XINMurat/ux-mizan) carries
 the same discipline into experience, where the evidence is behavioural rather
 than documentary — the loop closes.
 
+**Where it starts:** with something you already have. A document, an AI
+conversation, an article, a rough idea — Mizan is the entry, and everything
+after it is the loop.
+
 [All four, and how they hand off →](https://xinmurat.github.io/)
 
 </div>
@@ -118,6 +122,9 @@ registry'ler tutar. [Kıyas](https://github.com/XINMurat/Kiyas) Mizan'ın tartt�
 adayları üretir; Mizan registry'sindeki reddedilen kayıtlar da negatif kısıt
 olarak Kıyas'a geri akar. [ux-mizan](https://github.com/XINMurat/ux-mizan) aynı
 disiplini kanıtın belgesel değil davranışsal olduğu alana taşır — döngü kapanır.
+
+**Nereden başlar:** elinizde zaten olan bir şeyle. Bir doküman, bir YZ sohbeti,
+bir makale, ham bir fikir — giriş Mizan'dır, ondan sonrası döngüdür.
 
 [Dördü ve nasıl devrettikleri →](https://xinmurat.github.io/)
 
