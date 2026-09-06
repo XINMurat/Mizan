@@ -5,6 +5,8 @@ Concrete "say this → get this" examples. / Somut "şunu de → şunu al" örne
 
 ---
 
+<div id="pane-en" markdown="1">
+
 ## English
 
 ### 0. Install (30 seconds)
@@ -57,7 +59,9 @@ git config core.hooksPath tools/hooks                                 # block ba
 The validator checks R1–R22 mechanically (no LLM). See
 [`tools/README.md`](../tools/README.md).
 
----
+</div>
+
+<div id="pane-tr" markdown="1" hidden>
 
 ## Türkçe
 
@@ -111,3 +115,5 @@ export MIZAN_LANG=tr
 ```
 Doğrulayıcı R1–R22'yi mekanik kontrol eder (LLM yok). Bkz.
 [`tools/README.md`](../tools/README.md).
+
+</div>

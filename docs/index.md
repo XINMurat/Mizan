@@ -17,6 +17,8 @@ description: "A Claude skill that turns an experimental-science discipline into 
 
 ---
 
+<div id="pane-en" markdown="1">
+
 ## English
 
 Mizan (Turkish/Arabic: *the scale*) turns a rigorous experimental-science
@@ -49,7 +51,9 @@ non-blocking warning channel). It enforces the mechanical invariants and
 nothing else: semantic judgement stays with a human or a frontier model, which
 is rule R7 itself.
 
----
+</div>
+
+<div id="pane-tr" markdown="1" hidden>
 
 ## Türkçe
 
@@ -71,6 +75,8 @@ kaydı kanıttır.
 - [Yazılım modları](tr/yazilim-modlari.md)
 - [Alan uyarlama](tr/alan-uyarlama.md)
 - [Proje talimatı](tr/proje-talimati.md)
+
+</div>
 
 ---
 
