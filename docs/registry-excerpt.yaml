@@ -1,0 +1,324 @@
+# =====================================================================
+# Mizan urun registry'si — YAYINLANABILIR ALINTI / PUBLIC EXCERPT
+#
+# Uretildi / generated: 2026-09-06
+# Kaynak / source: mizan-product-registry.yaml (gitignore'lu, yayinlanmiyor / private, unpublished)
+# Uretici / generator: tools/mizan_export_public.py
+#
+# BU DOSYA BIR ALINTIDIR. Kaynak registry 23 girdi tasiyor; burada
+# 9 tanesi var. Disarida kalanlar silinmedi -- yalnizca
+# `visibility: public` tasimadiklari icin export edilmediler. Izin
+# yoklugu izin degildir: bir girdi acikca isaretlenmediyse ozel kalir.
+#
+# THIS FILE IS AN EXCERPT. The source registry holds 23 entries and
+# 9 of them are here. The rest were not deleted -- they simply do not
+# carry `visibility: public`. Absence is not permission.
+#
+# Alintida OLMAYAN bir girdiye dayanan her iddia, okuyucu tarafindan
+# denetlenemez ve R8 geregi kalici [KKE] tasir. Bunu soylemek bu dosyanin
+# isinin yarisidir.
+# =====================================================================
+
+registry:
+  owner: XINMurat
+  schema_version: '1.0'
+  methodology: mizan-v2.1
+  created: '2026-07-10'
+  notes: 'Mizan metodolojisinin araca/ürüne dönüşümüne dair hipotezler. Köken-şerhi: Bu girdilerin
+    çoğu dış-AI (Gemini) önerilerinden damıtıldı ve Mizan denetiminden geçirildi. Kişiselleştirilmiş
+    övgü ve vizyon-büyütme katmanları soyuldu; yalnız test edilebilir çekirdek kaydedildi.
+
+    '
+  excerpt_of: MizanProduct
+  excerpt: true
+hypotheses:
+- id: YZ-001
+  version: 2
+  visibility: public
+  tier: S
+  status: preregistered
+  preregistered: '2026-09-06'
+  title: Kanit-kapili dongu, serbest ajan dongusunden daha cok dogrulanabilir kesif uretir
+  formal: 'Ayni compute butcesi altinda Kiyas -> Mizan -> Iskele -> olcum zinciriyle yurutulen
+    bir arastirma programi, serbest bicimli (kapisiz) ajan dongusune gore daha yuksek "dogrulanmis
+    kesif / compute" orani uretir.
+
+    '
+  metric:
+    name: dogrulanmis kesif basina compute
+    instrument: yok — tasarlanmadi
+  threshold: 'AUC(kapi kolu) - AUC(ciplak-makullük kolu) >= 0.10 destek; <= 0.03 [R]. Kaynak:
+    K-04 tohumu (Kiyas partisi 2026-09-06, digest d006adbd5be46e24).
+
+    '
+  refutation: 'K-04: sonucu kesinlesmis >= 30 hipotezin sonuc alanlari silinip uc siralayiciya
+    verilir -- (a) rastgele, (b) yalnizca makullugu soran LLM, (c) Kiyas cikti sozlesmesi
+    + Mizan on-kayit kapisi. (c) (b)''yi gecmiyorsa kapinin filtreleme degeri yoktur -> [R].
+    ONKOSUL: bu deney BUGUN kosulamaz -- kesinlesmis girdi sayisi 30''un cok altinda (Kiyas
+    ledger''i: 6 tohum, hicbiri puanlanmamis). Onkosul saglanmadan alinan her sonuc "hucre
+    kapandi: onkosul basarisiz"dir, [R] degil.
+
+    '
+  arbiter:
+    class: none
+    judge: '-'
+    latency: '-'
+  two_sided: 'Kontrol kolu kazanirsa da bilgi: kapilarin maliyeti kazancindan buyuk demektir
+    ve ailenin ust iddiasi duser.
+
+    '
+  prior_art:
+  - RLVR (verifiable-reward RL)
+  - process reward models
+  - self-consistency / verifier filtering
+  cost: kontrol kolu + iki paralel arastirma programi — yuksek
+  history:
+  - date: '2026-09-06'
+    event: onkayit (curutme kosulu yoktu)
+  - date: '2026-09-06'
+    event: Kiyas partisi (digest d006adbd5be46e24) curutme tasarimini verdi; threshold+refutation
+      dolduruldu, tier degismedi
+  origin: Dort YZ ciktisinin ortak ust iddiasi
+  notes: 'Esiksiz ve hakemsiz oldugu icin [S] kalir. Bu ailenin en ust iddiasi ve su an hicbir
+    deposunda olculmuyor. YZ-002/003 bunun ucuz alt-parcalari.
+
+    '
+- id: YZ-002
+  version: 2
+  visibility: public
+  tier: S
+  status: preregistered
+  preregistered: '2026-09-06'
+  title: Kanit katmanlarinin sabit odule eslenmesi (PRM ikamesi)
+  formal: 'Akil yurutme adimlarinin surekli 0-1 PRM skoru yerine kesikli Mizan katmanlarina
+    ([K]/[H]/[S]/[KKE]/[R]/[Y]) eslenip sabit odul degerleri almasi, adim-duzeyi hata oranini
+    dusurur.
+
+    '
+  metric:
+    name: adim-duzeyi hata orani
+    instrument: harici deterministik dogrulayici (derleyici / Lean / Z3)
+  threshold: 'Alti-katman kolu, ikili kolu adim-hata oraninda >= %15 goreli iyilestirirse
+    destek; <= %5 ise [R]; arasi guc yetersiz (tek yeniden kosum). Esik bu kosum hattinin
+    kendi tohum-arasi yayilimindan turetilir, PRM literaturunun marjlarindan devralinmaz.
+
+    '
+  refutation: 'K-01: esit compute ile uc kol -- (a) ikili odul, (b) uc degerli (dogru/yanlis/uydurma),
+    (c) alti katman. (c)-(a) farki gurultunun icindeyse katman uzayi egitim acisindan anotasyon
+    semasidir, semantik durum uzayi degil -> [R]. IKINCI CURUTME (K-05, ayni kosumdan bedava
+    okunur): onerilen sabit kumesi [S] = 0.0 biraktigi icin spekulatif adim CEZASIZDIR ve
+    bir guvenli liman yaratir. [S] etiketli adim orani egitim boyunca >= %50 goreli artar
+    ve gorev dogrulugu <= %2 oynarsa, YZ-002 ONERILDIGI HALIYLE [R] olur -- katman fikri degil,
+    sabit kumesi curur.
+
+    '
+  arbiter:
+    class: runtime
+    judge: birim test / prover kosumu
+    latency: kosum basina
+  two_sided: 'Permutasyon farki kapatirsa esleme dekoratiftir (bu, sabitleri savunmaya calisan
+    herkes icin kesin bilgi); kapatmazsa kesikli katmanlarin kendisi calisiyor demektir.
+
+    '
+  prior_art:
+  - Lightman et al., process reward models
+  - DeepSeek-R1 kural tabanli odul
+  cost: kucuk model + tek alan pilotu
+  history:
+  - date: '2026-09-06'
+    event: onkayit (curutme kosulu yoktu)
+  - date: '2026-09-06'
+    event: Kiyas partisi (digest d006adbd5be46e24) curutme tasarimini verdi; threshold+refutation
+      dolduruldu, tier degismedi
+  origin: YZ ciktilari 2 ve 4
+  notes: 'Iki farkli YZ ciktisi AYNI esleme icin IKI FARKLI sabit kumesi verdi (+1.0/+0.3/0/-0.5/-1.5/-3.0
+    ve +1.0/+0.25/0/-0.75/-2.0/-3.5). Turetme yok. Bu haliyle esik tiyatrosu; permutasyon
+    testi gecmeden hicbir sabit savunulamaz.
+
+    '
+- id: YZ-003
+  version: 1
+  visibility: public
+  tier: H
+  status: preregistered
+  preregistered: '2026-09-06'
+  title: '[R] kutugunden hard-negative madenciligi (DPO)'
+  formal: 'Mizan [R] kayitlarindan turetilen (duzeltilmis es + curutulen es) tercih ciftleri,
+    esit sayida rastgele-zayif negatifle egitilen kola gore daha yuksek kazanma orani verir.
+
+    '
+  metric:
+    name: kor pairwise degerlendirmede kazanma orani
+    instrument: kor insan degerlendirme, sabit rubrik
+  threshold: belirlenecek — kosumdan ONCE
+  refutation: 'Rastgele-negatif kontrol kolu farki kapatirsa iddia [R].
+
+    '
+  arbiter:
+    class: third_party
+    judge: kor degerlendiriciler (yazar disinda)
+    latency: kosum + degerlendirme turu
+  two_sided: 'Rastgele-negatif kolu esitlerse "[R] kutugu degerli veri" iddiasi duser ve kutuk
+    tutmanin gerekcesi denetime kayar; esitlemezse kutugun egitim degeri olculmus olur.
+
+    '
+  prior_art:
+  - hard negative mining
+  - contrastive preference learning / DPO
+  cost: tek DPO kosumu + kontrol kolu — bu uclunun en ucuzu
+  origin: YZ ciktisi 4; YZ ciktisi 3 sinirini dogru koydu
+  notes: 'SERH: Bir [R] kaydi kendiliginde (y_w, y_l) cifti DEGILDIR. Ayni prompt altinda
+    duzeltilmis es uretilmeden cift kurulamaz; bu adim atlanirsa olculen sey hard-negative
+    degil, konu farkidir.
+
+    '
+- id: YZ-004
+  version: 1
+  visibility: public
+  tier: H
+  status: preregistered
+  preregistered: '2026-09-06'
+  title: Sayfa damgasi, dis-YZ'nin bayat anlik goruntu okumasini gorunur kilar
+  formal: 'Aile sayfasina makine-okunur bir "son guncelleme + commit hash" damgasi konursa,
+    sayfayi degerlendiren dis-YZ ciktilarinda surum/tanimlayici hatasi orani duser -- cunku
+    ciktinin hangi surumu okudugu iddianin kendisinden denetlenebilir hale gelir.
+
+    '
+  metric:
+    name: dis-YZ degerlendirmesinde yanlis surum/tanimlayici sayisi
+    instrument: damga ile beyan edilen surumun canli surumle karsilastirilmasi
+  threshold: 'Damga sonrasi uretilen degerlendirmelerde, ciktinin beyan ettigi surum ile okundugu
+    tarihteki canli surum arasindaki uyusmazlik >= %50 oraninda ciktida ACIKCA gorunur olmali
+    (gizli kalmamali).
+
+    '
+  refutation: 'Damgadan sonra alinan degerlendirmeler yine surumu belirtmeden eski numaralari
+    tekrar ediyorsa -> [R]: damga okunmuyor.
+
+    '
+  arbiter:
+    class: instrument
+    judge: sayfa damgasi vs. release etiketi karsilastirmasi
+    latency: degerlendirme basina
+  two_sided: 'Damgaya ragmen eski surumler tekrar ediyorsa problem sayfada degil okuyucudadir
+    ve cozum baska yerde aranir; azaliyorsa ucuz bir kontrol sinifi kapanmis olur.
+
+    '
+  prior_art:
+  - 'D-M005 dersi: dis-AI incelemesinden kapsam beyani istenir'
+  - 'R-M001 dersi: dis-AI ''arastirdim'' beyani kanit degildir'
+  cost: Jekyll build damgasi — dusuk (saatler)
+  origin: ESC-M003
+  notes: 'Bu bir kacaktan dogdu: D-M005 ve R-M001 dersi KAYITLIYDI ama hicbir kontrole donusmemisti.
+    Ders kaydetmek kontrol kurmak degildir.
+
+    '
+refuted_and_discarded:
+- id: D-M005
+  visibility: public
+  claim: '''Hipotez grafı eksik'' eleştirisi (ChatGPT incelemesi)'
+  tier: Y/R
+  reason: 'Şemada relations (depends_on/contradicts/refines) mevcut — incelemeci okumamış.
+    Geçerli kalan çekirdek ''graf gezinme/ görselleştirme aracı yok'' (tooling notu, düşük
+    öncelik). Ders: dış-AI incelemelerinden kapsam beyanı istenir (''hangi dosyalara baktın'')
+    — checklist adayı.
+
+    '
+- id: R-M001
+  visibility: public
+  claim: '''Front Deployment Engineer'' rol tanımı ve o role dayalı konumlandırma'
+  tier: R
+  reason: 'Rol mevcut değil; gerçek rol Forward Deployed Engineer (Palantir kökenli, müşteriye
+    gömülü mühendis; 2025-26''da ilanlar ~%729 arttı). Gemini uydurma tanımı, ''internetten
+    araştır'' talebine rağmen doğrulama-tiyatrosuyla savundu. Ders: dış-AI ''araştırdım''
+    beyanı kanıt değildir — kaynak istenir. Not: gerçek FDE kitlesi Mizan için [H] düzeyinde
+    aday — ayrı değerlendirilebilir, bu girdiyle karıştırılmaz.
+
+    '
+probes:
+  escaped:
+  - id: ESC-M001
+    visibility: public
+    found: '2026-09-06'
+    found_by: user
+    symptom: 'Aile sayfasindaki devir zinciri semasi kapali bir dongu ciziyordu (Iskele ->
+      Mizan -> Kiyas -> Iskele, ux-mizan backlog''a bagli). Serbest dusuncenin sisteme ILK
+      girisi hicbir yerde yoktu. Kullanicinin gercek akisi ise oradan basliyor: elde bir dokuman
+      var (YZ sohbeti, makale, eski not, ham fikir) -> Mizan denetler -> Kiyas denetimin gormedigini
+      uretir -> Iskele projeye cevirir.
+
+      '
+    in_scope: true
+    class_ref: checklist.md madde 12 — hic iddia edilmemis yetenek
+    class_new: ''
+    note: 'Semadaki her ok DOGRUYDU; eksik olan bir yanlis degil, bir YOKLUKTU -- ve yokluk
+      katmanlanacak iddia uretmedigi icin hicbir iddia denetimi onu bulamazdi. Madde 12''nin
+      tanimi bu. Ozel olarak ogretici yani: bu kez ifade edilemeyen sey, aracin kendi kullanim
+      akisinin ilk adimiydi; yani madde 12 aile sayfasinin kendisine uygulanmamisti. DUZELTME:
+      sema girisi kesik cizgili bir kutu olarak kazandi ("bir dokuman, sohbet, makale, ham
+      fikir" -> Mizan), maddeler "Siz -> Mizan" satiriyla acildi, ve Mizan docs index''i "nereden
+      baslar" cumlesini aldi. SONRAKI PAS ICIN: bu kacak, madde 12''nin senaryo listesinin
+      AILE SAYFASINA da sorulmasi gerektigini gosteriyor -- "bu urunun kullanicisi gercekte
+      ne yapiyor?" sorusu sayfanin kendisine hic sorulmamisti.
+
+      '
+    history:
+    - date: '2026-09-06'
+      event: kullanici bildirdi; sema ve maddeler duzeltildi
+  - id: ESC-M003
+    visibility: public
+    found: '2026-09-06'
+    found_by: user
+    symptom: 'Kullanicinin dort ayri YZ''ye yaptirdigi Mizan/Kiyas/Iskele/ux-mizan degerlendirmesinde
+      DORDU DE surumleri tam bir surum geride verdi (Mizan v2.5.0 / Iskele v1.3.0 / Kiyas
+      v1.3.0 / ux-mizan v0.5; canli sayfa: v2.6.0 / v1.5.0 / v1.4.0 / v0.6). Ayni ciktilar
+      kural setini "R1-R21" (gercek: R22) diye verdi ve "GEN:CIFT" gibi var olmayan bir tanimlayici
+      uretti (gercek: G13). Hepsi "sayfayi inceledim" cercevesiyle sunuldu.
+
+      '
+    in_scope: true
+    class_ref: D-M005 + R-M001 — dis-AI incelemesinden kapsam/kaynak beyani istenir
+    class_new: YZ-004 — sayfa damgasi (son guncelleme + commit hash)
+    note: 'Bu kacagin ogretici yani sinifinin YENI olmamasi. D-M005 ve R-M001 zaten ayni dersi
+      kayda gecirmisti: dis-AI''nin "okudum/arastirdim" beyani kanit degildir. Ders kaydedildi,
+      KONTROL KURULMADI -- ve ayni sinif ikinci kez, bu sefer dort bagimsiz kaynakta ayni
+      yonde kacti. Ayni yonde, ayni buyuklukte hata dort bagimsiz kaynakta olusmaz; ortak
+      (bayat) kaynak vardir. Kacan seyi saymak ogrenmek degildir: sayfaya makine-okunur bir
+      surum damgasi konana kadar bu sinif acik. AYRICA denetcinin kendi kacagi: ilk denetim
+      pasi surum tablosunu YANLIS artefaktta aradi (Mizan22/docs/index.md), oysa tablo ayri
+      bir depoda (xinmurat.github.io/index.md) duruyordu; ve "U13 uydurma" bulgusu yanlisti
+      (U13 gercek, ux-mizan bilesim kurali). Iki bulgu RR-11 ile geri alindi, satirlar silinmedi.
+
+      '
+    history:
+    - date: '2026-09-06'
+      event: denetim; sinif D-M005/R-M001'e baglandi, YZ-004 onkayit edildi
+  - id: ESC-M002
+    visibility: public
+    found: '2026-09-06'
+    found_by: user
+    symptom: 'Aile semasi zinciri TEK YONLU bir halka olarak ciziyordu. Iki sey birden eksikti:
+      (1) Kiyas -> Mizan oku hic yoktu, oysa Kiyas''in kendi SKILL''i adim 7''de "[H-aday]
+      fikirleri Mizan Registry Girdisi sablonuna yapistirilacak bicimde ver" diyor -- yani
+      araclarin belgesinde YAZAN bir devir semada cizilmemisti; (2) alan farklilastiginda
+      ya da vaka ozel ciktiginda Mizan ile Kiyas arasinda Iskele''ye hic ugramadan donuluyor,
+      ve ux-mizan bildirimleri de ayni donguye girebiliyor. Sema Iskele''yi yol ustunde zorunlu
+      bir durak gibi gosteriyordu.
+
+      '
+    in_scope: true
+    class_ref: checklist.md madde 12 — hic iddia edilmemis yetenek
+    class_new: ''
+    note: 'ESC-M001 ile ayni sinif ve ayni oturumda, ayni kullanicidan: sema alanda RUTIN
+      olan bir durumu ifade edemiyordu. (1) ozellikle ogretici, cunku eksik ok bir tahmin
+      degildi -- baska bir deponun SKILL.md''sinde yazili bir devirdi; yani capraz-depo tutarlilik
+      hic denetlenmemis. DUZELTME: sema iki donguye ayrildi -- ic dongu Mizan <-> Kiyas (iki
+      yonlu), Iskele ondan cikan bir DAL ("insa etmeye degdiginde"), ux-mizan ikisine birden
+      besliyor. Uc kardes deponun index''i de kendi ON KAPISINI yazdi. SONRAKI PAS: madde
+      12''nin senaryo listesi capraz-depo devirlere de sorulmali -- "A''nin SKILL''inde yazan
+      hangi devir B''nin semasinda yok?"
+
+      '
+    history:
+    - date: '2026-09-06'
+      event: kullanici bildirdi; sema iki donguye ayrildi
