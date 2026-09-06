@@ -119,3 +119,84 @@ bakabileceği negatif-kısıtlara çevrilir.
 anlaşamaz. Anahtar-kelime çıkarımı bilerek kabadır: eşleşme, bakmak için bir
 uyarıdır, otomatik ret değil. Yanlış pozitifin bedeli bir bakış; kaçırılmış
 çürütülmüş akrabanın bedeli tekrarlanmış bir deney.
+
+## `token_budget.py` — the context budget, checked
+
+A skill costs tokens the way a dependency costs bytes: to everyone who installs
+it, on every cold start, forever. This one was designed to be cheap and that
+intention lived only in prose — so between two releases the SKILL.md body grew
+and the per-run load grew with it, and nothing failed, because **a budget nobody
+checks is a preference**.
+
+```bash
+python tools/token_budget.py              # measure and compare to the ceilings
+python tools/token_budget.py --json       # machine-readable
+python tools/token_budget.py --update     # rewrite the ceilings AS THEY ARE NOW
+```
+
+Three tiers, because they are not paid at the same rate:
+
+| tier | what it is | when it is paid |
+|---|---|---|
+| **T0** | the frontmatter `description` | every session where the skill is installed, used or not |
+| **T1** | the SKILL.md body | whenever the skill triggers, and again on every cold start |
+| **T2** | references and schemas | only when the procedure sends the model to that file |
+
+Scripts and assets are not counted: they are executed or handed over as files,
+not read into context. Counting tokens nobody pays is the fastest way to get a
+budget ignored.
+
+`runs` in `tools/token-budget.json` names what ONE mode actually loads —
+SKILL.md plus whatever the procedure mandates — and gives that set its own
+ceiling. That is the operational number; the tier totals are the structural one.
+
+**The ceilings are preregistered.** Raising one is a deliberate commit with a
+reason in the message, exactly as this skill demands of every other threshold.
+`--update` exists for that commit and for no other purpose: running it to turn a
+red build green, without reading the diff, is threshold shopping.
+
+**The instrument, stated:** no tokenizer vocabulary is reachable offline, so
+tokens are estimated from characters at the ratio in the config. The absolute
+numbers are `[H]`; the drift the gate catches is `[K]`, because both sides are
+measured with one instrument.
+
+---
+
+## `token_budget.py` — bağlam bütçesi, kontrol edilerek
+
+Bir skill, bir bağımlılığın bayt harcadığı gibi token harcar: kuran herkese,
+her soğuk başlangıçta, sürekli. Bu skill ucuz olacak şekilde tasarlandı ve o
+niyet yalnızca düzyazıda yaşadı — iki release arasında SKILL.md gövdesi büyüdü,
+koşu başına yük onunla büyüdü ve hiçbir şey kırılmadı, çünkü **kimsenin kontrol
+etmediği bütçe, bütçe değil tercihtir.**
+
+```bash
+python tools/token_budget.py              # ölç, tavanlarla karşılaştır
+python tools/token_budget.py --json       # makine okunur
+python tools/token_budget.py --update     # tavanları ŞU ANKİ hâliyle yaz
+```
+
+Üç katman, çünkü aynı fiyattan ödenmiyorlar:
+
+| katman | nedir | ne zaman ödenir |
+|---|---|---|
+| **T0** | frontmatter'daki `description` | skill kurulu olan her oturumda, kullanılsa da kullanılmasa da |
+| **T1** | SKILL.md gövdesi | skill tetiklendiğinde ve her soğuk başlangıçta yeniden |
+| **T2** | referanslar ve şemalar | yalnız prosedür modeli o dosyaya gönderdiğinde |
+
+Script'ler ve varlıklar sayılmaz: onlar çalıştırılır ya da dosya olarak
+devredilir, bağlama okunmaz. Kimsenin ödemediği token'ı saymak, bir bütçeyi
+görmezden getirtmenin en hızlı yoludur.
+
+`tools/token-budget.json` içindeki `runs`, TEK bir modun fiilen ne yüklediğini
+adlandırır — SKILL.md artı prosedürün zorunlu kıldıkları — ve o kümeye kendi
+tavanını verir. Operasyonel sayı budur; katman toplamları yapısal olandır.
+
+**Tavanlar önkayıtlıdır.** Bir tavanı yükseltmek, mesajında gerekçesi olan
+bilinçli bir commit'tir — bu skill'in diğer her eşikten istediğinin aynısı.
+`--update` o commit için vardır, başka hiçbir şey için değil: kırmızı bir
+build'i diff'i okumadan yeşile çevirmek için koşturmak, eşik alışverişidir.
+
+**Alet, beyanıyla:** çevrimdışı erişilebilir bir tokenizer sözlüğü yok, bu yüzden
+token sayısı config'teki orandan karakterle tahmin edilir. Mutlak sayılar `[H]`;
+kapının yakaladığı kayma `[K]`, çünkü iki taraf da tek aletle ölçülür.

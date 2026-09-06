@@ -1,0 +1,43 @@
+{
+  "_note": "Ceilings are PREREGISTERED: they are written before the next change, not fitted to it. Raising one is a deliberate commit with a reason -- the same rule this skill applies to thresholds. The unit is estimated tokens at chars_per_token; the estimate is [H], the drift it catches is [K].",
+  "_runs_note": "The file lists under `runs` are a reading of SKILL.md's procedure -- what a mode actually pulls into context -- not a measurement of a live session. They are [H] and they are the number that matters operationally, so they carry their own ceilings.",
+  "skill_root": "skill/mizan",
+  "chars_per_token": 3.6,
+  "budgets": {
+    "T0": 300,
+    "T1": 7400,
+    "T2": 32000
+  },
+  "runs": {
+    "audit": {
+      "files": [
+        "skill/mizan/SKILL.md",
+        "skill/mizan/references/checklist.md"
+      ],
+      "ceiling": 11800
+    },
+    "registry-write": {
+      "files": [
+        "skill/mizan/SKILL.md",
+        "skill/mizan/references/templates.md",
+        "skill/mizan/schemas/mizan-registry.yaml"
+      ],
+      "ceiling": 21200
+    },
+    "code-audit": {
+      "files": [
+        "skill/mizan/SKILL.md",
+        "skill/mizan/references/checklist.md",
+        "skill/mizan/references/code-audit.md"
+      ],
+      "ceiling": 14400
+    },
+    "recovery": {
+      "files": [
+        "skill/mizan/SKILL.md",
+        "skill/mizan/references/recovery.md"
+      ],
+      "ceiling": 14200
+    }
+  }
+}
