@@ -6,6 +6,7 @@
 [![CI](https://github.com/XINMurat/Mizan/actions/workflows/mizan.yml/badge.svg)](https://github.com/XINMurat/Mizan/actions/workflows/mizan.yml)
 
 🌐 **Languages / Diller:** [English](#english) · [Türkçe](#türkçe)
+📚 **Docs / Belgeler:** [xinmurat.github.io/Mizan](https://xinmurat.github.io/Mizan/) — EN/TR on every page · her sayfada EN/TR
 
 Tiers / Katmanlar: **[K]** proven/kanıtlanmış · **[H]** plausible hypothesis/makul hipotez ·
 **[S]** speculative/spekülatif · **[R]** refuted/reddedildi (never deleted / silinmez) ·
@@ -125,13 +126,21 @@ produces.
 
 ### Documentation
 
-- **⚡ Quickstart:** [`docs/QUICKSTART.md`](docs/QUICKSTART.md) — concrete
-  "say this → get this" examples (bilingual).
-- **Start here:** [`docs/en/usage-guide.md`](docs/en/usage-guide.md) —
-  install, workflows, hard rules.
-- **Reference index:** [`docs/en/reference.md`](docs/en/reference.md) —
-  methodology, templates, checklist, software modes, domain adaptation.
-- **Turkish docs:** [`docs/tr/`](docs/tr/).
+Published at **[xinmurat.github.io/Mizan](https://xinmurat.github.io/Mizan/)** —
+every page carries the document list and an EN/TR control, so the links below
+are entry points rather than the only way in.
+
+- **⚡ Quickstart:** [Quickstart](https://xinmurat.github.io/Mizan/QUICKSTART.html)
+  — concrete "say this → get this" examples (bilingual page).
+- **Start here:** [Usage guide](https://xinmurat.github.io/Mizan/en/usage-guide.html)
+  — install, workflows, hard rules.
+- **Reference index:** [Reference](https://xinmurat.github.io/Mizan/en/reference.html)
+  — methodology, templates, checklist, software modes, domain adaptation.
+- **Turkish:** [Kullanım kılavuzu](https://xinmurat.github.io/Mizan/tr/kullanim-kilavuzu.html)
+  · [Metodoloji](https://xinmurat.github.io/Mizan/tr/metodoloji.html)
+  · [Yazılım modları](https://xinmurat.github.io/Mizan/tr/yazilim-modlari.html)
+  · [Alan uyarlama](https://xinmurat.github.io/Mizan/tr/alan-uyarlama.html) —
+  or press **TR** on any page.
 - **Contributing:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — the R1–R22
   discipline for PRs, bilingual-parity rule (bilingual).
 
@@ -263,16 +272,21 @@ metodolojinin ayakta kalmak için kurulduğu sonuç, ve kendi yaptığın bir
 
 ### Dokümantasyon
 
-- **⚡ Hızlı başlangıç:** [`docs/QUICKSTART.md`](docs/QUICKSTART.md) — somut
-  "şunu de → şunu al" örnekleri (iki dilli).
-- **Buradan başlayın:**
-  [`docs/tr/kullanim-kilavuzu.md`](docs/tr/kullanim-kilavuzu.md) — kurulum,
-  akışlar, sert kurallar.
-- **Tam metodoloji:** [`docs/tr/metodoloji.md`](docs/tr/metodoloji.md)
-  (Mod 1–2), [`docs/tr/yazilim-modlari.md`](docs/tr/yazilim-modlari.md)
-  (Mod 3–5), [`docs/tr/alan-uyarlama.md`](docs/tr/alan-uyarlama.md)
+Yayında: **[xinmurat.github.io/Mizan](https://xinmurat.github.io/Mizan/)** —
+her sayfa belge listesini ve bir EN/TR kontrolünü taşır, yani aşağıdakiler tek
+giriş yolu değil, birer giriş noktasıdır.
+
+- **⚡ Hızlı başlangıç:** [Hızlı başlangıç](https://xinmurat.github.io/Mizan/QUICKSTART.html)
+  — somut "şunu de → şunu al" örnekleri (iki dilli sayfa).
+- **Buradan başlayın:** [Kullanım kılavuzu](https://xinmurat.github.io/Mizan/tr/kullanim-kilavuzu.html)
+  — kurulum, akışlar, sert kurallar.
+- **Tam metodoloji:** [Metodoloji](https://xinmurat.github.io/Mizan/tr/metodoloji.html)
+  (Mod 1–2) · [Yazılım modları](https://xinmurat.github.io/Mizan/tr/yazilim-modlari.html)
+  (Mod 3–5) · [Alan uyarlama](https://xinmurat.github.io/Mizan/tr/alan-uyarlama.html)
   (14 alan).
-- **İngilizce dokümanlar:** [`docs/en/`](docs/en/).
+- **İngilizce:** [Usage guide](https://xinmurat.github.io/Mizan/en/usage-guide.html)
+  · [Reference](https://xinmurat.github.io/Mizan/en/reference.html) — ya da
+  herhangi bir sayfada **EN**'e basın.
 - **Katkı:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — PR'lar için R1–R22
   disiplini ve iki-dillilik kuralı (iki dilli).
 
