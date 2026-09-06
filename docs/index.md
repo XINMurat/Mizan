@@ -35,6 +35,9 @@ bias; a scored prediction record is evidence.
 
 - [Quickstart](QUICKSTART.md) — install, create a registry, validate it
 - [Usage guide](en/usage-guide.md) — the five modes, the hard rules, common mistakes
+- [Methodology](en/methodology.md) — the core skill in full (Modes 1–2)
+- [Software modes](en/software-modes.md) — code audit, bug registry, PRD gate (Modes 3–5)
+- [Domain adaptation](en/domain-adaptation.md) — the 14 domains beyond software
 - [Reference](en/reference.md) — where every part of the methodology lives
 - [Project instructions](en/project-instructions.md) — dropping Mizan into a project
 
@@ -84,6 +87,7 @@ kaydı kanıttır.
 - [Metodoloji](tr/metodoloji.md) — skill'in tam Türkçe karşılığı (Mod 1–2)
 - [Yazılım modları](tr/yazilim-modlari.md) — kod denetimi, bug registry'si, PRD kapısı (Mod 3–5)
 - [Alan uyarlama](tr/alan-uyarlama.md) — yazılım dışındaki 14 alan
+- [Referans](tr/referans.md) — metodolojinin her parçası nerede yaşıyor
 - [Proje talimatı](tr/proje-talimati.md) — Claude Project alanına yapıştırılacak blok
 
 </div>

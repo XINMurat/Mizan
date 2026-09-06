@@ -1,0 +1,14 @@
+{
+  "_comment": "Pages mirrored from the skill package by tools/sync_en_docs.py. The skill files are the source of truth; these entries only say where each one is published and what to call it.",
+  "pages": [
+    { "out": "methodology.md", "title": "Methodology — the core skill (Modes 1–2)",
+      "tr": "docs/tr/metodoloji.md",
+      "sources": ["skill/mizan/SKILL.md"] },
+    { "out": "software-modes.md", "title": "Software modes 3–5 — code audit, bug registry, feature gate",
+      "tr": "docs/tr/yazilim-modlari.md",
+      "sources": ["skill/mizan/references/code-audit.md", "skill/mizan/references/feature-gate.md"] },
+    { "out": "domain-adaptation.md", "title": "Domain adaptation — modes 3/4/5 beyond software",
+      "tr": "docs/tr/alan-uyarlama.md",
+      "sources": ["skill/mizan/references/domain-adaptation.md"] }
+  ]
+}

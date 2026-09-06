@@ -11,11 +11,15 @@ Choose a language / Bir dil seçin:
 |---|---|
 | [usage-guide.md](en/usage-guide.md) | Install, daily workflows, hard rules |
 | [project-instructions.md](en/project-instructions.md) | Block to paste into a Claude Project |
+| [methodology.md](en/methodology.md) | Modes 1–2, the core skill in full |
+| [software-modes.md](en/software-modes.md) | Modes 3–5: code audit, bug registry, feature gate |
+| [domain-adaptation.md](en/domain-adaptation.md) | Modes 3/4/5 across 14 domains beyond software |
 | [reference.md](en/reference.md) | Index → methodology, templates, checklist, software modes, domain adaptation |
 
 The English methodology reference is the skill itself
 ([`../skill/mizan/`](../skill/mizan/)), so it never drifts from what Claude
-loads. `reference.md` maps every topic to its file.
+loads. The three pages above are **generated** from those files by
+`tools/sync_en_docs.py` and checked in CI — read them here, edit them there.
 
 ## 🇹🇷 Türkçe
 
@@ -26,14 +30,16 @@ loads. `reference.md` maps every topic to its file.
 | [yazilim-modlari.md](tr/yazilim-modlari.md) | Mod 3–5: kod denetimi, bug registry, özellik kapısı |
 | [alan-uyarlama.md](tr/alan-uyarlama.md) | Mod 3/4/5'in yazılım ötesi 14 alana uyarlanması |
 | [proje-talimati.md](tr/proje-talimati.md) | Claude Project'e yapıştırılacak talimat bloğu |
+| [referans.md](tr/referans.md) | Dizin → metodoloji, şablonlar, kontrol listesi, yazılım modları, alan uyarlama |
 
 ---
 
-**Parity note / Parite notu:** the Turkish files are full-text mirrors of
-the English skill references; the two English-only long-form docs
-(usage-guide, project-instructions) have Turkish twins in `tr/`. When a
-reference changes, update both sides and record it (append-only, R4). /
-Türkçe dosyalar İngilizce skill referanslarının tam-metin karşılığıdır;
-yalnızca-İngilizce iki uzun belgenin (usage-guide, project-instructions)
-Türkçe ikizi `tr/` altındadır. Bir referans değişince iki tarafı da
-güncelleyin ve kaydedin (append-only, R4).
+**Parity note / Parite notu:** both sides now list the same documents. The
+Turkish files are hand-written full-text mirrors — when a reference changes,
+update the Turkish side and record it (append-only, R4). The English pages
+under `en/` that mirror the skill are generated, not hand-written: run
+`python tools/sync_en_docs.py`; CI fails if they drift. /
+İki taraf artık aynı belgeleri listeliyor. Türkçe dosyalar elle yazılmış
+tam-metin aynalardır — bir referans değişince Türkçe tarafı güncelleyin ve
+kaydedin (append-only, R4). `en/` altındaki skill aynası sayfalar ise elle
+değil `python tools/sync_en_docs.py` ile üretilir; saparlarsa CI patlar.
