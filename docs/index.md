@@ -90,11 +90,35 @@ kaydı kanıttır.
 
 ---
 
+<div data-chrome="en" markdown="1">
+
 ## The family
 
-**İskele kurar · Mizan tartar · Kıyas üretir.**
+**İskele builds · Mizan weighs · Kıyas generates · ux-mizan measures experience.**
 [İskele](https://github.com/XINMurat/Iskele) turns a vague project intent into
 an executable delivery kit. Mizan audits claims and maintains preregistered
 registries. [Kıyas](https://github.com/XINMurat/Kiyas) generates the candidates
 Mizan weighs, and a Mizan registry's refuted entries flow back to Kıyas as
-negative constraints — the loop closes.
+negative constraints. [ux-mizan](https://github.com/XINMurat/ux-mizan) carries
+the same discipline into experience, where the evidence is behavioural rather
+than documentary — the loop closes.
+
+[All four, and how they hand off →](https://xinmurat.github.io/)
+
+</div>
+
+<div data-chrome="tr" markdown="1" class="pane-init">
+
+## Aile
+
+**İskele kurar · Mizan tartar · Kıyas üretir · ux-mizan deneyimi ölçer.**
+[İskele](https://github.com/XINMurat/Iskele) belirsiz bir proje niyetini
+koşulabilir bir teslim kitine çevirir. Mizan iddiaları denetler ve önkayıtlı
+registry'ler tutar. [Kıyas](https://github.com/XINMurat/Kiyas) Mizan'ın tarttığı
+adayları üretir; Mizan registry'sindeki reddedilen kayıtlar da negatif kısıt
+olarak Kıyas'a geri akar. [ux-mizan](https://github.com/XINMurat/ux-mizan) aynı
+disiplini kanıtın belgesel değil davranışsal olduğu alana taşır — döngü kapanır.
+
+[Dördü ve nasıl devrettikleri →](https://xinmurat.github.io/)
+
+</div>
