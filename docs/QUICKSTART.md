@@ -61,7 +61,7 @@ The validator checks R1–R22 mechanically (no LLM). See
 
 </div>
 
-<div id="pane-tr" markdown="1" hidden>
+<div id="pane-tr" markdown="1" class="pane-init">
 
 ## Türkçe
 

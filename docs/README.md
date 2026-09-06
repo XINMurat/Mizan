@@ -5,7 +5,7 @@
 
 Choose a language / Bir dil seçin:
 
-## 🇬🇧 English — [`en/`](en/)
+## 🇬🇧 English
 
 | Doc | What it covers |
 |---|---|
@@ -17,7 +17,7 @@ The English methodology reference is the skill itself
 ([`../skill/mizan/`](../skill/mizan/)), so it never drifts from what Claude
 loads. `reference.md` maps every topic to its file.
 
-## 🇹🇷 Türkçe — [`tr/`](tr/)
+## 🇹🇷 Türkçe
 
 | Belge | İçerik |
 |---|---|

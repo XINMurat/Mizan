@@ -5,19 +5,18 @@ description: "A Claude skill that turns an experimental-science discipline into 
 
 # Mizan
 
+<div id="pane-en" markdown="1">
+
 **Evidence-tiered auditing and preregistration methodology, packaged as a Claude skill.**
-**Kanıt-katmanlı denetim ve önkayıt metodolojisi — bir Claude skill'i olarak paketlenmiş.**
 
 [Repository](https://github.com/XINMurat/Mizan) ·
 [Latest release](https://github.com/XINMurat/Mizan/releases/latest) ·
 [Kıyas](https://github.com/XINMurat/Kiyas) ·
 [İskele](https://github.com/XINMurat/Iskele) ·
 [ux-mizan](https://github.com/XINMurat/ux-mizan) ·
-[**the family · aile**](https://xinmurat.github.io/)
+[**the family**](https://xinmurat.github.io/)
 
 ---
-
-<div id="pane-en" markdown="1">
 
 ## English
 
@@ -53,7 +52,18 @@ is rule R7 itself.
 
 </div>
 
-<div id="pane-tr" markdown="1" hidden>
+<div id="pane-tr" markdown="1" class="pane-init">
+
+**Kanıt-katmanlı denetim ve önkayıt metodolojisi — bir Claude skill'i olarak paketlenmiş.**
+
+[Depo](https://github.com/XINMurat/Mizan) ·
+[Son sürüm](https://github.com/XINMurat/Mizan/releases/latest) ·
+[Kıyas](https://github.com/XINMurat/Kiyas) ·
+[İskele](https://github.com/XINMurat/Iskele) ·
+[ux-mizan](https://github.com/XINMurat/ux-mizan) ·
+[**aile sayfası**](https://xinmurat.github.io/)
+
+---
 
 ## Türkçe
 
@@ -69,12 +79,12 @@ girdiler silinmez. Sürpriz pozitif, manşetten önce simetrik kontrolünü
 bekler. Ve üç doğrulayıcı anekdot seçilim yanlılığıdır; puanlanmış bir tahmin
 kaydı kanıttır.
 
-- [Hızlı başlangıç](QUICKSTART.md)
-- [Kullanım kılavuzu](tr/kullanim-kilavuzu.md)
-- [Metodoloji](tr/metodoloji.md)
-- [Yazılım modları](tr/yazilim-modlari.md)
-- [Alan uyarlama](tr/alan-uyarlama.md)
-- [Proje talimatı](tr/proje-talimati.md)
+- [Hızlı başlangıç](QUICKSTART.md) — kur, bir registry aç, doğrula
+- [Kullanım kılavuzu](tr/kullanim-kilavuzu.md) — beş mod, sert kurallar, sık hatalar
+- [Metodoloji](tr/metodoloji.md) — skill'in tam Türkçe karşılığı (Mod 1–2)
+- [Yazılım modları](tr/yazilim-modlari.md) — kod denetimi, bug registry'si, PRD kapısı (Mod 3–5)
+- [Alan uyarlama](tr/alan-uyarlama.md) — yazılım dışındaki 14 alan
+- [Proje talimatı](tr/proje-talimati.md) — Claude Project alanına yapıştırılacak blok
 
 </div>
 

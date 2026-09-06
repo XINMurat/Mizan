@@ -3,7 +3,9 @@
 The English canonical reference for the methodology lives inside the
 portable skill package, so it stays in sync with what Claude actually
 loads. This page is a map. The Turkish full-text mirrors are in
-[`docs/tr/`](../tr/).
+[Kullanım kılavuzu](../tr/kullanim-kilavuzu.md), [Metodoloji](../tr/metodoloji.md),
+[Yazılım modları](../tr/yazilim-modlari.md) and [Alan uyarlama](../tr/alan-uyarlama.md)
+— or press **TR** in the header.
 
 | Topic | English (canonical) | Turkish mirror |
 |---|---|---|
