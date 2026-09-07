@@ -110,14 +110,29 @@ def build(data: dict) -> dict:
                 "keywords": keywords(body),
                 "source_registry": reg.get("project") or "",
             })
-    return {
+    note = (
+        "Negative constraints for Kıyas generation (AD4/[GB]). A match is "
+        "a prompt to check relatedness, never an automatic rejection."
+    )
+    result = {
         "refuted_patterns": out,
         "exported_from": reg.get("project") or "",
-        "note": (
-            "Negative constraints for Kıyas generation (AD4/[GB]). A match is "
-            "a prompt to check relatedness, never an automatic rejection."
-        ),
+        "note": note,
     }
+    # A registry that declares itself an excerpt produces an export that is
+    # also an excerpt, and the consumer has to be told. Kıyas runs its AD4
+    # sweep against this file and reports "clear" when nothing matches --
+    # against a partial list that word means "no match among the patterns I
+    # was given", which is a different sentence. Silence here would let a
+    # generator record a completed sweep it did not perform.
+    if reg.get("excerpt"):
+        result["partial"] = True
+        result["note"] = (
+            note + " PARTIAL EXPORT: the source registry is itself an excerpt, "
+            "so this list is not the full set of refuted patterns. An AD4 sweep "
+            "against it can report 'no match found', never 'clear'."
+        )
+    return result
 
 
 def main(argv: list[str]) -> int:

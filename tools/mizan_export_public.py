@@ -94,7 +94,11 @@ def export(doc: dict) -> tuple[dict, int, int]:
     kept = total = 0
 
     reg = dict(doc.get("registry") or {})
-    reg["excerpt_of"] = reg.pop("project", "unknown")
+    # `project` is preserved, not renamed. Downstream tools key on it --
+    # mizan_export_refuted.py stamps it into every exported pattern as
+    # `source_registry` -- and renaming it here produced a chain of empty
+    # provenance fields two hops away. `excerpt: true` is the marker; the
+    # identity stays what it was.
     reg["excerpt"] = True
     out["registry"] = reg
 

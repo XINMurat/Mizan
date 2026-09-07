@@ -1,7 +1,7 @@
 # =====================================================================
 # Mizan urun registry'si — YAYINLANABILIR ALINTI / PUBLIC EXCERPT
 #
-# Uretildi / generated: 2026-09-06
+# Uretildi / generated: 2026-09-07
 # Kaynak / source: mizan-product-registry.yaml (gitignore'lu, yayinlanmiyor / private, unpublished)
 # Uretici / generator: tools/mizan_export_public.py
 #
@@ -20,6 +20,7 @@
 # =====================================================================
 
 registry:
+  project: MizanProduct
   owner: XINMurat
   schema_version: '1.0'
   methodology: mizan-v2.1
@@ -29,7 +30,6 @@ registry:
     övgü ve vizyon-büyütme katmanları soyuldu; yalnız test edilebilir çekirdek kaydedildi.
 
     '
-  excerpt_of: MizanProduct
   excerpt: true
 hypotheses:
 - id: YZ-001

@@ -1,0 +1,47 @@
+refuted_patterns:
+- id: D-M005
+  title: ''
+  tier: Y/R
+  block: refuted_and_discarded
+  claim: '''Hipotez grafı eksik'' eleştirisi (ChatGPT incelemesi)'
+  why_closed: 'Şemada relations (depends_on/contradicts/refines) mevcut — incelemeci
+    okumamış. Geçerli kalan çekirdek ''graf gezinme/ görselleştirme aracı yok'' (tooling
+    notu, düşük öncelik). Ders: dış-AI incelemelerinden kapsam beyanı istenir (''hangi
+    dosyalara baktın'') — checklist adayı.'
+  keywords:
+  - hipotez
+  - grafı
+  - eksik
+  - eleştirisi
+  - chatgpt
+  - incelemesi
+  - şemada
+  - relations
+  source_registry: MizanProduct
+- id: R-M001
+  title: ''
+  tier: R
+  block: refuted_and_discarded
+  claim: '''Front Deployment Engineer'' rol tanımı ve o role dayalı konumlandırma'
+  why_closed: 'Rol mevcut değil; gerçek rol Forward Deployed Engineer (Palantir kökenli,
+    müşteriye gömülü mühendis; 2025-26''da ilanlar ~%729 arttı). Gemini uydurma tanımı,
+    ''internetten araştır'' talebine rağmen doğrulama-tiyatrosuyla savundu. Ders:
+    dış-AI ''araştırdım'' beyanı kanıt değildir — kaynak istenir. Not: gerçek FDE
+    kitlesi Mizan için [H] düzeyinde aday — ayrı değerlendirilebilir, bu girdiyle
+    karıştırılmaz.'
+  keywords:
+  - front
+  - deployment
+  - engineer
+  - tanımı
+  - role
+  - dayalı
+  - konumlandırma
+  - mevcut
+  source_registry: MizanProduct
+exported_from: MizanProduct
+note: 'Negative constraints for Kıyas generation (AD4/[GB]). A match is a prompt to
+  check relatedness, never an automatic rejection. PARTIAL EXPORT: the source registry
+  is itself an excerpt, so this list is not the full set of refuted patterns. An AD4
+  sweep against it can report ''no match found'', never ''clear''.'
+partial: true
