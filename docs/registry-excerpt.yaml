@@ -5,13 +5,13 @@
 # Kaynak / source: mizan-product-registry.yaml (gitignore'lu, yayinlanmiyor / private, unpublished)
 # Uretici / generator: tools/mizan_export_public.py
 #
-# BU DOSYA BIR ALINTIDIR. Kaynak registry 23 girdi tasiyor; burada
-# 9 tanesi var. Disarida kalanlar silinmedi -- yalnizca
+# BU DOSYA BIR ALINTIDIR. Kaynak registry 25 girdi tasiyor; burada
+# 11 tanesi var. Disarida kalanlar silinmedi -- yalnizca
 # `visibility: public` tasimadiklari icin export edilmediler. Izin
 # yoklugu izin degildir: bir girdi acikca isaretlenmediyse ozel kalir.
 #
-# THIS FILE IS AN EXCERPT. The source registry holds 23 entries and
-# 9 of them are here. The rest were not deleted -- they simply do not
+# THIS FILE IS AN EXCERPT. The source registry holds 25 entries and
+# 11 of them are here. The rest were not deleted -- they simply do not
 # carry `visibility: public`. Absence is not permission.
 #
 # Alintida OLMAYAN bir girdiye dayanan her iddia, okuyucu tarafindan
@@ -211,6 +211,91 @@ hypotheses:
   origin: ESC-M003
   notes: 'Bu bir kacaktan dogdu: D-M005 ve R-M001 dersi KAYITLIYDI ama hicbir kontrole donusmemisti.
     Ders kaydetmek kontrol kurmak degildir.
+
+    '
+- id: YZ-005
+  version: 1
+  visibility: public
+  tier: S
+  status: preregistered
+  preregistered: '2026-09-07'
+  title: Adimin degerini degil, adimin katmanini dogru etiketlemeyi odullendirmek
+  formal: 'Bir akil yurutme modelini adiminin DEGERI icin degil, adiminin kanit katmanini
+    DOGRU ETIKETLEMESI icin odullendirmek (yardimci kalibrasyon basligi, hedef = dis hakemin
+    gecikmeli verdikti), halusinasyon oranini katman-degeri odulunden daha cok dusurur.
+
+    '
+  metric:
+    name: tutulan kumede halusinasyon orani + ECE
+    instrument: ECE hesabi + dis dogrulayicidan gelen halusinasyon sayimi
+  threshold: 'Yardimci-baslik kolu, KAPASITE-ESLI generik yardimci baslik koluna gore halusinasyon
+    oranini >= %10 goreli dusururse destek; <= %3 ise [R]. ECE esigi bu harness''in kendi
+    baseline yayilimindan turetilir.
+
+    '
+  two_sided: 'Kalibrasyon duzelip halusinasyon oynamazsa yardimci gorev atildir ve bu da bilgidir;
+    ikisi birlikte duzelirse Mizan etiketlerinin egitim degeri olculmus olur.
+
+    '
+  refutation: 'K-02 (Kiyas partisi, digest d006adbd5be46e24). Kapasite-esli generik yardimci
+    baslik kolu ZORUNLU: onsuz kazanc generik kapasiteye atfedilebilir. Dorduncu kol (hedef
+    = modelin kendi guven skoru) iddiayi Kadavath 2022''nin yeniden uygulanmasindan ayirir.
+
+    '
+  arbiter:
+    class: instrument
+    judge: ECE + dis dogrulayici sayimi
+    latency: saatler
+  prior_art:
+  - Kadavath et al. 2022 — models (mostly) know what they know
+  - Lin et al. 2022 — verbalized uncertainty
+  - Lightman et al. 2023 — process reward models
+  cost: ~2 GPU-gunu, dort kol
+  origin: K-02
+  notes: 'Sirasi YZ-002 sonrasi: K-01 ikili kolu 6-katman kolunu esitlerse bu girdinin gerekcesi
+    zayiflar (paylasilan oncul).
+
+    '
+- id: YZ-006
+  version: 1
+  visibility: public
+  tier: H
+  status: preregistered
+  preregistered: '2026-09-07'
+  title: Cift pasi loss'ta degil cikarimda — hakem problemi orada cozuluyor
+  formal: 'Bilesimsel tutarlilik denetimi ("cift pasi"), turevlenebilir bir ceza terimi olarak
+    degil, cikarim aninda aday-eleme filtresi olarak calistirilirsa oz-celiski orani duser.
+    Substrat degisimi hakem problemini cozer: cift pasinin ihtiyaci hakemdir, turev degil.
+
+    '
+  metric:
+    name: oz-celiski orani + gorev dogrulugu
+    instrument: sembolik celiski denetleyicisi (AST + cozucu; kod/matematik)
+  threshold: 'Filtre kolu, ESIT COMPUTE''lu best-of-n koluna gore oz-celiski oranini >= %25
+    goreli dusurur ve gorev dogrulugunu dusurmezse destek; <= %8 [R].
+
+    '
+  two_sided: 'Filtre kazanmazsa problem cikarimda degil egitimdedir ve arama oraya kayar;
+    kazanirsa turevlenemez hakem kullanilabilir hale gelir.
+
+    '
+  refutation: 'K-03. KONTROL GREEDY DEKODLAMA DEGIL, esit compute''lu best-of-n''dir -- greedy''ye
+    karsi olculen her kazanc yalnizca ornekleme sayisinin kazancidir. Ucuncu kol (nihai-cevap
+    dogrulayicisiyla yeniden siralama) iddiayi Cobbe 2021''in yeniden uygulanmasindan ayirir.
+
+    '
+  arbiter:
+    class: runtime
+    judge: sembolik celiski denetleyicisi
+    latency: dakikalar
+  prior_art:
+  - Cobbe et al. 2021 — verifier-reranked sampling
+  - Wang et al. 2023 — self-consistency decoding
+  - Weng et al. 2023 — self-verification
+  cost: GPU egitimi yok; yalnizca cikarim — bu ailenin en ucuz deneyi
+  origin: K-03
+  notes: 'Bes tohumun tek GPU-egitimi gerektirmeyeni; sirada once bu var. Kapsam: celiskisi
+    mekanik denetlenebilen alanlar.
 
     '
 refuted_and_discarded:
