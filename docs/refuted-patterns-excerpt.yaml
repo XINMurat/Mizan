@@ -1,4 +1,26 @@
 refuted_patterns:
+- id: YZ-006
+  title: Cift pasi loss'ta degil cikarimda — hakem problemi orada cozuluyor
+  tier: R
+  block: hypotheses
+  claim: 'Bilesimsel tutarlilik denetimi ("cift pasi"), turevlenebilir bir ceza terimi
+    olarak degil, cikarim aninda aday-eleme filtresi olarak calistirilirsa oz-celiski
+    orani duser. Substrat degisimi hakem problemini cozer: cift pasinin ihtiyaci hakemdir,
+    turev degil.'
+  why_closed: K-03. KONTROL GREEDY DEKODLAMA DEGIL, esit compute'lu best-of-n'dir
+    -- greedy'ye karsi olculen her kazanc yalnizca ornekleme sayisinin kazancidir.
+    Ucuncu kol (nihai-cevap dogrulayicisiyla yeniden siralama) iddiayi Cobbe 2021'in
+    yeniden uygulanmasindan ayirir.
+  keywords:
+  - cift
+  - pasi
+  - loss
+  - degil
+  - cikarimda
+  - hakem
+  - problemi
+  - orada
+  source_registry: MizanProduct
 - id: D-M005
   title: ''
   tier: Y/R

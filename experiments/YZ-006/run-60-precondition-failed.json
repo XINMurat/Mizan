@@ -1,0 +1,851 @@
+{
+ "config": {
+  "model": "qwen2.5:1.5b-instruct",
+  "n": 8,
+  "problems": 60,
+  "temp": 0.8,
+  "out": "run-60.json"
+ },
+ "rows": [
+  {
+   "i": 0,
+   "gold": 18.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 1
+   }
+  },
+  {
+   "i": 1,
+   "gold": 3.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 1
+   }
+  },
+  {
+   "i": 2,
+   "gold": 70000.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 2
+   }
+  },
+  {
+   "i": 3,
+   "gold": 540.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 1
+   }
+  },
+  {
+   "i": 4,
+   "gold": 20.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 4
+   }
+  },
+  {
+   "i": 5,
+   "gold": 64.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 2
+   }
+  },
+  {
+   "i": 6,
+   "gold": 260.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 3
+   }
+  },
+  {
+   "i": 7,
+   "gold": 160.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 30
+   }
+  },
+  {
+   "i": 8,
+   "gold": 45.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 8
+   }
+  },
+  {
+   "i": 9,
+   "gold": 460.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {}
+  },
+  {
+   "i": 10,
+   "gold": 366.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 1
+   }
+  },
+  {
+   "i": 11,
+   "gold": 694.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 18
+   }
+  },
+  {
+   "i": 12,
+   "gold": 13.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 22
+   }
+  },
+  {
+   "i": 13,
+   "gold": 18.0,
+   "n_parseable": 1,
+   "n_clean": 0,
+   "arm_a": 24.0,
+   "arm_b": 24.0,
+   "fell_back": true,
+   "rate_a": 1.0,
+   "rate_b": 1.0,
+   "kinds": {
+    "ARITH": 18,
+    "FINAL": 1
+   }
+  },
+  {
+   "i": 14,
+   "gold": 60.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 7
+   }
+  },
+  {
+   "i": 15,
+   "gold": 125.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 6
+   }
+  },
+  {
+   "i": 16,
+   "gold": 230.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 3
+   }
+  },
+  {
+   "i": 17,
+   "gold": 57500.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 5
+   }
+  },
+  {
+   "i": 18,
+   "gold": 7.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 2
+   }
+  },
+  {
+   "i": 19,
+   "gold": 6.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 5
+   }
+  },
+  {
+   "i": 20,
+   "gold": 15.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 30,
+    "PAIR": 1
+   }
+  },
+  {
+   "i": 21,
+   "gold": 14.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 5
+   }
+  },
+  {
+   "i": 22,
+   "gold": 7.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 1
+   }
+  },
+  {
+   "i": 23,
+   "gold": 8.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 2
+   }
+  },
+  {
+   "i": 24,
+   "gold": 26.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 28,
+    "PAIR": 13
+   }
+  },
+  {
+   "i": 25,
+   "gold": 2.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 17
+   }
+  },
+  {
+   "i": 26,
+   "gold": 243.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 4
+   }
+  },
+  {
+   "i": 27,
+   "gold": 16.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 2
+   }
+  },
+  {
+   "i": 28,
+   "gold": 25.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {}
+  },
+  {
+   "i": 29,
+   "gold": 104.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 4
+   }
+  },
+  {
+   "i": 30,
+   "gold": 109.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 9
+   }
+  },
+  {
+   "i": 31,
+   "gold": 80.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 9,
+    "PAIR": 1
+   }
+  },
+  {
+   "i": 32,
+   "gold": 35.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {}
+  },
+  {
+   "i": 33,
+   "gold": 70.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 6,
+    "PAIR": 2
+   }
+  },
+  {
+   "i": 34,
+   "gold": 23.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {}
+  },
+  {
+   "i": 35,
+   "gold": 9.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 2
+   }
+  },
+  {
+   "i": 36,
+   "gold": 75.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 9
+   }
+  },
+  {
+   "i": 37,
+   "gold": 2.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 6
+   }
+  },
+  {
+   "i": 38,
+   "gold": 10.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 45
+   }
+  },
+  {
+   "i": 39,
+   "gold": 18.0,
+   "n_parseable": 2,
+   "n_clean": 1,
+   "arm_a": 72.0,
+   "arm_b": 36.0,
+   "fell_back": false,
+   "rate_a": 1.0,
+   "rate_b": 0.0,
+   "kinds": {
+    "ARITH": 1,
+    "FINAL": 1
+   }
+  },
+  {
+   "i": 40,
+   "gold": 8.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 66
+   }
+  },
+  {
+   "i": 41,
+   "gold": 200.0,
+   "n_parseable": 2,
+   "n_clean": 1,
+   "arm_a": 200.0,
+   "arm_b": 200.0,
+   "fell_back": false,
+   "rate_a": 0.5,
+   "rate_b": 0.0,
+   "kinds": {
+    "ARITH": 2,
+    "FINAL": 1
+   }
+  },
+  {
+   "i": 42,
+   "gold": 26.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 1
+   }
+  },
+  {
+   "i": 43,
+   "gold": 48.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 27
+   }
+  },
+  {
+   "i": 44,
+   "gold": 20.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {}
+  },
+  {
+   "i": 45,
+   "gold": 104.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 1
+   }
+  },
+  {
+   "i": 46,
+   "gold": 163.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 3
+   }
+  },
+  {
+   "i": 47,
+   "gold": 800.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 10,
+    "PAIR": 1
+   }
+  },
+  {
+   "i": 48,
+   "gold": 8.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 1
+   }
+  },
+  {
+   "i": 49,
+   "gold": 30.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 1
+   }
+  },
+  {
+   "i": 50,
+   "gold": 294.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 1
+   }
+  },
+  {
+   "i": 51,
+   "gold": 5.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 4
+   }
+  },
+  {
+   "i": 52,
+   "gold": 15.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 15,
+    "PAIR": 2
+   }
+  },
+  {
+   "i": 53,
+   "gold": 40.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 6
+   }
+  },
+  {
+   "i": 54,
+   "gold": 40.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 6
+   }
+  },
+  {
+   "i": 55,
+   "gold": 14.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {}
+  },
+  {
+   "i": 56,
+   "gold": 3.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 3
+   }
+  },
+  {
+   "i": 57,
+   "gold": 83.0,
+   "n_parseable": 1,
+   "n_clean": 0,
+   "arm_a": 0.0,
+   "arm_b": 0.0,
+   "fell_back": true,
+   "rate_a": 1.0,
+   "rate_b": 1.0,
+   "kinds": {
+    "ARITH": 6,
+    "PAIR": 1,
+    "FINAL": 1
+   }
+  },
+  {
+   "i": 58,
+   "gold": 57.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 65,
+    "PAIR": 43
+   }
+  },
+  {
+   "i": 59,
+   "gold": 187.0,
+   "n_parseable": 0,
+   "n_clean": 0,
+   "arm_a": null,
+   "arm_b": null,
+   "fell_back": true,
+   "rate_a": null,
+   "rate_b": null,
+   "kinds": {
+    "ARITH": 5
+   }
+  }
+ ]
+}

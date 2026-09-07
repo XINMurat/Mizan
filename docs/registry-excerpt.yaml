@@ -1,7 +1,7 @@
 # =====================================================================
 # Mizan urun registry'si — YAYINLANABILIR ALINTI / PUBLIC EXCERPT
 #
-# Uretildi / generated: 2026-09-07
+# Uretildi / generated: 2026-09-08
 # Kaynak / source: mizan-product-registry.yaml (gitignore'lu, yayinlanmiyor / private, unpublished)
 # Uretici / generator: tools/mizan_export_public.py
 #
@@ -257,9 +257,9 @@ hypotheses:
 
     '
 - id: YZ-006
-  version: 1
+  version: 3
   visibility: public
-  tier: H
+  tier: R
   status: preregistered
   preregistered: '2026-09-07'
   title: Cift pasi loss'ta degil cikarimda — hakem problemi orada cozuluyor
@@ -294,6 +294,131 @@ hypotheses:
   - Weng et al. 2023 — self-verification
   cost: GPU egitimi yok; yalnizca cikarim — bu ailenin en ucuz deneyi
   origin: K-03
+  run_protocol:
+    date_locked: '2026-09-07'
+    model: qwen2.5:1.5b-instruct (yerel, ollama)
+    dataset: GSM8K test, ilk 60 problem — secim yok, bastan sirayla
+    n_candidates: 8
+    temperature: 0.8
+    arm_a: tum ayristirilabilir adaylar uzerinde cogunluk oyu
+    arm_b: kendi icinde celisen adaylar elenir, kalanlar uzerinde cogunluk oyu
+    fallback: tum adaylar elenirse A'nin havuzuna donulur; bu satir kayda gecer
+    stopping_rule: 60 problem, sabit. Fark acilana kadar uzatma yok.
+    exclusion: 'Nihai cevabi ayristirilamayan aday sayilmaz (her iki kolda da ayni sekilde).
+      Problem duzeyinde hicbir dislama yok.
+
+      '
+    substitution_declared: 'Esik "esit compute''lu best-of-n" diyor. Secim aninda dis dogrulayici
+      olmadigi icin best-of-n''in durust ornegi COGUNLUK OYUdur. Bu ikame burada, sonuctan
+      once, acikca yaziliyor -- sessizce yapilsaydi kontrolun ne oldugu sonradan pazarlik
+      edilebilir olurdu.
+
+      '
+    scope_caveat_measured: 'HAKEM SINIRI: kapali aritmetik ifadelerde PAIR sinifi ARITH sinifi
+      tarafindan KAPSANIYOR (ayni ifade iki farkli degerle yazildiysa degerlerden biri zaten
+      aritmetik olarak yanlistir). Yani bu kosum dar anlamda "cift" filtresini degil, onu
+      iceren IC-TUTARLILIK filtresini olcuyor. Sonucun asimetrisi bu yuzden onemli ve simdiden
+      yaziliyor: genis filtre CURURSE dar olani da curumus sayilir; genis filtre KAZANIRSA
+      kazanc ciftlige atfedilemez ve K-03 [H] olarak kalir, [K] olmaz.
+
+      '
+    predicted: 'Yazar destek bekliyor ama esigin altinda: celiski oraninda %25''ten kucuk
+      goreli dusus. Yani kendi tohumunun curutulmesini bekliyor.
+
+      '
+  results:
+  - date: '2026-09-07'
+    run: run-60.json (qwen2.5:1.5b-instruct, 60 problem, n=8, temp 0.8, 117 dk)
+    outcome: HUCRE KAPANDI — ONKOSUL BASARISIZ
+    detail: '60 problemin 56''sinda HICBIR aday ayristirilabilir nihai cevap uretmedi; kullanilabilir
+      problem sayisi 4. Iki kol arasindaki hicbir sayi bu n ile anlam tasimaz. Betigin bastigi
+      "SUPPORT" hukmu GECERSIZDIR ve buraya sonuc olarak yazilmiyor -- yaziliyor olmasinin
+      tek sebebi, basildigini gizlememek.
+
+      '
+    why: 'Prompt kalibrasyonu ters tepti. Ilk taslakta format sayisal bir ornekle anlatiliyordu
+      ("16 - 3 = 13") ve model bunu alakasiz problemlerde kendi adimi gibi kopyaliyordu --
+      hakemi kirleten bir talimat. Ornek kaldirildi ve format kelimeyle tarif edildi ("dort
+      kare isareti"); model o zaman da format satirini hic uretmez oldu. Iki hatanin arasindaki
+      daralik gorulmemisti.
+
+      '
+    arbiter_note: 'Hakemin kendisi de denetlenemez halde kosuldu: kosum ham izleri kaydetmiyordu,
+      yani 542 ARITH bayraginin gercek mi yoksa ikinci bir ayristirma hatasi mi oldugu SONRADAN
+      kontrol edilemez. Bir hakemin verdiktleri denetlenemiyorsa o hakem R8 anlaminda enstrumandan
+      cok yazar beyanidir.
+
+      '
+    fixes_before_rerun: '(1) Format artik yer tutucuyla gosteriliyor -- "<ifade> = <sayi>"
+      ve "#### <sayi>" -- yani promptta kopyalanabilir TEK BIR RAKAM yok. Alti uretimlik on-testte
+      ayristirma orani 4/6. (2) Kosum ham izleri saklayacak, hakem sonradan denetlenebilsin.
+      (3) Onkosul kapisi SIMDI kilitleniyor, asagida.
+
+      '
+    precondition_gate_locked: '2026-09-07, yeniden kosumdan ONCE: kullanilabilir problem sayisi
+      60''in 40''inin altindaysa sonuc "hucre kapandi" olarak yazilir ve hicbir esik degerlendirilmez.
+      Bu kapi ilk kosumda YOKTU ve eksikligi tam da bu satirin var olma sebebi -- analiz betigi
+      n=4 ile hukum basabiliyordu.
+
+      '
+    harking_note: 'Bu kosumdan sonra yapilan tek degisiklikler prompt formati, iz kaydi ve
+      onkosul kapisidir. Esik, kollar, kontrol tanimi, n, durdurma ve dislama kurallari DEGISMEDI
+      -- yani duzeltmeler olcumu degil, olcum aletini hedefliyor. Sonuclara bakip esik oynatilsaydi
+      bu satir yerine bir HARKing serhi olurdu.
+
+      '
+  - date: '2026-09-08'
+    run: run-60-v2.json (qwen2.5:1.5b-instruct, 60 problem, n=8, temp 0.8, 297 dk)
+    outcome: '[R] — ONKAYITLI BASARI KOSULU SAGLANMADI'
+    precondition: SAGLANDI — 60/60 problem kullanilabilir, kilitli taban 40
+    numbers: 'Secilen izin celiski orani: A 0.485 -> B 0.133, goreli dusus %72.5 (esik >=%25
+      -- fazlasiyla asildi). Dogruluk: A 0.367 -> B 0.333, fark -3.3 puan, %95 eslestirilmis
+      bootstrap GA [-11.7, +5.0]. Filtrenin degistirdigi cevap: 20 (2 duzeltti, 4 bozdu, 14''u
+      zaten yanlistan yanlisa). Celiski siniflari: ARITH 1664, PAIR 554, FINAL 77.
+
+      '
+    verdict_reasoning: 'Esik bir BILESIKTI: celiski orani >=%25 dussun VE dogruluk dusmesin.
+      Birinci sart genis farkla saglandi, ikincisi saglanmadi -- nokta tahmini yanlis yone
+      gitti. GA sifiri kestigi icin "dogruluk dustu" DA gosterilmis degil; gosterilen sey,
+      "dusmedi"nin gosterilememis olmasi. Onkayitli kural destek icin "dusmedi"yi ariyordu,
+      "belirsiz"i degil. Bu ayrimi sonradan gevsetmek esik oynatmak olurdu.
+
+      '
+    mechanism: 'Sonucun sebebi dogrudan sayilarda: filtre 2 cevabi duzeltti, 4 cevabi BOZDU.
+      Ic tutarlilik ile dogruluk ayni sey degildir. Kendi icinde hic celismeyen, bastan sona
+      tutarli ve bastan sona yanlis bir iz, filtrenin TERCIH ETTIGI izdir. Filtre olctugu
+      seyi optimize ediyor: celiskiyi kaldiriyor, yanlisi degil. Bu, K-05''in odul semasi
+      icin ongordugu Goodhart mekanizmasinin kucuk ve olculmus bir ornegi -- farkli bir tohumdan,
+      ayni sinif.
+
+      '
+    instrument_caveat: 'HAKEM DENETIMI (yapildi, ve sonucu sinirliyor): bayraklar teknik olarak
+      DOGRU -- "0 = 1", "10 = 7" gercekten yanlis esitlikler, hakem celiski UYDURMUYOR. Ama
+      bayraklarin buyuk kismi AKIL YURUTME HATASI DEGIL, YOZLASMA: 1.5B model sik sik "1 =
+      7" satirini yuzlerce kez tekrarlayan donguye giriyor ve tek bir iz 100+ ARITH uretebiliyor.
+      Yani bu olcekte filtre agirlikla bir BOZUK-CIKTI DEDEKTORU olarak calisti, K-03''un
+      asil hedefledigi "yerel olarak dogru, butunde tutarsiz" vakasi olarak degil. Celiski
+      oranindaki %72.5''lik dusus bu yuzden gorundugu kadar bilgilendirici degil: cop atmak
+      celiskiyi ucuza dusurur.
+
+      '
+    scope: 'Tek model (1.5B), tek alan (GSM8K), n=60, tek kosum. Buyuk modele, koda ya da
+      baska bir hakeme genellemez. [R] BU KOSUMUN kosullarinda gecerlidir ve "cift pasi cikarimda
+      ise yaramaz" demek DEGILDIR; onkayitli esigin bu kurulumla saglanmadigini soyler.
+
+      '
+    failed_fix_recorded: 'Bir onceki sonuc blogunda "kosum ham izleri saklayacak" diye yazilmisti.
+      SAKLAMADI: alan aday sozlugune eklendi ama satir duzeyinde ozete yazilmadi, yani duzeltme
+      kodda goruntude kaldi. Hakem denetimi bu yuzden izleri AYNI TOHUMLARLA yeniden ureterek
+      yapildi. Bu bir kurtarma, tam ikame degil: ollama tohumlarinin determinizmi VARSAYILDI,
+      dogrulanmadi -- orijinal izler elde olmadigi icin karsilastirilamiyor.
+
+      '
+    predicted_vs_actual: 'Yazar "destek ama esigin altinda" bekliyordu. Celiski orani beklentiyi
+      COK astı (%72.5 vs beklenen <%25), dogruluk ise beklenmedigi yone gitti. Yani tahmin
+      iki uctan da yanlisti ve bu satir tahminin tutmadigini kayda geciriyor.
+
+      '
   notes: 'Bes tohumun tek GPU-egitimi gerektirmeyeni; sirada once bu var. Kapsam: celiskisi
     mekanik denetlenebilen alanlar.
 
