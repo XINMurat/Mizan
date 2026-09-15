@@ -4,8 +4,8 @@ description: Evidence-tiered claim auditing and preregistered hypothesis registr
 license: MIT
 metadata:
   author: XINMurat
-  version: "2.7"         # the skill's own version; the prose is pinned to it by CI
-  schema_version: "1.10"  # pinned to the schema banner by CI
+  version: "2.8"         # the skill's own version; the prose is pinned to it by CI
+  schema_version: "1.11"  # pinned to the schema banner by CI
 ---
 
 # Mizan — Evidence-Tiered Auditing & Preregistration Registry
@@ -94,6 +94,17 @@ Read `references/feature-gate.md` before gating a feature or PRD. This
 mode also generates feature candidates the user didn't ask for, via the
 Gap Map and alternative-forcing — see that file's "suggestion mechanism"
 section for what this can and cannot promise.
+
+**Mode 7 — Security probe.** Modes 3–5 all start from a sentence someone
+wrote; a vulnerability is the sentence nobody wrote, so the engine that
+powers them cannot reach it (audit step 7 says why). Mode 7 changes the
+scenario source to a trust-boundary map plus an adversary model, and
+inverts what counts as evidence: **not exploited is not a pass** — a failed
+attempt and a clean scanner are silence and cap at `[KKE]` (R26); only a
+named control on every path to the asset promotes. Read
+`references/security-probe.md` before the first security pass. R27 is R19
+with the supplier changed, because the people who built the thing cannot
+name the assumption they never knew they made.
 
 **Beyond software.** Modes 3/4/5 are domain-independent patterns
 (claim-vs-evidence hop audit; anomaly → rival-hypothesis registry;
@@ -403,7 +414,7 @@ from the outside.
   writing entries, `recovery.md` the moment a run stops behaving. Reading
   everything at the start spends the context the audit itself needs.
 - **The scripted part is the part that travels.** `mizan_validate.py`
-  enforces R1–R25 without a model, so it behaves identically in every
+  enforces R1–R27 without a model, so it behaves identically in every
   host. Whatever is enforced only by this prose is negotiable by the
   host's prose. When rigor must survive an unknown setup, put it in the
   validator, not in a paragraph.
@@ -440,6 +451,8 @@ from the outside.
   (bug-hypothesis registry) procedures.
 - `references/feature-gate.md` — Mode 5 (feature/PRD gate) procedure and
   the suggestion mechanism.
+- `references/security-probe.md` — Mode 7: the trust-boundary map,
+  the inverted tier table, and what the pass cannot see.
 - `references/domain-adaptation.md` — Modes 3/4/5 beyond software:
   adaptation recipe + 14 domain modules (analytics, marketing, sales,
   research, finance, ops/RCA, security/IR, hiring, procurement, legal,
@@ -447,7 +460,7 @@ from the outside.
 - `schemas/mizan-registry.yaml` — the machine-readable registry format.
   When the user keeps a registry file (in project knowledge, a repo, or
   uploads one), read it at session start, APPEND rather than overwrite,
-  propose new entries in this schema, and enforce its hard rules R1–R25
+  propose new entries in this schema, and enforce its hard rules R1–R27
   (mandatory baseline, mandatory confound controls, append-only history,
   no K-promotion without controls on surprising positives, and
   producer/auditor separation: propose tier changes, let the owner or a
