@@ -1,17 +1,17 @@
 # =====================================================================
 # Mizan urun registry'si — YAYINLANABILIR ALINTI / PUBLIC EXCERPT
 #
-# Uretildi / generated: 2026-09-08
+# Uretildi / generated: 2026-09-15
 # Kaynak / source: mizan-product-registry.yaml (gitignore'lu, yayinlanmiyor / private, unpublished)
 # Uretici / generator: tools/mizan_export_public.py
 #
-# BU DOSYA BIR ALINTIDIR. Kaynak registry 25 girdi tasiyor; burada
-# 11 tanesi var. Disarida kalanlar silinmedi -- yalnizca
+# BU DOSYA BIR ALINTIDIR. Kaynak registry 30 girdi tasiyor; burada
+# 16 tanesi var. Disarida kalanlar silinmedi -- yalnizca
 # `visibility: public` tasimadiklari icin export edilmediler. Izin
 # yoklugu izin degildir: bir girdi acikca isaretlenmediyse ozel kalir.
 #
-# THIS FILE IS AN EXCERPT. The source registry holds 25 entries and
-# 11 of them are here. The rest were not deleted -- they simply do not
+# THIS FILE IS AN EXCERPT. The source registry holds 30 entries and
+# 16 of them are here. The rest were not deleted -- they simply do not
 # carry `visibility: public`. Absence is not permission.
 #
 # Alintida OLMAYAN bir girdiye dayanan her iddia, okuyucu tarafindan
@@ -423,6 +423,84 @@ hypotheses:
     mekanik denetlenebilen alanlar.
 
     '
+design_constraints:
+- id: H-M005
+  version: 1
+  visibility: public
+  tier: H
+  status: preregistered
+  preregistered: '2026-09-15'
+  review_by: '2026-12-31'
+  title: R23-R25, fazlı denetimin DİLİMLER ARASI kör noktasını kapatır
+  formal: 'Şema 1.10''un üç kuralı (R23 MERGE''in bakılmamış çiftleri, R24 denetçinin kendi
+    enstrümanının kalibrasyonu, R25 çalışma zamanı kararının eser tazeliği), fazlı bir Mod
+    3 denetiminin dilimler arasında kusur kaçırmasını AZALTIR — ve azaltmayı, kuralların kendisi
+    yakalayarak değil, denetçiyi bakmadığı yere BAKMAYA ZORLAYARAK yapar.
+
+    '
+  origin: '15.09''da gerçek bir depoda kosan fazlı denetim yedi satırını kapattı ve ürün sahibinin
+    aynı gün elle bulduğu dört kusuru kaçırdı (ESC-M004). Dördü de dilimlerin arasındaydı.
+    Aynı denetimde denetçinin kendi tarayıcıları dört kez yanlış okudu (ESC-M005) ve bir yetki
+    değişikliği bayat derlemeyle "doğrulandı" (ESC-M006).
+
+    '
+  metric:
+    name: dilimler_arasi_kacak
+    instrument: 'Bir sonraki fazlı denetimde: MERGE kapandıktan SONRA kullanıcı/üretim tarafından
+      bulunan ve dilimler arası olduğu gösterilebilen kusur sayısı.
+
+      '
+    instrument_built_by: existing
+  arbiter:
+    class: third_party
+    who: 'Ürün sahibi ya da kullanıcı — kusuru BULAN taraf denetçi olamaz; olsaydı ölçüm,
+      ölçtüğü şeyin tarafı olurdu.
+
+      '
+    independent_of_author: true
+    latency: weeks
+    calibration: 'Taban 15.09 denetimi: MERGE kapandı, dilimler arası 4 kaçak. Bu sayı BU
+      depo ve BU denetçi içindir; başka bir denetime devredilemez.
+
+      '
+  threshold:
+    support: Sonraki fazlı denetimde dilimler arası kaçak ≤ 1 (taban 4).
+    refute: ≥ 3 kaçak — kurallar denetçiyi bakmadığı yere baktırmıyor.
+    underpowered: '2 kaçak, ya da denetimin kapsamı tabandan belirgin farklıysa: tek koşu
+      karar vermez, ikinci bir denetim beklenir.
+
+      '
+  refutation: 'Kurallar yazılı olduğu hâlde dilimler arası kaçak azalmazsa hipotez düşer ve
+    sorun kuralda değil BÖLÜMLEMENİN kendisindedir — o zaman çözüm yeni bir kural değil, ilişkiye
+    göre bölen bir A5.1 olur.
+
+    '
+  two_sided: 'Destek: zorunlu alan, denetçiyi seam''lere bakmaya itiyor. Ret: alan dolduruluyor
+    ama içi tören — o zaman R23 de "eşik tiyatrosu"nun kendi örneği olur ve kayıt bunu söylemek
+    zorunda.
+
+    '
+  informativeness_precondition: 'Sonraki denetimin FAZLI olması. Tek pasta koşan bir denetim
+    bu hipotez hakkında hiçbir şey söylemez.
+
+    '
+  preregistered_prediction: 'Yazan taraf, R24 ve R25''in (mekanik, ucuz, ikili) tutacağını;
+    R23''ün ise kısmen tören riski taşıdığını bekliyor — çünkü "hangi çiftler" sorusunun yanıtı
+    yargı gerektiriyor ve yargı, alan doldurmakla kanıtlanamaz.
+
+    '
+  prior_art:
+  - code-audit.md A5.1 — fazlı denetim; eksik olan bölümleme EKSENİYDİ
+  - checklist 13 (bileşim pası) — aynı sezginin özellik düzeyindeki hâli; R23 onu DİLİM düzeyine
+    taşıyor
+  confounds:
+  - denetci_ogrenmesi
+  - depo_olgunlasmasi
+  cost: 'S (kurallar yazildi); olcum: sonraki denetimin icinde, ek maliyet yok'
+  status_note: 'Bu kayıt ONKAYITTIR ve kuralların kendisi post-hoc doğdu. İkisi karıştırılmamalı:
+    kaçaklar olmuş bitmiş (ESC-M004..007), kuralların İŞE YARAYIP YARAMADIĞI ise henüz ölçülmedi.
+
+    '
 refuted_and_discarded:
 - id: D-M005
   visibility: public
@@ -447,6 +525,129 @@ refuted_and_discarded:
     '
 probes:
   escaped:
+  - id: ESC-M004
+    visibility: public
+    found: '2026-09-15'
+    found_by: user
+    symptom: 'Gercek bir depoda kosan FAZLI Mod 3 denetimi (P0-P6 + MERGE) butun satirlarini
+      kapatti, 19 girdi ve 10 sonuc yazdi, dort hakem betigi uretti -- ve urun sahibinin AYNI
+      GUN elle buldugu DORT kusuru kacirdi: (1) postadan dogan ise "gelen kutusunda ac" diyen
+      bir baglanti, hedef ekranin o nesneyi gosterebilen hicbir gorunumu olmadigi icin HER
+      SEFERINDE bos donuyordu; (2) birim olusturma sozlesmesinde `parentId` vardi, guncellemede
+      yoktu -- birim kuruldugu yerde sonsuza dek kaliyordu; (3) posta yonlendirme, hedef birime
+      SINIRSIZ yeni okuma yetkisi veriyordu; (4) denetim izine `fromUnitId` sabit null yaziliyordu,
+      oysa ayni islem veritabanina gercek degeri yaziyordu.
+
+      '
+    in_scope: true
+    class_ref: ''
+    class_new: 'R23 -- MERGE, BAKILMAMIS CIFTLERI uzlastirir. Dordunun de ortak ozelligi kacirilmalarinin
+      sebebini soyluyor: HICBIRI BIR DOSYANIN ICINDE DEGIL, hepsi iki yer arasindaki ILISKI.
+      Denetci A5.1''i harfiyen uyguladi; A5.1''in verdigi bolumleme eksenleri ("modul, yol
+      ya da yuzey") KAP, kusurlar ise ILISKI idi. MERGE bu bosluğu kapatmaliydi ama tarifi
+      onu BULUNMUS bulgulara yonlendiriyordu (tier surklenmesi, tekrarlar, yazili iddialar
+      arasi sicramalar). Hic bakilmamis cifti saymasini soyleyen hicbir cumle yoktu. Yani
+      tarif, denetci degil, kusurludur.
+
+      '
+    note: 'Bu kacagin en pahali yani sinifinin GORUNMEZ olmasi: dilimlerin arasindaki bir
+      kusur hicbir dilimin bulgularinda gorunmez, dolayisiyla o bulgulari ne kadar iyi uzlastirirsaniz
+      uzlastirin ortaya cikmaz. Denetim "temiz" raporlar ve temizligin kanitiyla kirliligin
+      yoklugu ayni satirda okunur.
+
+      '
+    history:
+    - date: '2026-09-15'
+      event: kullanici dort kusuru bildirdi; dordu de kod okunarak dogrulandi
+    - date: '2026-09-15'
+      event: sinif R23 olarak sema 1.10'a yazildi; A5.1 ve MERGE tarifi duzeltildi
+  - id: ESC-M005
+    visibility: public
+    found: '2026-09-15'
+    found_by: later_audit
+    symptom: 'Ayni denetimde DENETCININ KENDI tarayicilari dort kez yanlis okudu: degismemis
+      kod uzerinde ayni soruya uc farkli sayi (11, 9, 6); on iki ucu "yetki kapisi yok" diye
+      bildirdi (on ikisi de paylasilan bir yardimcidan kapiliydi); dogru bir bileseni 40 satirlik
+      yakinlik penceresi yuzunden yanlis isaretledi; ve bir rotayi "olu link" sandi cunku
+      duzenli ifade `to=` ile eslesiyor `to:` ile eslesmiyordu.
+
+      '
+    in_scope: true
+    class_ref: checklist 11 -- denetcinin kendi kor noktasi (ama o madde YARGIYA bakiyor,
+      ALETE degil)
+    class_new: 'R24 + checklist 14 -- denetcinin KENDI enstrumani de kalibre edilir. R1-R22''nin
+      olcumle ilgili her kurali DISARIYI gosteriyor: hakemi adlandir, bagimsiz tut, esigi
+      hakemin null''una gore kalibre et. Hicbiri olcumu YAPAN seyin calisip calismadigini
+      sormuyor. Denetim sirasinda yazilan bir tarayici daha zayif bir enstruman degil, KALIBRE
+      EDILMEMIS bir enstrumandir; kontrolu ucuz -- bilinen bir pozitif ve bilinen bir negatif.
+
+      '
+    note: 'Yakalanmasinin tek sebebi tutarsizlik fark edilmesiydi, yani tesadüf. Uc farkli
+      sayi uretmeseydi hicbiri gorunmeyecekti; ve tarayicinin TEMIZ dedigi yerler hic geri
+      donulup bakilmayan yerlerdir.
+
+      '
+    history:
+    - date: '2026-09-15'
+      event: denetim sirasinda fark edildi; H-016 olarak proje registry'sine yazildi
+    - date: '2026-09-15'
+      event: sinif R24 + checklist 14 olarak sema 1.10'a yazildi
+  - id: ESC-M006
+    visibility: public
+    found: '2026-09-15'
+    found_by: later_audit
+    symptom: 'Bir yetki kontrolu eklendi ve UC KEZ olculdu: hedef test YESIL, bilerek yapilan
+      iki uclu kontrol KIRMIZI, tam suit 861/861 BASARILI. Ucu de korumanin BULUNMADIGI bir
+      derlemeyle kostu -- `dotnet test`, referans verdigi projeyi her zaman yeniden derlemiyordu.
+      Kanit, derlenmis ikilinin icinde yeni dize aranarak bulundu (yoktu; ayni oturumda eklenen
+      baska bir dize vardi, yani arama yontemi calisiyordu).
+
+      '
+    in_scope: true
+    class_ref: ''
+    class_new: 'R25 -- calisma zamani karari, KOSTUGU ESERI adlandirir. `runtime` bu metodolojideki
+      en guclu hakem sinifi, cunku karari yazar degil makine veriyor. Bu guc, semanin hic
+      kontrol etmedigi bir seye dayaniyordu: makinenin DENETLENEN KODU kosturdugu. "Suit gecti",
+      HANGI DERLEMENIN gectigi soylenene kadar kanit degildir.
+
+      '
+    note: 'Bu zayif bir olcum degil, YANLIS BIR GUVENCEDIR: dogrulanmamis bir guvenlik degisikligini
+      commit etmeye bir komut kalmisti. Ayrica oldurululuk olcumunu de kirletiyor -- bayat
+      ikili uzerinde "hayatta kalan" bir mutasyon, esdeger mutantla birebir ayni gorunur ve
+      ikisi zit sonuc tasir.
+
+      '
+    history:
+    - date: '2026-09-15'
+      event: bulundu; ilgili butun olcumler --no-incremental ile tekrarlandi
+    - date: '2026-09-15'
+      event: sinif R25 olarak sema 1.10'a yazildi; code-audit A4'e uyari eklendi
+  - id: ESC-M007
+    visibility: public
+    found: '2026-09-15'
+    found_by: later_audit
+    symptom: '`probes.domain` denetimin ILK gunu olusturuldu, `supplied_by: none` ve dort
+      senaryo `unchecked` birakildi, ve YEDI FAZ bunun etrafinda kapandi. Alan sahibine senaryolar
+      hic sorulmadi; denetim [H] deyip bitti.
+
+      '
+    in_scope: true
+    class_ref: R19 -- ama R19 yalnizca tier-K kapsam iddiasini engelliyor
+    class_new: 'W6 -- butun fazlar bitmisken alan probu yanitsizsa ve `domain_probe_waived`
+      yoksa uyarilir. R19 dogru ama DAR: [H] ile yetinen bir denetim ona hic carpmaz. Engel
+      duruyor, prob bos kaliyor, denetim bitiyor. Feragat bir karardir; sessizlik degildir.
+
+      '
+    note: 'Bu, kacaklarin en sinsisi cunku metodolojinin kendi kurali "bu listeyi denetci
+      yazamaz" diyor ve denetci de yazmiyor -- yani kural UYGULANIYOR ve sonuc yine de bos.
+      Kuralin eksigi yasak degil, TAKIP.
+
+      '
+    history:
+    - date: '2026-09-15'
+      event: MERGE'de fark edildi; kapsam iddiasi [H] birakilirken gerekce olarak yazildi
+    - date: '2026-09-15'
+      event: sinif W6 olarak sema 1.10'a yazildi
   - id: ESC-M001
     visibility: public
     found: '2026-09-06'

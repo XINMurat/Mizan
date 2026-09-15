@@ -24,7 +24,7 @@ maintaining living hypothesis registries.
 hypothesis carries a refutation condition; surprising positives require a
 symmetric confound control before promotion; history is append-only;
 refuted entries are kept `[R]`, never deleted; the producer of a result is
-not the sole auditor who promotes it (R1–R22).
+not the sole auditor who promotes it (R1–R25).
 
 ### Install
 
@@ -156,13 +156,13 @@ are entry points rather than the only way in.
   · [Yazılım modları](https://xinmurat.github.io/Mizan/tr/yazilim-modlari.html)
   · [Alan uyarlama](https://xinmurat.github.io/Mizan/tr/alan-uyarlama.html) —
   or press **TR** on any page.
-- **Contributing:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — the R1–R22
+- **Contributing:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — the R1–R25
   discipline for PRs, bilingual-parity rule (bilingual).
 
 ### Tooling (`tools/`)
 
 A **judgment-free, LLM-free** validator enforces the mechanical hard rules
-R1–R22 on any `mizan-registry.yaml`:
+R1–R25 on any `mizan-registry.yaml`:
 
 ```bash
 pip install -r tools/requirements.txt
@@ -182,7 +182,7 @@ skill/mizan/                    raw skill: SKILL.md, references/, schemas/  (EN 
 docs/en/                        English long-form docs
 docs/tr/                        Türkçe uzun-metin dokümanlar
 templates/                      copy-and-fill templates (registry schema)
-examples/                       worked registry that passes R1–R22;
+examples/                       worked registry that passes R1–R25;
                                 portability tests across hostile + neutral hosts;
                                 auditing a document whose source you cannot reach
 tools/                          mizan_validate.py + pre-commit hook
@@ -206,7 +206,7 @@ taşınabilir bir araca dönüştürür.
 her hipotez bir çürütme koşulu taşır; sürpriz pozitifler terfiden önce
 simetrik confound kontrolü ister; geçmiş append-only'dir; çürüyen girdiler
 `[R]` olarak tutulur, silinmez; bir sonucun üreticisi onu terfi ettiren tek
-denetçi olamaz (R1–R22).
+denetçi olamaz (R1–R25).
 
 ### Kurulum
 
@@ -316,13 +316,13 @@ giriş yolu değil, birer giriş noktasıdır.
 - **İngilizce:** [Usage guide](https://xinmurat.github.io/Mizan/en/usage-guide.html)
   · [Reference](https://xinmurat.github.io/Mizan/en/reference.html) — ya da
   herhangi bir sayfada **EN**'e basın.
-- **Katkı:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — PR'lar için R1–R22
+- **Katkı:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — PR'lar için R1–R25
   disiplini ve iki-dillilik kuralı (iki dilli).
 
 ### Araçlar (`tools/`)
 
 **Yargısız, LLM'siz** bir doğrulayıcı, herhangi bir `mizan-registry.yaml`
-üzerinde mekanik sert kuralları (R1–R22) uygular:
+üzerinde mekanik sert kuralları (R1–R25) uygular:
 
 ```bash
 pip install -r tools/requirements.txt
@@ -344,6 +344,29 @@ verirsiniz.
 ---
 
 ### Version / Sürüm
+
+**v2.7** — the three rules that came from an audit which MISSED things. A
+phased Mode 3 audit of a real repository closed every ledger row, wrote 19
+entries and 10 results — and missed four defects the product owner found by
+hand the same afternoon. All four lay BETWEEN slices, and nothing in R1–R22
+could have caught them, because each rule below closes a place the method
+trusted without checking. **R23** — a `MERGE` row marked done carries
+`cross_slice`: the slice boundaries actually examined. A5.1's partition axes
+("module, path, or surface") are all containers while the escaped defects were
+relations, and MERGE's own description sent it after *findings* already
+written down; nothing told it to enumerate what was never examined at all.
+**R24** — an entry at `[K]` whose instrument the auditor built during the audit
+must record `instrument_validated`: run against a known positive and a known
+negative. In that run the auditor's ad-hoc scanners gave three different
+answers to one question on unchanged code. A scanner written during an audit
+is not a lesser instrument, it is an uncalibrated one. **R25** — a result with
+`threshold_met: yes` on a `runtime` arbiter names `artifact_freshness`. An
+authorization guard was measured three times — test green, two-sided check
+red, 861-test suite passing — and all three ran a build that did not contain
+it; that is not a weaker measurement, it is a false assurance. Also **W6**:
+every coverage phase done while the domain probe was never answered, because
+R19's block is correct but narrow — an audit settling for `[H]` never meets
+it. Registry schema 1.10.
 
 **v2.6** — `cost_actual` and R22: what the work cost, and against what. The
 cost side of an ROI claim is a measurement and is usually already on disk; the

@@ -238,3 +238,43 @@ and a compact worked example.
 - **Cost of finding it late:** cheap on paper, expensive in code. These
   are model-level conflicts; discovered during design they are one
   decision, discovered after shipping they are a migration.
+
+## 14. The uncalibrated instrument (the auditor's own tool lies)
+
+Every rule in this method about measurement points **outward**: name the
+arbiter, keep it independent of the author, calibrate the threshold against
+the arbiter's null. None of them asks whether the thing doing the measuring
+works — and during an audit the auditor is constantly building measuring
+things: a grep, a regex sweep, a small script to count endpoints.
+
+- **What it looks like:** a number that moves without the code moving. One
+  real audit measured the same quantity three times on an unchanged repo and
+  got 11, then 9, then 6. Every difference was the scanner, not the code.
+- **The three failures that produced this item**, all from one audit:
+  - a scanner reading only each endpoint's own body reported twelve routes
+    as ungated; all twelve were gated through a shared helper;
+  - a 40-line proximity window flagged a correct component, because the
+    `sr-only` it "found" was in a different subtree;
+  - a link sweep cleared a route because the regex matched `to=` (a JSX
+    attribute) but not `to:` (an object key in a nav table).
+- **Why it survives review:** the tool and its output arrive together, from
+  the same person, in the same minute. There is no moment at which someone
+  asks the scanner to prove itself, and a clean result feels like evidence of
+  a clean repo rather than evidence of a blind scanner. A green sweep and a
+  blind sweep are the same character on screen.
+- **The check, and it is cheap:** run the instrument against a **known
+  positive** and a **known negative** before trusting it. If it cannot be
+  shown to fail, it has not been shown to work — the two-sidedness this
+  method demands of every test, turned on the measuring tool itself.
+- **A second form, worse because it is invisible:** the instrument is fine
+  but it ran against the wrong artifact. A test suite that silently reuses a
+  stale build reports green, red and 861-passing with equal confidence, and
+  none of it touched the code under audit. That is not a weak measurement,
+  it is a **false assurance** (R25).
+- **Where it is recorded:** `metric.instrument_built_by` /
+  `metric.instrument_validated` (R24) and `results[].artifact_freshness`
+  (R25). An instrument the auditor built, unvalidated, caps the entry below
+  `[K]`.
+- **Cost of finding it late:** every finding the instrument touched has to
+  be re-measured, and the ones it cleared are the expensive half — nobody
+  goes back to re-check a green.

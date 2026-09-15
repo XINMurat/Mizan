@@ -44,9 +44,23 @@ BETWEEN units, so audit it as its own pass with two cheap diffs:
   code path that reads it for a user. Zero read paths = dead surface
   (either an unregistered deferral or a broken promise).
 
-Report both denominators ("57 of 61 routes reachable, 17 of 20 tables
-read") — the ratio is what tells you whether you found an exception or a
-pattern. See checklist §10.
+- **Link → destination screen:** for every link or navigation target that
+  points at an OBJECT, check that the destination can show that object **in
+  every state it can be in**. A link is a claim ("you will find it there");
+  the evidence is the destination's default filter, and the two live in
+  different files by construction.
+
+  This third diff was added after the first two missed it. A process started
+  from an email carried a link reading *"open in the inbox"*. Starting the
+  process set the pool row to `started`; the inbox listed only `open`, and
+  had no view that could show `started` at all. The link was dead **every
+  single time, for exactly the case it was built for** — and both halves
+  were individually correct, tested, and green.
+
+Report all three denominators ("57 of 61 routes reachable, 17 of 20 tables
+read, 9 of 9 object links land on a view that can show the object") — the
+ratio is what tells you whether you found an exception or a pattern. See
+checklist §10.
 
 ### A3. Drift catalog (code versions of checklist items)
 
@@ -72,6 +86,12 @@ test:
 - Where available, use **mutation testing** (mutmut, cosmic-ray, Stryker)
   as the systematic control: if mutating the implementation doesn't kill
   the test, the test wasn't guarding the claim.
+- **Prove the suite ran the code you changed** (R25). A test runner may reuse
+  a stale build of a referenced project, and then green, red and a full
+  passing suite all mean nothing. Check the built artifact for something only
+  the new code contains, or force a clean build. A mutation that "survives"
+  against a stale binary looks exactly like an equivalent mutant — and the
+  two carry opposite conclusions.
 - Cheap manual version: deliberately break the claimed behavior locally;
   if the suite stays green, the claim's `[K]` was false — mark `[KKE]`.
 
@@ -102,7 +122,17 @@ Procedure:
    module/path map and risk-rank it (A5 selection rule: entry points,
    security/money surfaces, recently-churned files). Emit a **partition
    plan**: phases P1..Pn, each a bounded slice (by module, path, or
-   surface) that fits one pass. Write the plan into the Coverage Ledger
+   surface) that fits one pass.
+
+   **Then write down what the partition CUTS, before you start.** Those three
+   axes are all containers, and the defects that survive a phased audit are
+   relations — a link and the screen it lands on, a contract written in one
+   slice and consumed in another, a field written here and read by an
+   authorization predicate there. Each boundary you draw hides the pairs that
+   cross it, so list those pairs in the MERGE row's `cross_slice` NOW, while
+   you can still see the seams. Filling it at the end means recalling which
+   boundaries existed; filling it here means naming them while drawing them.
+   R23 will not let the MERGE row close empty. Write the plan into the Coverage Ledger
    (template in `templates.md` §5) with every phase marked `⏳ planned`.
 2. **Phase k — one slice, fully.** Run Mode 3 (or 4) completely on slice
    Pk only. APPEND findings to the single registry / behavior report;
@@ -113,7 +143,16 @@ Procedure:
 3. **Merge — cross-phase reconciliation (mandatory, do not skip).**
    A final pass reconciles claims that cross slice boundaries: tier drift
    between modules, duplicate findings, and — the real risk — hops where
-   a claim in slice A is verified only by evidence in slice E. Naive
+   a claim in slice A is verified only by evidence in slice E.
+
+   **Every item in that list is about findings ALREADY WRITTEN DOWN, and that
+   is not enough.** A defect living only in the seam between two slices
+   appears in neither slice's findings, so no amount of reconciling them can
+   surface it. MERGE's first job is therefore the `cross_slice` list from
+   Phase 0: walk each boundary and ask what relation crosses it. An audit
+   that skipped this ran seven phases, closed every row, and missed four
+   defects a user found by hand the same day — while following this section
+   exactly. Naive
    partitioning MISSES these; reconciliation is where phased audit is
    weakest, so name it explicitly. Until this pass runs, the audit's
    coverage claim is `[H]`, not `[K]`: "each slice fully audited" ≠ "the

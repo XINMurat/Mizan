@@ -124,6 +124,74 @@
 #        Enforced from schema_version 1.9. An entry with no cost_actual pays
 #        nothing.
 #
+#   R23. MERGE RECONCILES THE PAIRS NOBODY LOOKED AT. A `MERGE` phase row
+#        marked done carries `cross_slice`: the slice boundaries actually
+#        examined, each with an outcome. An empty list, or one where every
+#        pair is `unchecked`, fails.
+#
+#        The three rules R23-R25 all came from the same place and it is worth
+#        saying plainly: an audit that MISSED things, not one that found them.
+#        A phased Mode 3 audit of a real repository ran P0-P6 plus MERGE,
+#        closed every row, wrote 19 entries and 10 results -- and missed four
+#        defects the product owner found by hand the same afternoon. All four
+#        lay BETWEEN slices: a link whose destination screen had no view that
+#        could show the thing it pointed at; a create/update contract
+#        asymmetric in one field, so a unit could never be moved after it was
+#        created; a redirect that granted read access to any unit, without
+#        limit; an audit-trail field hardcoded to null while the same
+#        transaction wrote the real value to the database.
+#
+#        The auditor followed A5.1 exactly. The partition axes A5.1 names --
+#        "module, path, or surface" -- are all CONTAINERS, and the defects
+#        were RELATIONS. MERGE was supposed to catch what the partition split,
+#        but its description told it to reconcile FINDINGS: tier drift,
+#        duplicates, cross-slice hops among things already written down.
+#        Nothing told it to enumerate the pairs nobody had examined at all.
+#        So the recipe, not the auditor, is what left them out.
+#
+#        Enforced from schema_version 1.10.
+#
+#   R24. THE AUDITOR'S OWN INSTRUMENTS GET CALIBRATED TOO. An entry at [K]
+#        whose `metric.instrument_built_by` is `auditor` must also carry
+#        `instrument_validated` -- the record of running that instrument
+#        against a known positive and a known negative.
+#
+#        Every earlier rule about measurement points OUTWARD: name the
+#        arbiter (R8), keep it independent, calibrate the threshold against
+#        the arbiter's null. None asks whether the thing doing the measuring
+#        works. In the run behind this rule, the auditor's ad-hoc scanners
+#        returned three different answers to one question on unchanged code
+#        (11, then 9, then 6), reported twelve endpoints as ungated when all
+#        twelve were gated through a shared helper, and cleared a component
+#        because a regex matched `to=` but not `to:`. Four wrong readings,
+#        none of them visible to R1-R22.
+#
+#        A scanner written during the audit is not a lesser instrument; it is
+#        an UNCALIBRATED one, and the difference is a decision, not a detail.
+#
+#        Enforced from schema_version 1.10.
+#
+#   R25. A RUNTIME VERDICT NAMES THE ARTIFACT IT RAN AGAINST. A result with
+#        `threshold_met: yes` whose hypothesis has a `runtime` arbiter must
+#        carry `artifact_freshness`: how it is known that the arbiter ran the
+#        code under audit.
+#
+#        `runtime` is the strongest arbiter class here precisely because a
+#        machine returns the verdict instead of the author. That strength
+#        rests on something the schema never checked -- that the machine ran
+#        THE THING BEING AUDITED. In the escape behind this rule, an
+#        authorization guard was added and then measured three times: the
+#        test reported green, the deliberate two-sided check reported red,
+#        and a full 861-test suite reported success. All three ran against a
+#        build that did not contain the guard, because the test runner did
+#        not rebuild the referenced project. The proof came from searching
+#        the compiled binary for the new string literal and not finding it.
+#
+#        This is not a weaker measurement. It is a FALSE ASSURANCE, and it
+#        came within one command of shipping an unverified security change.
+#
+#        Enforced from schema_version 1.10.
+#
 # Tiers: K (proven) | H (plausible hypothesis) | S (speculative)
 #        R (refuted) | KKE (critical control missing) | Y (misleading)
 #
@@ -160,6 +228,16 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.10 — adds `coverage.phases[MERGE].cross_slice`, `metric.instrument_built_by`
+#         / `metric.instrument_validated`, `results[].artifact_freshness` and
+#         `coverage.domain_probe_waived`; activates R23-R25 and W6. All four
+#         were written from ONE audit's escapes, and all four close a place
+#         where the method trusted something it never checked: that MERGE
+#         looks between the slices, that the auditor's own tools work, that a
+#         runtime arbiter ran the audited code, and that an unanswered domain
+#         probe cannot quietly outlive every phase.
+#         MIGRATION: 1.0-1.9 unaffected; a registry without these fields pays
+#         nothing until it declares 1.10.
 #   1.9 — adds `cost_actual` on features and activates R22: an entry that says
 #         what the work cost also says which instrument produced the number,
 #         over which window, how the spend was attributed, and against what
@@ -246,6 +324,16 @@
 #       starts once a result references it, but the entry is written BEFORE
 #       the test, so the gap is worth naming early.
 #   W3. every tiered entry in the registry sitting at [K].
+#   W6. every coverage phase is done, the domain probe was never answered
+#       (`supplied_by` absent/none/auditor, or every scenario still
+#       `unchecked`), and no `coverage.domain_probe_waived` is recorded.
+#       R19 already blocks a tier-K claim over an unanswered probe, and that
+#       is correct but narrow: an audit that settles for [H] never meets it.
+#       In the run this came from, the probe was created on day one with
+#       `supplied_by: none` and seven phases closed around it -- the block
+#       existed, the probe stayed empty, and the audit ended. Waiving is a
+#       decision; silence is not.
+#
 #   W5. a registry with a `coverage` block and no `probes.domain`, or none
 #       with `probes.conjunction`. Below a tier-K claim R19/R20 do not fire,
 #       and the two passes that find what tests cannot are the two easiest to
@@ -268,7 +356,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.9"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21; 1.9 R22
+  schema_version: "1.10"            # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21; 1.9 R22; 1.10 R23-R25
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -313,6 +401,17 @@ hypotheses:
     metric:
       name: "perplexity_improvement"
       instrument: "script/path or query — the thing that produces the number"
+      instrument_built_by: "existing"  # existing | auditor  (schema 1.10, R24)
+                                    # `auditor` = written DURING this audit, for
+                                    # this audit. Not a lesser instrument — an
+                                    # UNCALIBRATED one, and R24 makes the
+                                    # difference a decision instead of a detail.
+      instrument_validated: >
+        REQUIRED at [K] when instrument_built_by is `auditor`. What it was run
+        against and what came back: a known positive AND a known negative. An
+        instrument that cannot be shown to fail has not been shown to work —
+        the same two-sidedness this method demands of every test, turned on
+        the measuring tool itself.
     arbiter:                        # MANDATORY from schema 1.2 (R8)
       # WHO returns the verdict on the threshold below — not who measures,
       # who DECIDES. Pick the weakest class that honestly applies.
@@ -429,6 +528,12 @@ results:
     decision: "propose H->K"        # propose H->K | propose H->R |
                                     # cell_closed | underpowered_rerun
     decision_confirmed_by: ""       # owner/audit pass (R7); empty = pending
+    artifact_freshness: >
+      REQUIRED (R25, schema 1.10) when threshold_met is `yes` and the
+      hypothesis' arbiter is `runtime`. HOW it is known the arbiter ran the
+      code under audit — not that a suite passed, but which BUILD passed.
+      Naming the command is not enough if that command can silently reuse a
+      stale artifact; say what was checked and how.
     honesty_annexes:                # MANDATORY, non-empty (R5)
       - "n=1 dataset, single seed"
       - "instrument dependence: ..."
@@ -625,6 +730,11 @@ coverage:
     surfaces, recently-churned files (git log --stat). Written down because
     a partition nobody can reconstruct is not a scope statement.
   claim_tier: "H"                   # K only when every row below is done (R16)
+  domain_probe_waived: ""           # schema 1.10, W6. Fill this ONLY to record
+                                    # that the field was deliberately never
+                                    # asked, and why. Empty + all phases done +
+                                    # an unanswered domain probe = W6 warns.
+                                    # Waiving is a decision; silence is not.
   phases:
     - id: "P0"
       slice: "scoping only — the partition plan"
@@ -647,6 +757,23 @@ coverage:
       coverage: "—"
       findings: "tier drift across slices; cross-slice hops; duplicates"
       date: ""
+      # R23 (schema 1.10) — REQUIRED once this row is `done`. The pairs above
+      # are what MERGE tidies; these are what it HUNTS. `findings` invites a
+      # summary of what the slices already produced; a defect that lives only
+      # in the seam between two slices appears in neither, so nothing in the
+      # older ledger could ever surface it.
+      #
+      # Pick the pairs from the partition itself: for each boundary, what
+      # relation crosses it? A link and the screen it lands on. A contract
+      # written in one slice and consumed in another. A field written here and
+      # read by an authorization predicate there.
+      cross_slice:
+        - id: "X-01"
+          a: "P4"                   # the two slices the pair straddles
+          b: "P5"
+          relation: "link -> destination screen's default filter"
+          outcome: "unchecked"      # holds | breaks | unchecked
+          evidence: ""
       history: []
 # ---------------------------------------------------------------------
 # PROBES (schema 1.8+, rules R19-R21) — the passes whose input is not text

@@ -16,7 +16,7 @@ aynı yere götürür.
 | Kurtarma rampaları (RR-00…RR-13), model hata sınıfları, kapanış skorkartı | [`skill/mizan/references/recovery.md`](../../skill/mizan/references/recovery.md) | [Metodoloji §4](metodoloji.md) — rampa tablosu ve hata sınıfları; rampa başına uzun form yalnızca İngilizce |
 | Yazılım modları 3–5 (kod denetimi, bug registry, özellik kapısı) | [Software modes](../en/software-modes.md) | [Yazılım modları](yazilim-modlari.md) |
 | Alan uyarlama (yazılım dışı 14 alan) | [Domain adaptation](../en/domain-adaptation.md) | [Alan uyarlama](alan-uyarlama.md) |
-| Makine-okunur registry şeması (R1–R22) | [`skill/mizan/schemas/mizan-registry.yaml`](../../skill/mizan/schemas/mizan-registry.yaml) | aynı dosya (yorumlar İngilizce) |
+| Makine-okunur registry şeması (R1–R25) | [`skill/mizan/schemas/mizan-registry.yaml`](../../skill/mizan/schemas/mizan-registry.yaml) | aynı dosya (yorumlar İngilizce) |
 
 ## Yalnızca İngilizce uzun-form belgeler
 

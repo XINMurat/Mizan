@@ -277,9 +277,45 @@ in a Markdown table no check could read. Keeping it in the registry follows
 the cross-phase carrier", and it means R4 protects its rows for free: a
 re-scoped slice gets a new row, never an edit that erases the old one.
 
-The validator also has a **non-blocking warning channel** (W1–W4): a missing
+**From schema 1.10, three rules close gaps the method itself had — and all
+three came from an audit that MISSED things, not one that found them.** A
+phased Mode 3 audit ran every phase, closed every ledger row, wrote 19 entries
+and 10 results, and missed four defects the product owner found by hand the
+same afternoon. Nothing in R1–R22 could have caught any of them, because each
+rule below closes a place where the method trusted something it never checked:
+
+- **R23 — MERGE reconciles the pairs NOBODY LOOKED AT.** A `MERGE` row marked
+  done carries `cross_slice`: the slice boundaries actually examined. All four
+  escaped defects lay BETWEEN slices, and the partition axes A5.1 names —
+  "module, path, or surface" — are all CONTAINERS while the defects were
+  RELATIONS. MERGE was meant to catch what the partition split, but its own
+  description sent it after *findings* (tier drift, duplicates, hops among
+  things already written down). Nothing told it to enumerate what was never
+  examined at all. **The recipe, not the auditor, is what left them out.**
+- **R24 — the auditor's own instruments get calibrated too.** Every earlier
+  rule about measurement points outward: name the arbiter, keep it
+  independent, calibrate against its null. None asks whether the thing doing
+  the measuring works. In that audit the auditor's ad-hoc scanners gave three
+  different answers to one question on unchanged code, called twelve gated
+  endpoints ungated, and cleared a component because a regex matched `to=`
+  but not `to:`. A scanner written during an audit is not a lesser
+  instrument; it is an **uncalibrated** one.
+- **R25 — a runtime verdict names the artifact it ran against.** `runtime` is
+  the strongest arbiter class here because a machine returns the verdict
+  instead of the author — which assumes the machine ran THE AUDITED CODE. An
+  authorization guard was measured three times (test green, two-sided check
+  red, full 861-test suite passing) and all three ran a build that did not
+  contain it. That is not a weaker measurement, it is a **false assurance**,
+  and it came within one command of shipping an unverified security change.
+
+The validator also has a **non-blocking warning channel** (W1–W6): a missing
 two-sided statement, an entry written with no threshold or refutation and no
-result yet, and a registry where every tiered entry is `[K]`. These advise
+result yet, a registry where every tiered entry is `[K]`, and — from 1.10 —
+**W6: every coverage phase done while the domain probe was never answered.**
+R19 already blocks a tier-K claim over an unanswered probe, which is correct
+but narrow: an audit settling for `[H]` never meets it. In the run that
+produced W6 the probe was created on day one with `supplied_by: none` and
+seven phases closed around it. Waiving is a decision; silence is not. These advise
 rather than stop, for the same reason R8's flag classes differ in force — a
 checker that can only block teaches people to write around it, which is a
 different skill from writing honestly.
@@ -375,7 +411,7 @@ from the outside.
   writing entries, `recovery.md` the moment a run stops behaving. Reading
   everything at the start spends the context the audit itself needs.
 - **The scripted part is the part that travels.** `mizan_validate.py`
-  enforces R1–R22 without a model, so it behaves identically in every
+  enforces R1–R25 without a model, so it behaves identically in every
   host. Whatever is enforced only by this prose is negotiable by the
   host's prose. When rigor must survive an unknown setup, put it in the
   validator, not in a paragraph.
@@ -419,7 +455,7 @@ from the outside.
 - `schemas/mizan-registry.yaml` — the machine-readable registry format.
   When the user keeps a registry file (in project knowledge, a repo, or
   uploads one), read it at session start, APPEND rather than overwrite,
-  propose new entries in this schema, and enforce its hard rules R1–R22
+  propose new entries in this schema, and enforce its hard rules R1–R25
   (mandatory baseline, mandatory confound controls, append-only history,
   no K-promotion without controls on surprising positives, and
   producer/auditor separation: propose tier changes, let the owner or a

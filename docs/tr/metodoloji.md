@@ -377,6 +377,47 @@ MERGE satırı `✅ tamam` olana dek `[H]` kalır — bkz. §A5.1 adım 3.
 
 ---
 
+## 2.5b Şema 1.10 — yöntemin kendi kör noktalarını kapatan üç kural
+
+Bu üç kural, bir şey **bulan** denetimden değil, bir şey **kaçıran** denetimden
+doğdu. Gerçek bir depoda koşan fazlı Mod 3 denetimi bütün fazlarını kapattı,
+19 girdi ve 10 sonuç yazdı, dört hakem betiği üretti — ve ürün sahibinin aynı
+öğleden sonra elle bulduğu dört kusuru kaçırdı. R1–R22'nin hiçbiri onları
+yakalayamazdı, çünkü üçü de yöntemin **kontrol etmeden güvendiği** bir yeri
+kapatıyor:
+
+- **R23 — MERGE, KİMSENİN BAKMADIĞI çiftleri uzlaştırır.** `done` işaretli bir
+  `MERGE` satırı `cross_slice` taşır: fiilen incelenen dilim sınırları.
+  Kaçan dört kusurun dördü de dilimlerin **arasındaydı**, ve A5.1'in verdiği
+  bölümleme eksenleri — "modül, yol ya da yüzey" — hepsi **KAP**tır, kusurlar
+  ise **İLİŞKİ**ydi. MERGE bölümlemenin ayırdığını yakalamalıydı ama kendi
+  tarifi onu *bulgulara* yönlendiriyordu (katman kayması, tekrarlar, zaten
+  yazılmış şeyler arasındaki sıçramalar). Hiç incelenmemiş olanı saymasını
+  söyleyen bir cümle yoktu. **Tarif kusurludur, denetçi değil.**
+- **R24 — denetçinin kendi enstrümanları da kalibre edilir.** Ölçümle ilgili
+  her önceki kural dışarıyı gösterir: hakemi adlandır, bağımsız tut, null'una
+  göre kalibre et. Hiçbiri ölçümü yapan şeyin çalışıp çalışmadığını sormaz. O
+  denetimde denetçinin ad hoc tarayıcıları değişmemiş kod üzerinde aynı soruya
+  üç farklı yanıt verdi, kapılı on iki ucu kapısız saydı ve bir bileşeni
+  desen `to=` ile eşleşip `to:` ile eşleşmediği için temize çıkardı. Denetim
+  sırasında yazılan bir tarayıcı daha **zayıf** bir enstrüman değildir;
+  **kalibre edilmemiş** bir enstrümandır.
+- **R25 — çalışma zamanı kararı, koştuğu eseri adlandırır.** `runtime` buradaki
+  en güçlü hakem sınıfıdır, çünkü kararı yazar değil makine verir — ki bu,
+  makinenin **denetlenen kodu** koşturduğunu varsayar. Bir yetki koruması üç
+  kez ölçüldü (test yeşil, iki uçlu kontrol kırmızı, 861 testlik tam süit
+  başarılı) ve üçü de o korumanın bulunmadığı bir derlemeye karşı koştu. Bu
+  zayıf bir ölçüm değil, **yanlış bir güvencedir**; doğrulanmamış bir güvenlik
+  değişikliğini göndermeye bir komut kalmıştı.
+
+Ayrıca **W6**: bütün kapsam fazları bitmişken alan probu hiç yanıtlanmamışsa
+uyarılır. R19 zaten yanıtsız bir prob üzerinden tier-K iddiasını engelliyor —
+doğru ama **dar**: `[H]` ile yetinen bir denetim ona hiç çarpmaz. W6'yı doğuran
+koşuda prob ilk gün `supplied_by: none` ile açıldı ve yedi faz etrafında
+kapandı. **Feragat bir karardır; sessizlik değildir.**
+
+---
+
 ## 2.6 Prob blokları (madde 3.12 ve 3.13'ün kaydı)
 
 Bölüm 2'nin diğer her şablonu birinin **yazdığı** bir şeyi biçimlendirir.
@@ -671,10 +712,50 @@ kompakt çalışılmış örnek.
   bir pas, hiç koşulmamış pastan ayırt edilemez — ve bu pas varsayılan
   olarak atlanır.
 
+## 3.14 Kalibre edilmemiş enstrüman (denetçinin kendi aleti yalan söylüyor)
+
+Bu yöntemin ölçümle ilgili her kuralı **dışarıyı** gösterir: hakemi adlandır,
+yazardan bağımsız tut, eşiği hakemin kendi null'una göre kalibre et. Hiçbiri
+ölçümü **yapan** şeyin çalışıp çalışmadığını sormaz — oysa denetim boyunca
+denetçi sürekli ölçüm aleti üretir: bir grep, bir düzenli ifade taraması,
+uçları sayan küçük bir betik.
+
+- **Neye benzer:** kod kıpırdamadan kıpırdayan bir sayı. Gerçek bir denetim
+  aynı niceliği değişmemiş bir depoda üç kez ölçtü ve 11, sonra 9, sonra 6
+  buldu. Farkların hepsi tarayıcıdandı, koddan değil.
+- **Bu maddeyi doğuran üç hata**, hepsi tek denetimden:
+  - yalnızca ucun kendi gövdesine bakan bir tarayıcı on iki rotayı "yetki
+    kapısı yok" diye bildirdi; on ikisi de paylaşılan bir yardımcıdan kapılıydı;
+  - 40 satırlık bir yakınlık penceresi doğru bir bileşeni işaretledi, çünkü
+    "bulduğu" `sr-only` başka bir alt ağaçtaydı;
+  - bir rota "ölü bağlantı" sanıldı, çünkü desen `to=` ile eşleşiyor `to:`
+    ile eşleşmiyordu.
+- **Neden incelemeden geçer:** alet ile çıktısı aynı kişiden, aynı dakikada,
+  birlikte gelir. Tarayıcıdan kendini kanıtlaması istenen bir an yoktur ve
+  temiz bir sonuç, kör bir tarayıcının değil temiz bir deponun kanıtı gibi
+  okunur. Ekranda ikisi aynı karakterdir.
+- **Kontrol ucuzdur:** enstrümanı güvenmeden önce **bilinen bir pozitif** ve
+  **bilinen bir negatif** üzerinde koştur. Başarısız olabildiği
+  gösterilemiyorsa, çalıştığı da gösterilmemiştir — bu yöntemin her testten
+  istediği iki uçluluğun, ölçüm aletinin kendisine çevrilmiş hâli.
+- **İkinci biçimi, görünmez olduğu için daha kötü:** enstrüman doğrudur ama
+  yanlış esere karşı koşmuştur. Bayat bir derlemeyi sessizce yeniden kullanan
+  bir test süiti; yeşili, kırmızıyı ve 861-geçeni aynı güvenle bildirir ve
+  hiçbiri denetlenen koda dokunmamıştır. Bu zayıf bir ölçüm değil, **yanlış
+  bir güvencedir** (R25).
+- **Nereye kaydedilir:** `metric.instrument_built_by` /
+  `metric.instrument_validated` (R24) ve `results[].artifact_freshness`
+  (R25). Denetçinin yazdığı, doğrulanmamış bir enstrüman girdiyi `[K]`'nın
+  altında tutar.
+- **Geç bulmanın bedeli:** enstrümanın dokunduğu her bulgu yeniden ölçülmeli
+  ve **temiz dedikleri** pahalı yarıdır — kimse bir yeşili yeniden kontrol
+  etmeye dönmez.
+
 > **Numaralandırma notu.** İngilizce `checklist.md` dosyasında madde 10
 > üretici-tarafı iddia, madde 11 denetçinin kör noktasıdır; buradaki 3.10 ve
 > 3.11 bu ikisinin yeri değişmiş hâlidir. 12 ve 13 iki dilde aynı numarayı
-> taşır — kurallar (R19/R20) ve rampalar onlara numarayla atıf yapar.
+> taşır — kurallar (R19/R20) ve rampalar onlara numarayla atıf yapar. Madde 14
+> iki dilde de 14'tür (R24/R25).
 
 ---
 

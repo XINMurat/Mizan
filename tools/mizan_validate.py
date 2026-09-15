@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mizan registry validator — LLM-free static enforcement of hard rules R1–R22.
+Mizan registry validator — LLM-free static enforcement of hard rules R1–R25.
 
 This is the cheap, judgment-free baseline of feature FEAT-M001 (in the
 project's roadmap registry). It does NOT evaluate the *quality* of a
@@ -17,7 +17,7 @@ to write registries that do not trigger it, and that is a different skill
 from writing honest ones. Some findings are usually-wrong-but-legitimately-
 right-often-enough that stopping on them would be false precision. So:
 
-  * VIOLATIONS (R1-R22) block. They mark a registry that is incomplete in a
+  * VIOLATIONS (R1-R25) block. They mark a registry that is incomplete in a
     way the prose forbids outright.
   * WARNINGS (W1-W4) do not block by default. They mark shapes worth a
     second look. `--strict` promotes them to violations; CI runs strict,
@@ -365,6 +365,39 @@ MSG = {
         "R22: {id} feature'ı baseline.kind {kind!r} diyor ama not yok. Tarif edilmemiş bir kol, "
         "kontrol edilemeyen bir koldur — ne olduğunu ve neyi kontrol ETMEDİĞİNİ yaz.",
     ),
+    "R23_merge_no_cross_slice": (
+        "R23: the MERGE row is done but lists no cross_slice pair ({why}) — reconciliation's job "
+        "is the pairs NOBODY LOOKED AT, not the findings already written down. A MERGE that only "
+        "tidies existing entries leaves the gaps between slices exactly where they were.",
+        "R23: MERGE satırı done ama hiçbir cross_slice çifti listelemiyor ({why}) — uzlaştırmanın "
+        "işi, zaten yazılmış bulguları derlemek değil, KİMSENİN BAKMADIĞI çiftlerdir. Yalnızca var "
+        "olan girdileri düzenleyen bir MERGE, dilimler arasındaki boşlukları olduğu yerde bırakır.",
+    ),
+    "R24_unvalidated_instrument": (
+        "R24: {kind} {id} sits at [K] on an instrument the auditor built ({what}) with no "
+        "instrument_validated — a measuring tool nobody checked is a claim, not a measurement. "
+        "Run it against a known positive and a known negative, and record both.",
+        "R24: {kind} {id}, denetçinin kendi yazdığı bir enstrümanla ({what}) [K]'da ama "
+        "instrument_validated yok — kimsenin sınamadığı bir ölçüm aleti, ölçüm değil iddiadır. "
+        "Bilinen bir pozitif ve bilinen bir negatifle koştur, ikisini de kaydet.",
+    ),
+    "R25_no_artifact_freshness": (
+        "R25: result {id} claims a met threshold on a runtime arbiter with no artifact_freshness — "
+        "'the suite passed' is not evidence until you can say WHICH BUILD passed. A runtime verdict "
+        "on a stale artifact is not a weaker measurement, it is a false assurance.",
+        "R25: {id} sonucu, çalışma zamanı hakemiyle karşılanmış bir eşik bildiriyor ama "
+        "artifact_freshness yok — 'süit geçti', HANGİ DERLEMENİN geçtiği söylenene kadar kanıt "
+        "değildir. Bayat bir eser üzerindeki çalışma zamanı kararı, zayıf bir ölçüm değil, "
+        "YANLIŞ BİR GÜVENCEDİR.",
+    ),
+    "W6_domain_probe_unanswered": (
+        "W6: every coverage phase is done but the domain probe was never answered ({why}) and no "
+        "domain_probe_waived is recorded — an audit can finish all its phases and still never ask "
+        "the field what happens in it. Waiving is a decision; silence is not.",
+        "W6: bütün kapsam fazları bitmiş ama alan probu hiç yanıtlanmamış ({why}) ve "
+        "domain_probe_waived kaydı yok — bir denetim bütün fazlarını bitirip alana ne olduğunu hiç "
+        "sormamış olabilir. Feragat bir karardır; sessizlik değildir.",
+    ),
     "W4_no_merge_row": (
         "W4: the coverage ledger has phase rows but no MERGE row — reconciliation is where a phased "
         "audit is weakest (a claim in one slice verified only by evidence in another), so it is "
@@ -392,8 +425,8 @@ MSG = {
         "önlüğü giymiş iltifat problemidir. Meşru olabilir, ama kaynakları kontrol etmeye değer.",
     ),
     "clean": (
-        "OK — {n} entries checked, no R1–R22 violations.",
-        "OK — {n} girdi kontrol edildi, R1–R22 ihlali yok.",
+        "OK — {n} entries checked, no R1–R25 violations.",
+        "OK — {n} girdi kontrol edildi, R1–R25 ihlali yok.",
     ),
     "found": (
         "{n} violation(s) found.",
@@ -603,6 +636,21 @@ def check(data: dict, lang: str,
     # make a cost claim.
     if _schema_at_least(data, (1, 9)):
         errs += _check_cost_actual(features, lang)
+
+    # R23-R25 — the three rules that came from an audit MISSING things, not
+    # from an audit finding them. Gated at 1.10 like every predecessor: a
+    # registry written before these fields existed migrates on purpose.
+    #
+    # They share one shape and it is worth naming: each closes a gap where the
+    # methodology trusted something it never checked. R23 trusted that MERGE
+    # would look between the slices; R24 trusted the auditor's own tools; R25
+    # trusted that a runtime arbiter ran the code under audit. All three were
+    # false in a single real audit, and none of R1-R22 could see it.
+    if _schema_at_least(data, (1, 10)):
+        errs += _check_merge_cross_slice(data.get("coverage"), lang)
+        errs += _check_instrument_validation(hyps, features, bugs, lang)
+        errs += _check_artifact_freshness(hyps, results, lang)
+        warns += _domain_probe_warning(data.get("probes"), data.get("coverage"), lang)
 
     # tier sanity
     for kind, coll in (("hypothesis", hyps.values()), ("feature", features), ("bug", bugs)):
@@ -1023,6 +1071,135 @@ def _coverage_warnings(cov: Any, lang: str) -> list[str]:
     if phases and not any(_s(ph.get("id")).upper() == "MERGE" for ph in phases):
         return [m("W4_no_merge_row", lang)]
     return []
+
+
+def _check_merge_cross_slice(cov: Any, lang: str) -> list[str]:
+    """R23 — MERGE's job is the pairs nobody looked at.
+
+    Until schema 1.10 the ledger checked that a MERGE row EXISTS (W4) and that
+    every row said done (R16). Neither asks what reconciliation actually did,
+    and the tool's own field names pushed it the wrong way: `findings` invites
+    a summary of what the slices already produced.
+
+    This rule was written from a measured escape, not from theory. A phased
+    audit of a real repo ran P0-P6 + MERGE, closed every row, and missed four
+    defects a user found by hand the same day. All four sat BETWEEN slices —
+    a link whose destination could not show the thing it pointed at, an
+    endpoint contract asymmetric between create and update, a redirect that
+    granted read access, an audit field hardcoded to null. The audit followed
+    A5.1 exactly; the recipe, not the auditor, is what left them out.
+    """
+    if not isinstance(cov, dict):
+        return []
+    phases = [ph for ph in (cov.get("phases") or []) if isinstance(ph, dict)]
+    merge = next((ph for ph in phases if _s(ph.get("id")).upper() == "MERGE"), None)
+    if merge is None or _s(merge.get("status")).lower() != "done":
+        return []
+
+    pairs = [pr for pr in (merge.get("cross_slice") or []) if isinstance(pr, dict)]
+    if not pairs:
+        why = ("the cross_slice list is empty or absent" if lang != "tr"
+               else "cross_slice listesi boş ya da yok")
+        return [m("R23_merge_no_cross_slice", lang, why=why)]
+
+    unchecked = [_s(pr.get("id")) or "?" for pr in pairs
+                 if _s(pr.get("outcome")).lower() in ("", "unchecked")]
+    if len(unchecked) == len(pairs):
+        why = (("every listed pair is unchecked: " if lang != "tr"
+                else "listelenen her çift unchecked: ") + ", ".join(unchecked))
+        return [m("R23_merge_no_cross_slice", lang, why=why)]
+    return []
+
+
+def _check_instrument_validation(hyps: dict, features: list[dict], bugs: list[dict],
+                                 lang: str) -> list[str]:
+    """R24 — the auditor's OWN tools get calibrated too.
+
+    Every earlier rule about instruments points outward: name the arbiter,
+    keep it independent, calibrate the threshold. None of them asks whether
+    the thing doing the measuring works. In the escape that produced this
+    rule, an auditor's ad-hoc scanners returned three different answers to one
+    question on unchanged code, reported twelve endpoints as ungated when all
+    twelve were gated through a shared helper, and flagged a correct component
+    because a regex matched `to=` but not `to:`. Nothing in R1-R22 fires on
+    any of that.
+    """
+    errs: list[str] = []
+    for kind, coll in (("hypothesis", hyps.values()), ("feature", features), ("bug", bugs)):
+        label = KIND_LABEL[kind][1 if lang == "tr" else 0]
+        for e in coll:
+            if _s(e.get("tier")).upper() != "K":
+                continue
+            metric = e.get("metric") if isinstance(e.get("metric"), dict) else {}
+            if _s(metric.get("instrument_built_by")).lower() != "auditor":
+                continue
+            if _s(metric.get("instrument_validated")):
+                continue
+            errs.append(m("R24_unvalidated_instrument", lang, kind=label, id=e.get("id"),
+                          what=_s(metric.get("instrument")) or "?"))
+    return errs
+
+
+def _check_artifact_freshness(hyps: dict, results: list[dict], lang: str) -> list[str]:
+    """R25 — a runtime verdict names the artifact it ran against.
+
+    `runtime` is the strongest arbiter class in this methodology precisely
+    because a machine, not the author, returns the verdict. That strength
+    assumes something the schema never checked: that the machine ran THE CODE
+    UNDER AUDIT. In the escape behind this rule, a test suite reported green,
+    a two-sided check reported red, and a full 861-test run reported success —
+    all three against a build that did not contain the change. The proof was
+    found by searching the compiled binary for the new string literal.
+    """
+    errs: list[str] = []
+    for r in results:
+        if _s(r.get("threshold_met")).lower() != "yes":
+            continue
+        h = hyps.get(_s(r.get("hypothesis")))
+        if not isinstance(h, dict):
+            continue
+        arb = h.get("arbiter") if isinstance(h.get("arbiter"), dict) else {}
+        if _s(arb.get("class")).lower() != "runtime":
+            continue
+        if _s(r.get("artifact_freshness")):
+            continue
+        errs.append(m("R25_no_artifact_freshness", lang, id=_s(r.get("id")) or "?"))
+    return errs
+
+
+def _domain_probe_warning(probes: Any, cov: Any, lang: str) -> list[str]:
+    """W6 — the phases can all close while the field was never asked.
+
+    R19 already blocks a tier-K coverage claim over an unanswered domain
+    probe, and that is correct but narrow: an audit that settles for [H] never
+    meets it. The block exists, the probe stays empty, and the audit ends.
+    That is exactly what happened in the run this rule came from -- the probe
+    was created on day one with `supplied_by: none`, and seven phases closed
+    around it.
+    """
+    if not isinstance(cov, dict):
+        return []
+    phases = [ph for ph in (cov.get("phases") or []) if isinstance(ph, dict)]
+    if not phases or any(_s(ph.get("status")).lower() != "done" for ph in phases):
+        return []
+    if _s(cov.get("domain_probe_waived")):
+        return []
+
+    p = probes if isinstance(probes, dict) else {}
+    dom = p.get("domain") if isinstance(p.get("domain"), dict) else {}
+    scen = [x for x in (dom.get("scenarios") or []) if isinstance(x, dict)]
+    supplier = _s(dom.get("supplied_by")).lower()
+
+    if supplier in ("", "none", "auditor"):
+        why = (f"supplied_by is {supplier or 'absent'!r}" if lang != "tr"
+               else f"supplied_by {supplier or 'yok'!r}")
+    elif scen and all(_s(sc.get("outcome")).lower() in ("", "unchecked") for sc in scen):
+        why = ("every scenario is still unchecked" if lang != "tr"
+               else "her senaryo hâlâ unchecked")
+    else:
+        return []
+
+    return [m("W6_domain_probe_unanswered", lang, why=why)]
 
 
 def _check_entry_discipline(hyps: dict, features: list[dict], bugs: list[dict],
