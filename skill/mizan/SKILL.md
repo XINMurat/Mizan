@@ -275,36 +275,29 @@ in a Markdown table no check could read. Keeping it in the registry follows
 the cross-phase carrier", and it means R4 protects its rows for free: a
 re-scoped slice gets a new row, never an edit that erases the old one.
 
-**From schema 1.10, three rules close gaps the method itself had — and all
-three came from an audit that MISSED things, not one that found them.** A
-phased Mode 3 audit ran every phase, closed every ledger row, wrote 19 entries
-and 10 results, and missed four defects the product owner found by hand the
-same afternoon. Nothing in R1–R22 could have caught any of them, because each
-rule below closes a place where the method trusted something it never checked:
+**From schema 1.10, three rules close gaps the method itself had.** All three
+came from one audit that MISSED four defects a user found by hand the same
+day — every one of them lying BETWEEN slices, and none reachable by R1–R22.
+Each closes a place the method trusted without checking:
 
 - **R23 — MERGE reconciles the pairs NOBODY LOOKED AT.** A `MERGE` row marked
-  done carries `cross_slice`: the slice boundaries actually examined. All four
-  escaped defects lay BETWEEN slices, and the partition axes A5.1 names —
-  "module, path, or surface" — are all CONTAINERS while the defects were
-  RELATIONS. MERGE was meant to catch what the partition split, but its own
-  description sent it after *findings* (tier drift, duplicates, hops among
-  things already written down). Nothing told it to enumerate what was never
-  examined at all. **The recipe, not the auditor, is what left them out.**
+  done carries `cross_slice`. A5.1's partition axes are all CONTAINERS while
+  the escapes were RELATIONS, and MERGE's own description sent it after
+  *findings already written down*. A defect living only in a seam appears in
+  neither slice's findings, so reconciling them can never surface it.
 - **R24 — the auditor's own instruments get calibrated too.** Every earlier
-  rule about measurement points outward: name the arbiter, keep it
-  independent, calibrate against its null. None asks whether the thing doing
-  the measuring works. In that audit the auditor's ad-hoc scanners gave three
-  different answers to one question on unchanged code, called twelve gated
-  endpoints ungated, and cleared a component because a regex matched `to=`
-  but not `to:`. A scanner written during an audit is not a lesser
-  instrument; it is an **uncalibrated** one.
+  measurement rule points outward; none asks whether the thing measuring
+  works. That audit's ad-hoc scanners gave three different answers to one
+  question on unchanged code. A scanner written during an audit is not a
+  lesser instrument, it is an **uncalibrated** one.
 - **R25 — a runtime verdict names the artifact it ran against.** `runtime` is
-  the strongest arbiter class here because a machine returns the verdict
-  instead of the author — which assumes the machine ran THE AUDITED CODE. An
-  authorization guard was measured three times (test green, two-sided check
-  red, full 861-test suite passing) and all three ran a build that did not
-  contain it. That is not a weaker measurement, it is a **false assurance**,
-  and it came within one command of shipping an unverified security change.
+  the strongest arbiter class because a machine returns the verdict — which
+  assumes it ran THE AUDITED CODE. A guard was measured three times (green,
+  two-sided red, full suite passing) against a build that did not contain it.
+  Not a weaker measurement: a **false assurance**.
+
+The escapes, the numbers and what each rule would have caught are in
+`references/code-audit.md` and `checklist.md` item 14.
 
 The validator also has a **non-blocking warning channel** (W1–W6): a missing
 two-sided statement, an entry written with no threshold or refutation and no

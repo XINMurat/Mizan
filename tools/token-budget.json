@@ -5,8 +5,8 @@
   "chars_per_token": 3.6,
   "budgets": {
     "T0": 300,
-    "T1": 7400,
-    "T2": 33700
+    "T1": 7900,
+    "T2": 36700
   },
   "runs": {
     "audit": {
@@ -14,7 +14,7 @@
         "skill/mizan/SKILL.md",
         "skill/mizan/references/checklist.md"
       ],
-      "ceiling": 11800
+      "ceiling": 13100
     },
     "registry-write": {
       "files": [
@@ -22,7 +22,7 @@
         "skill/mizan/references/templates.md",
         "skill/mizan/schemas/mizan-registry.yaml"
       ],
-      "ceiling": 22400
+      "ceiling": 24600
     },
     "code-audit": {
       "files": [
@@ -30,15 +30,16 @@
         "skill/mizan/references/checklist.md",
         "skill/mizan/references/code-audit.md"
       ],
-      "ceiling": 14400
+      "ceiling": 16500
     },
     "recovery": {
       "files": [
         "skill/mizan/SKILL.md",
         "skill/mizan/references/recovery.md"
       ],
-      "ceiling": 14200
+      "ceiling": 14900
     }
   },
+  "_raised_1_10": "1.10 (R23-R25 + W6): three new rules and a warning. Two of the tool's three options were taken FIRST -- the escape narratives moved out of schemas/mizan-registry.yaml (paid on every registry write) into references/code-audit.md and checklist.md item 14 (paid only in the software modes), which is the same move R22 made into feature-gate.md; and SKILL.md's three bullets were cut to about half. What remains is the rules themselves and is content, not commentary. Raised deliberately, each ~3% above the new measurement: T1 7400->7900, T2 33700->36700, audit 11800->13100, registry-write 22400->24600, code-audit 14400->16500, recovery 14200->14900. T0 left at 300 -- it still has slack, and shrinking a ceiling that is not binding buys nothing. NOTE: the ceiling that caught this was doing its job on its own author; the first push of 1.10 went red here, which is the intended behaviour and is why the gate exists.",
   "_raised": "1.9 (R22): the cost_actual block adds eight fields a writer needs in front of them while filling the form. The RATIONALE for the rule moved to references/feature-gate.md Step 6 -- loaded only in Mode 5 instead of on every registry write -- which returned ~500 tokens; the rest is the block itself and is content, not commentary. Raised deliberately: T2 32000->33700, registry-write 21200->22400, each ~3% above the new measurement."
 }

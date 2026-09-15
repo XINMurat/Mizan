@@ -129,68 +129,40 @@
 #        examined, each with an outcome. An empty list, or one where every
 #        pair is `unchecked`, fails.
 #
-#        The three rules R23-R25 all came from the same place and it is worth
-#        saying plainly: an audit that MISSED things, not one that found them.
-#        A phased Mode 3 audit of a real repository ran P0-P6 plus MERGE,
-#        closed every row, wrote 19 entries and 10 results -- and missed four
-#        defects the product owner found by hand the same afternoon. All four
-#        lay BETWEEN slices: a link whose destination screen had no view that
-#        could show the thing it pointed at; a create/update contract
-#        asymmetric in one field, so a unit could never be moved after it was
-#        created; a redirect that granted read access to any unit, without
-#        limit; an audit-trail field hardcoded to null while the same
-#        transaction wrote the real value to the database.
-#
-#        The auditor followed A5.1 exactly. The partition axes A5.1 names --
-#        "module, path, or surface" -- are all CONTAINERS, and the defects
-#        were RELATIONS. MERGE was supposed to catch what the partition split,
-#        but its description told it to reconcile FINDINGS: tier drift,
-#        duplicates, cross-slice hops among things already written down.
-#        Nothing told it to enumerate the pairs nobody had examined at all.
-#        So the recipe, not the auditor, is what left them out.
-#
-#        Enforced from schema_version 1.10.
+#        A5.1's partition axes -- module, path, surface -- are all CONTAINERS,
+#        and MERGE's own description sends it after FINDINGS already written
+#        down. A defect living only in a seam appears in neither slice's
+#        findings, so reconciling them can never surface it.
 #
 #   R24. THE AUDITOR'S OWN INSTRUMENTS GET CALIBRATED TOO. An entry at [K]
 #        whose `metric.instrument_built_by` is `auditor` must also carry
 #        `instrument_validated` -- the record of running that instrument
 #        against a known positive and a known negative.
 #
-#        Every earlier rule about measurement points OUTWARD: name the
-#        arbiter (R8), keep it independent, calibrate the threshold against
-#        the arbiter's null. None asks whether the thing doing the measuring
-#        works. In the run behind this rule, the auditor's ad-hoc scanners
-#        returned three different answers to one question on unchanged code
-#        (11, then 9, then 6), reported twelve endpoints as ungated when all
-#        twelve were gated through a shared helper, and cleared a component
-#        because a regex matched `to=` but not `to:`. Four wrong readings,
-#        none of them visible to R1-R22.
-#
-#        A scanner written during the audit is not a lesser instrument; it is
-#        an UNCALIBRATED one, and the difference is a decision, not a detail.
-#
-#        Enforced from schema_version 1.10.
+#        Every earlier measurement rule points OUTWARD (name the arbiter, keep
+#        it independent, calibrate the threshold). None asks whether the thing
+#        doing the measuring works. A scanner written during an audit is not a
+#        lesser instrument; it is an UNCALIBRATED one.
 #
 #   R25. A RUNTIME VERDICT NAMES THE ARTIFACT IT RAN AGAINST. A result with
 #        `threshold_met: yes` whose hypothesis has a `runtime` arbiter must
-#        carry `artifact_freshness`: how it is known that the arbiter ran the
-#        code under audit.
+#        carry `artifact_freshness`: how it is known the arbiter ran the code
+#        under audit.
 #
-#        `runtime` is the strongest arbiter class here precisely because a
-#        machine returns the verdict instead of the author. That strength
-#        rests on something the schema never checked -- that the machine ran
-#        THE THING BEING AUDITED. In the escape behind this rule, an
-#        authorization guard was added and then measured three times: the
-#        test reported green, the deliberate two-sided check reported red,
-#        and a full 861-test suite reported success. All three ran against a
-#        build that did not contain the guard, because the test runner did
-#        not rebuild the referenced project. The proof came from searching
-#        the compiled binary for the new string literal and not finding it.
+#        `runtime` is the strongest arbiter class here because a machine, not
+#        the author, returns the verdict -- which assumes the machine ran THE
+#        AUDITED CODE. A stale build reports green, red and a full passing
+#        suite with equal confidence. That is not a weaker measurement, it is
+#        a FALSE ASSURANCE.
 #
-#        This is not a weaker measurement. It is a FALSE ASSURANCE, and it
-#        came within one command of shipping an unverified security change.
+#        R23-R25 all came from ONE audit that MISSED four defects a user found
+#        by hand the same day. The four escapes, the numbers and what each rule
+#        would have caught are in references/code-audit.md (A2, A4, A5.1) and
+#        checklist.md item 14 -- one file away, because this one is loaded on
+#        every registry write and those only in the software modes. Same reason
+#        R22's reasoning lives in feature-gate.md.
 #
-#        Enforced from schema_version 1.10.
+#        All three enforced from schema_version 1.10.
 #
 # Tiers: K (proven) | H (plausible hypothesis) | S (speculative)
 #        R (refuted) | KKE (critical control missing) | Y (misleading)
@@ -231,13 +203,8 @@
 #   1.10 — adds `coverage.phases[MERGE].cross_slice`, `metric.instrument_built_by`
 #         / `metric.instrument_validated`, `results[].artifact_freshness` and
 #         `coverage.domain_probe_waived`; activates R23-R25 and W6. All four
-#         were written from ONE audit's escapes, and all four close a place
-#         where the method trusted something it never checked: that MERGE
-#         looks between the slices, that the auditor's own tools work, that a
-#         runtime arbiter ran the audited code, and that an unanswered domain
-#         probe cannot quietly outlive every phase.
-#         MIGRATION: 1.0-1.9 unaffected; a registry without these fields pays
-#         nothing until it declares 1.10.
+#         close a place the method trusted without checking.
+#         MIGRATION: 1.0-1.9 unaffected.
 #   1.9 — adds `cost_actual` on features and activates R22: an entry that says
 #         what the work cost also says which instrument produced the number,
 #         over which window, how the spend was attributed, and against what
@@ -326,13 +293,10 @@
 #   W3. every tiered entry in the registry sitting at [K].
 #   W6. every coverage phase is done, the domain probe was never answered
 #       (`supplied_by` absent/none/auditor, or every scenario still
-#       `unchecked`), and no `coverage.domain_probe_waived` is recorded.
-#       R19 already blocks a tier-K claim over an unanswered probe, and that
-#       is correct but narrow: an audit that settles for [H] never meets it.
-#       In the run this came from, the probe was created on day one with
-#       `supplied_by: none` and seven phases closed around it -- the block
-#       existed, the probe stayed empty, and the audit ended. Waiving is a
-#       decision; silence is not.
+#       `unchecked`), and no `coverage.domain_probe_waived` is recorded. R19
+#       blocks a tier-K claim over an unanswered probe, but an audit settling
+#       for [H] never meets it: the block exists, the probe stays empty, the
+#       audit ends. Waiving is a decision; silence is not.
 #
 #   W5. a registry with a `coverage` block and no `probes.domain`, or none
 #       with `probes.conjunction`. Below a tier-K claim R19/R20 do not fire,
