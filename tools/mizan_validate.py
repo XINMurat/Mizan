@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mizan registry validator — LLM-free static enforcement of hard rules R1–R25.
+Mizan registry validator — LLM-free static enforcement of hard rules R1–R27.
 
 This is the cheap, judgment-free baseline of feature FEAT-M001 (in the
 project's roadmap registry). It does NOT evaluate the *quality* of a
@@ -17,7 +17,7 @@ to write registries that do not trigger it, and that is a different skill
 from writing honest ones. Some findings are usually-wrong-but-legitimately-
 right-often-enough that stopping on them would be false precision. So:
 
-  * VIOLATIONS (R1-R25) block. They mark a registry that is incomplete in a
+  * VIOLATIONS (R1-R27) block. They mark a registry that is incomplete in a
     way the prose forbids outright.
   * WARNINGS (W1-W4) do not block by default. They mark shapes worth a
     second look. `--strict` promotes them to violations; CI runs strict,
@@ -424,9 +424,65 @@ MSG = {
         "W3: {n} etiketli girdinin hepsi [K] — 'her iddiası K'ya inen tierlı rapor', laboratuvar "
         "önlüğü giymiş iltifat problemidir. Meşru olabilir, ama kaynakları kontrol etmeye değer.",
     ),
+    # --- R26/R27 + W7 (schema 1.11) — Mode 7, the security probe. -----------
+    # The rationale lives in references/security-probe.md, one file away, the
+    # same move R22 made into feature-gate.md: this file is read on every
+    # registry write, that one only when Mode 7 runs.
+    "R26_blocked_without_control": (
+        "R26: adversary scenario {id} says blocked_by but names no control_ref — \"the attack did not "
+        "work\" is one adversary's result, not a control. Only a NAMED control, shown on every path "
+        "to the asset, blocks.",
+        "R26: {id} saldırı senaryosu blocked_by diyor ama control_ref vermiyor — \"saldırı işe "
+        "yaramadı\" tek bir saldırganın sonucudur, kontrol değil. Yalnızca ADI KONMUŞ ve varlığa "
+        "giden her yolda gösterilmiş bir kontrol engeller.",
+    ),
+    "R26_blocked_self_arbiter": (
+        "R26: adversary scenario {id} says blocked_by on arbiter {got!r} — a self-run attempt is "
+        "self-report (R8). An attack you thought of and could not land is a sample of one.",
+        "R26: {id} saldırı senaryosu {got!r} hakemiyle blocked_by diyor — kendi koşturduğun deneme "
+        "kendi beyanındır (R8). Aklına gelip beceremediğin saldırı, tek örneklik bir örneklemdir.",
+    ),
+    "R26_silence_K": (
+        "R26: {kind} {id} sits at [K] on security_evidence {got!r} — not exploited is not a pass. "
+        "Silence (a failed attempt, a clean scanner) caps the entry at [KKE]; only control_verified "
+        "promotes.",
+        "R26: {kind} {id}, {got!r} security_evidence'ı üzerinde [K] duruyor — sömürülmemiş olmak "
+        "geçer not değildir. Sessizlik (başarısız deneme, temiz tarayıcı) girdiyi [KKE] ile "
+        "sınırlar; yalnızca control_verified terfi ettirir.",
+    ),
+    "R27_boundary_incomplete": (
+        "R27: trust boundary {id} is missing {missing} — near_side_assumes is the sentence nobody "
+        "wrote, and a boundary that cannot state its own assumption is the first finding, not a row.",
+        "R27: {id} güven sınırı eksik: {missing} — near_side_assumes, kimsenin yazmadığı cümledir; "
+        "kendi varsayımını söyleyemeyen bir sınır, bir satır değil ilk bulgudur.",
+    ),
+    "R27_scenario_incomplete": (
+        "R27: adversary scenario {id} is missing {missing} — a scenario with no action is a bug "
+        "class, and a class names no test.",
+        "R27: {id} saldırı senaryosu eksik: {missing} — eylemi yazılmamış senaryo bir hata sınıfıdır, "
+        "sınıf ise hiçbir testin adı değildir.",
+    ),
+    "R27_bad_outcome": (
+        "R27: adversary scenario {id} has outcome {got!r}; expected one of {allowed}.",
+        "R27: {id} saldırı senaryosu sonucu {got!r}; beklenen: {allowed}.",
+    ),
+    "R27_coverage_unprobed": (
+        "R27: coverage claims tier K over a security scope but {why} — this is R19 with the supplier "
+        "changed: the builders cannot name the assumption they never knew they made, so the boundary "
+        "map has to come from a threat model, before the work.",
+        "R27: coverage, bir güvenlik kapsamı üzerinde tier K iddia ediyor ama {why} — bu, "
+        "tedarikçisi değişmiş R19'dur: yapanlar, farkında olmadan yaptıkları varsayımı adlandıramaz; "
+        "bu yüzden sınır haritası, işten önce, bir tehdit modelinden gelmek zorundadır.",
+    ),
+    "W7_no_outer_boundary": (
+        "W7: the adversary probe maps no {which} boundary — its far side is not a person on the "
+        "team, which is exactly why it gets forgotten rather than waived.",
+        "W7: saldırı probu hiç {which} sınırı haritalamıyor — karşı tarafında ekipten biri olmadığı "
+        "için bu sınır muaf tutulmaz, unutulur.",
+    ),
     "clean": (
-        "OK — {n} entries checked, no R1–R25 violations.",
-        "OK — {n} girdi kontrol edildi, R1–R25 ihlali yok.",
+        "OK — {n} entries checked, no R1–R27 violations.",
+        "OK — {n} girdi kontrol edildi, R1–R27 ihlali yok.",
     ),
     "found": (
         "{n} violation(s) found.",
@@ -645,12 +701,27 @@ def check(data: dict, lang: str,
     # methodology trusted something it never checked. R23 trusted that MERGE
     # would look between the slices; R24 trusted the auditor's own tools; R25
     # trusted that a runtime arbiter ran the code under audit. All three were
-    # false in a single real audit, and none of R1-R25 could see it.
+    # false in a single real audit, and no rule that existed then could see it.
     if _schema_at_least(data, (1, 10)):
         errs += _check_merge_cross_slice(data.get("coverage"), lang)
         errs += _check_instrument_validation(hyps, features, bugs, lang)
         errs += _check_artifact_freshness(hyps, results, lang)
         warns += _domain_probe_warning(data.get("probes"), data.get("coverage"), lang)
+
+    # R26-R27 — Mode 7, the security probe. Gated at 1.11 like every
+    # predecessor. R26 is the first rule in this file that treats a PASSING
+    # check as non-evidence: a failed attack and a silent scanner are what a
+    # security review is usually built out of, and neither is a measurement of
+    # the system. R27 is R19 with the supplier changed, because the people who
+    # built the thing are the wrong witnesses for the assumption they did not
+    # know they were making. Rationale: references/security-probe.md.
+    if _schema_at_least(data, (1, 11)):
+        sec_entries = ([("hypothesis", h) for h in hyps.values()]
+                       + [("feature", f) for f in features]
+                       + [("bug", b) for b in bugs])
+        errs += _check_adversary(data.get("probes"), data.get("coverage"),
+                                 sec_entries, lang)
+        warns += _adversary_warnings(data.get("probes"), lang)
 
     # tier sanity
     for kind, coll in (("hypothesis", hyps.values()), ("feature", features), ("bug", bugs)):
@@ -1021,6 +1092,143 @@ def _check_probes(probes: Any, cov: Any, lang: str) -> list[str]:
     return errs
 
 
+EM_DASH = u"\u2014"
+ADVERSARY_OUTCOMES = ("reachable", "blocked_by", "boundary_recorded", "unchecked")
+# Evidence classes for a security claim. The split is the whole rule: the first
+# two are SILENCE (nothing happened when I pushed), the third is STRUCTURE (the
+# control is there, on every path). Only structure promotes.
+SECURITY_SILENCE = ("attack_failed", "scanner_silence")
+# An attempt adjudicated by nobody but the person who ran it. R8's classes.
+SELF_ARBITERS = ("author", "none", "")
+# The two boundaries whose far side is not a person on the team (W7).
+OUTER_BOUNDARIES = {
+    "supply": ("registry", "package", "dependency", "lockfile", "npm", "pypi", "vendor"),
+    "build": ("ci", "build", "pipeline", "runner", "workflow", "action"),
+}
+
+
+def _check_adversary(probes: Any, cov: Any, entries: list, lang: str) -> list[str]:
+    """R26-R27 — Mode 7. The pass whose scenarios come from an adversary.
+
+    R19 sent the auditor to the domain owner because the auditor cannot write
+    the scenario list alone. Here the domain owner is the wrong witness too:
+    they cannot name the assumption they never knew they made. So the supplier
+    changes to a threat model, and the boundary map has to exist first.
+
+    R26 is the inversion the rest of this file does not contain. Everywhere
+    else a passing check is evidence toward [K]; here a failed attack and a
+    quiet scanner are SILENCE, and silence caps at [KKE]. Security tooling
+    almost universally scores silence as a pass — refusing to is the reason
+    this runs inside a registry at all.
+    """
+    errs: list[str] = []
+    if not isinstance(probes, dict):
+        probes = {}
+    adv = probes.get("adversary") if isinstance(probes.get("adversary"), dict) else {}
+    boundaries = [b for b in (adv.get("boundaries") or []) if isinstance(b, dict)]
+
+    scenarios: list = []
+    for b in boundaries:
+        bid = _s(b.get("id")) or "?"
+        missing = [k for k in ("surface", "who", "controls", "near_side_assumes")
+                   if not _s(b.get(k))]
+        if missing:
+            errs.append(m("R27_boundary_incomplete", lang, id=bid,
+                          missing=" / ".join(missing)))
+        for sc in (b.get("scenarios") or []):
+            if isinstance(sc, dict):
+                scenarios.append(sc)
+
+    for sc in scenarios:
+        sid = _s(sc.get("id")) or "?"
+        missing = [k for k in ("action", "outcome") if not _s(sc.get(k))]
+        if missing:
+            errs.append(m("R27_scenario_incomplete", lang, id=sid,
+                          missing=" / ".join(missing)))
+        out = _s(sc.get("outcome")).lower()
+        if out and out not in ADVERSARY_OUTCOMES:
+            errs.append(m("R27_bad_outcome", lang, id=sid, got=out,
+                          allowed=", ".join(ADVERSARY_OUTCOMES)))
+        if out == "blocked_by":
+            # R26, scenario half. `blocked_by` is the ONLY promoting outcome,
+            # so it is the only one worth forging — and the two ways to forge it
+            # are to name no control and to be your own judge.
+            if not _s(sc.get("control_ref")):
+                errs.append(m("R26_blocked_without_control", lang, id=sid))
+            arb = _s(sc.get("arbiter")).lower()
+            if arb in SELF_ARBITERS:
+                errs.append(m("R26_blocked_self_arbiter", lang, id=sid,
+                              got=_s(sc.get("arbiter")) or EM_DASH))
+
+    # R26, entry half. An entry may rest its tier on a security observation; if
+    # that observation is silence, [K] is closed. Same shape as R22's
+    # baseline-less cap, and for the reason R2 gave.
+    for kind, e in entries:
+        sev = _s(e.get("security_evidence")).lower()
+        if sev in SECURITY_SILENCE and _s(e.get("tier")).upper() == "K":
+            errs.append(m("R26_silence_K", lang, kind=kind,
+                          id=_s(e.get("id")) or "?", got=sev))
+
+    # --- the gating half: only on a coverage block claiming tier K ----------
+    if not isinstance(cov, dict) or _s(cov.get("claim_tier")).upper() != "K":
+        return errs
+    if _s(cov.get("security_scope")).lower() not in ("true", "yes", "1"):
+        # R27 fires on a SECURITY coverage claim, not on every coverage claim.
+        # An audit that never claimed to cover security should not be told it
+        # forgot a threat model it never promised.
+        return errs
+
+    why = None
+    if not boundaries:
+        why = ("there is no trust-boundary map" if lang != "tr"
+               else u"hiç güven sınırı haritası yok")
+    elif not scenarios:
+        why = ("the boundaries carry no scenarios" if lang != "tr"
+               else u"sınırların hiçbirinde senaryo yok")
+    elif _s(adv.get("supplied_by")).lower() in SELF_SUPPLIED:
+        who = _s(adv.get("supplied_by")) or EM_DASH
+        why = (("the scenarios are supplied_by %r " % who) + EM_DASH + " self-report"
+               if lang != "tr"
+               else (u"senaryoları veren %r " % who) + EM_DASH + u" kendi beyanı")
+    elif _s(adv.get("written_before_work")).lower() not in ("true", "yes", "1"):
+        why = ("the scenarios are not marked written_before_work " + EM_DASH + " a scenario "
+               "written after the bug was found is HARKing and says nothing about coverage"
+               if lang != "tr"
+               else u"senaryolar written_before_work olarak işaretli değil " + EM_DASH
+                    + u" hata bulunduktan sonra yazılan senaryo HARKing'dir ve kapsam "
+                      u"hakkında bir şey söylemez")
+    else:
+        unchecked = [_s(sc.get("id")) or "?" for sc in scenarios
+                     if _s(sc.get("outcome")).lower() == "unchecked"]
+        if unchecked:
+            why = (("these scenarios were never run: " if lang != "tr"
+                    else u"şu senaryolar hiç koşulmamış: ")
+                   + ", ".join(unchecked))
+    if why:
+        errs.append(m("R27_coverage_unprobed", lang, why=why))
+    return errs
+
+
+def _adversary_warnings(probes: Any, lang: str) -> list[str]:
+    """W7 — the two boundaries that get forgotten rather than waived.
+
+    Advisory, not blocking, for the same reason W5 is: a project with no CI and
+    no third-party dependencies exists, and blocking would teach authors to
+    write an empty row instead of a real one.
+    """
+    if not isinstance(probes, dict):
+        return []
+    adv = probes.get("adversary") if isinstance(probes.get("adversary"), dict) else {}
+    boundaries = [b for b in (adv.get("boundaries") or []) if isinstance(b, dict)]
+    if not boundaries:
+        return []
+    blob = " ".join(_s(b.get("surface")) + " " + _s(b.get("who"))
+                    for b in boundaries).lower()
+    return [m("W7_no_outer_boundary", lang, which=which)
+            for which, words in OUTER_BOUNDARIES.items()
+            if not any(w in blob for w in words)]
+
+
 def _probe_warnings(probes: Any, cov: Any, lang: str) -> list[str]:
     """W5 — a coverage block with a pass missing. Advisory: it may simply not
     have run yet, and blocking would teach authors to write an empty block."""
@@ -1121,7 +1329,7 @@ def _check_instrument_validation(hyps: dict, features: list[dict], bugs: list[di
     rule, an auditor's ad-hoc scanners returned three different answers to one
     question on unchanged code, reported twelve endpoints as ungated when all
     twelve were gated through a shared helper, and flagged a correct component
-    because a regex matched `to=` but not `to:`. Nothing in R1-R25 fires on
+    because a regex matched `to=` but not `to:`. No hard rule fires on
     any of that.
     """
     errs: list[str] = []
@@ -1340,7 +1548,7 @@ def _append_only(new: dict, old: dict, lang: str) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(description="Mizan registry R1–R25 validator")
+    ap = argparse.ArgumentParser(description="Mizan registry R1–R27 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
     ap.add_argument("--lang", choices=["en", "tr"], default="en")
     ap.add_argument("--against", metavar="GITREF",

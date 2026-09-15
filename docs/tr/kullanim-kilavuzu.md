@@ -7,7 +7,7 @@ denetiminden ayakta kalan mimariye dayanır — gerisi atılmıştır:
 | Katman | Bileşen | Sorumluluğu | Nerede yaşar |
 |---|---|---|---|
 | Davranış | userPreferences + Mizan Proje Talimatı | AI nasıl davranır | Claude ayarları + Project instructions |
-| Denetim | Mizan skill (v2.7) | Bir iddia nasıl değerlendirilir | Skill olarak yüklü |
+| Denetim | Mizan skill (v2.8) | Bir iddia nasıl değerlendirilir | Skill olarak yüklü |
 | Veri | mizan-registry.yaml | Araştırma bilgisi nasıl saklanır | Proje bilgisi / repo |
 
 Üç katman bağımsız çalışır: skill'siz şema da okunur, şemasız skill de
@@ -19,7 +19,7 @@ denetler. Birlikte tam sistemdir.
 
 1. **Skill:** `mizan.skill` dosyasını Claude'a yükleyin (Ayarlar →
    Capabilities → Skills). Güncellemelerde eski sürümün üzerine yenisini
-   yükleyin — otomatik güncellenmez. Şu anki sürüm: v2.7 (5 mod + şema).
+   yükleyin — otomatik güncellenmez. Şu anki sürüm: v2.8 (7 mod + şema).
 2. **Proje talimatı:** `Mizan_Proje_Talimati.md` içindeki bloğu, Mizan
    ile çalışacağınız her Claude Project'in "Project instructions"
    alanına yapıştırın.
@@ -85,13 +85,25 @@ alternatif + null alternatif, aynı metrikte). Kabul kriterleri çürütme
 dilinde yazılır. Boşluk Haritası'ndan gelen adaylar kanıt taşıyan hazır
 backlog'dur.
 
+### 2.8b Güvenlik probu (Mod 7)
+"Güvenlik probunu koş." Mod 3-5, birinin yazdığı bir cümleden başlar; bir
+güvenlik açığı ise kimsenin yazmadığı cümledir, dolayısıyla o motor oraya
+ulaşamaz. Mod 7 önce güven sınırlarını haritalar -- karşı tarafta kim var, neyi
+kontrol ediyor, ve beri taraf onun hakkında ne VARSAYIYOR -- ve senaryoları
+yapanlardan değil bir tehdit modelinden türetir; çünkü kimse farkında olmadan
+yaptığı varsayımı adlandıramaz. Katman kuralı terstir: **sömürülmemiş olmak
+geçer not değildir.** Başarısız bir deneme ve temiz bir tarayıcı sessizliktir ve
+girdiyi `[KKE]` ile sınırlar (R26); yalnızca adı konmuş ve varlığa giden her
+yolda gösterilmiş bir kontrol terfi ettirir. Hiçbir şey bulamayan bir Mod 7
+pası, temiz kağıt değil `[KKE]` kapsam beyanı üretir.
+
 ### 2.8 Meta-inceleme (Mod 6 davranışı)
 Her ~10 girdide veya istekle: hangi hipotez türleri isabetli, hangi
 enstrümanlar güvenilir, yanlılık nerede birikiyor. Çıktı metodolojiyi
 besler — talimat ve şema da revizyona tabidir (kendi disiplinlerine
 uyarak: değişiklik gerekçeli, geçmiş silinmez).
 
-## 3. Sert kurallar (özet — şemadaki R1–R25)
+## 3. Sert kurallar (özet — şemadaki R1–R27)
 
 1. Sonuçtan önce eşik + çürütme koşulu (HARKing yapısal olarak kapalı).
 2. Baseline zorunlu; baseline'sız sonuç [K] üretemez.
@@ -245,7 +257,7 @@ sonuçtur.
 
 | Dosya | İçerik |
 |---|---|
-| mizan.skill | Skill paketi v2.7 (5 mod + şema gömülü) |
+| mizan.skill | Skill paketi v2.8 (7 mod + şema gömülü) |
 | mizan-registry.yaml | Şema şablonu (bağımsız kopya) |
 | Mizan_Proje_Talimati.md | Project instructions bloğu + fark analizi |
 | Mizan_TR_Dokumantasyon.md | Mod 1–2 tam Türkçe referans |

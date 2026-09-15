@@ -1,5 +1,5 @@
 # =====================================================================
-# Mizan Registry Schema v1.10  (mizan-registry.yaml)
+# Mizan Registry Schema v1.11  (mizan-registry.yaml)
 # =====================================================================
 # Machine-readable research/engineering registry aligned with the Mizan
 # methodology. Human-editable, AI-readable, git-diff friendly.
@@ -164,6 +164,31 @@
 #
 #        All three enforced from schema_version 1.10.
 #
+#   R26. NOT EXPLOITED IS NOT A PASS. This is the one rule here that treats a
+#        PASSING check as non-evidence, and it is the whole reason Mode 7 runs
+#        inside a registry instead of inside a scanner. An entry resting on
+#        `security_evidence: attack_failed | scanner_silence` may not sit at
+#        [K]: an attack you thought of and could not land is a sample of one
+#        adversary, and a scanner's silence is a statement about its rule set.
+#        Only `blocked_by` promotes -- a NAMED control (`control_ref`) shown on
+#        every path to the asset, adjudicated by something other than the
+#        person who ran the attempt (R8's arbiter classes again).
+#
+#   R27. If a `coverage` block claims tier K with `security_scope: true`, a
+#        `probes.adversary` block must exist: a trust boundary carrying
+#        `who` / `controls` / `near_side_assumes`, scenarios written as
+#        ACTIONS, none left `unchecked`, `written_before_work: true`, and
+#        `supplied_by` outside {auditor, none}. This is R19 with the supplier
+#        changed. R19 sent the auditor to the domain owner; here the domain
+#        owner is the wrong witness too, because nobody can name the
+#        assumption they never knew they made. `near_side_assumes` is that
+#        sentence, and a boundary that cannot state it is the first finding.
+#
+#        Both enforced from schema_version 1.11. Rationale, tier table and
+#        procedure: references/security-probe.md -- one file away, because this
+#        one is loaded on every registry write and that one only in Mode 7.
+#        Same move R22 made into feature-gate.md.
+#
 # Tiers: K (proven) | H (plausible hypothesis) | S (speculative)
 #        R (refuted) | KKE (critical control missing) | Y (misleading)
 #
@@ -200,6 +225,11 @@
 #         opposite of the honesty-annex principle). See FEAT-M002 in the
 #         project roadmap registry — this field ships; whether it earns
 #         its place stays GATED pending real migration data.
+#   1.11 — adds `probes.adversary`, `coverage.security_scope` and an entry-level
+#         `security_evidence`; activates R26-R27 and W7 (Mode 7, the security
+#         probe). R26 inverts what counts as evidence for one class of claim:
+#         silence stops promoting. MIGRATION: 1.0-1.10 unaffected; a registry
+#         with no adversary probe and no security_evidence pays nothing.
 #   1.10 — adds `coverage.phases[MERGE].cross_slice`, `metric.instrument_built_by`
 #         / `metric.instrument_validated`, `results[].artifact_freshness` and
 #         `coverage.domain_probe_waived`; activates R23-R25 and W6. All four
@@ -297,6 +327,10 @@
 #       blocks a tier-K claim over an unanswered probe, but an audit settling
 #       for [H] never meets it: the block exists, the probe stays empty, the
 #       audit ends. Waiving is a decision; silence is not.
+#   W7. a `probes.adversary` block that maps no supply/dependency boundary, or
+#       no CI/build-input one. Both have a far side that is not a person on the
+#       team, and that is exactly why they get forgotten rather than waived.
+#       Advisory like W5: a project with neither exists.
 #
 #   W5. a registry with a `coverage` block and no `probes.domain`, or none
 #       with `probes.conjunction`. Below a tier-K claim R19/R20 do not fire,
@@ -320,7 +354,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.10"            # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21; 1.9 R22; 1.10 R23-R25
+  schema_version: "1.11"            # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21; 1.9 R22; 1.10 R23-R25; 1.11 R26-R27
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -333,6 +367,11 @@ hypotheses:
   - id: "H-001"
     version: 1                      # bump on revision; old versions stay in history
     tier: "H"                       # current evidence tier
+    security_evidence: ""           # schema 1.11, R26. Fill ONLY on a security
+                                    # claim: attack_failed | scanner_silence |
+                                    # control_verified. The first two are
+                                    # SILENCE and cap the entry below [K] --
+                                    # not exploited is not a pass.
     status: "preregistered"         # preregistered | testing | closed | dormant
     preregistered: "2026-07-10"
     # R18 (schema 1.7+) — what the preregistration actually locked. Required on
@@ -694,6 +733,11 @@ coverage:
     surfaces, recently-churned files (git log --stat). Written down because
     a partition nobody can reconstruct is not a scope statement.
   claim_tier: "H"                   # K only when every row below is done (R16)
+  security_scope: false             # schema 1.11, R27. true = this coverage
+                                    # claim includes security. It is what makes
+                                    # R27 demand a trust-boundary map, so an
+                                    # audit that never promised security is not
+                                    # failed for a threat model it never owed.
   domain_probe_waived: ""           # schema 1.10, W6. Fill this ONLY to record
                                     # that the field was deliberately never
                                     # asked, and why. Empty + all phases done +
@@ -823,6 +867,52 @@ probes:
           feature and are silent about the pair.
         entry_ref: ""
         history: []
+
+  adversary:
+    # R26-R27 (schema 1.11) -- Mode 7. The scenario list comes from a THREAT
+    # MODEL, not from the builders: R19's supplier, changed for the one pass
+    # where the people who built the thing are the wrong witnesses.
+    supplied_by: "threat_model"     # threat_model | third_party | red_team
+                                    # | auditor | none
+                                    # auditor / none = invented scenarios;
+                                    # R27 blocks a tier-K claim over them.
+    supplier_note: >
+      One line: whose model, built when, against which version.
+    phase: "P1"
+    written_before_work: true       # false = written after a bug was found.
+                                    # HARKing; says nothing about coverage.
+    boundaries:
+      - id: "TB-01"
+        surface: "POST /api/import -- bulk record upload"
+        who: "authenticated tenant user"
+        controls: "the whole JSON body, including per-row tenant_id"
+        near_side_assumes: >
+          The sentence nobody wrote. "Rows were already scoped to the caller's
+          tenant by the handler." Cannot fill it in? That IS the finding.
+        scenarios:
+          - id: "AS-01"
+            action: >
+              An action, not a bug class. "A tenant A user sets row.tenant_id
+              to B and imports" -- not "IDOR". The class names no test.
+            outcome: "reachable"    # reachable | blocked_by
+                                    # | boundary_recorded | unchecked
+                                    # reachable         -> a finding
+                                    # blocked_by        -> the ONLY promoting
+                                    #                      outcome; needs
+                                    #                      control_ref + a
+                                    #                      non-author arbiter
+                                    # boundary_recorded -> it works, and that
+                                    #                      was a written
+                                    #                      decision. Fine.
+                                    # unchecked         -> blocks tier K (R27)
+            control_ref: ""         # R26: the control, AND the evidence it is
+                                    # on EVERY path. One reached call site is
+                                    # not a guarantee.
+            arbiter: "instrument"   # R8. A self-run attempt is `author`.
+            instrument: "named tool + version, or the third party"
+            evidence: "api/import.py:214 -- check_access called once per batch"
+            entry_ref: "SEC-H003"
+            history: []
 
   escaped:
     # R21. One row per defect that got out — found by a user, in production,

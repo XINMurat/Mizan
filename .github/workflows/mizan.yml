@@ -346,6 +346,73 @@ jobs:
           fi
           echo "OK: R22 waits for schema 1.9, the way R19-R21 waited for 1.8."
 
+      - name: Self-test — R26/R27 must refuse to score silence as a pass
+        run: |
+          set -e
+          # Every other rule in the validator treats a passing check as
+          # evidence. R26 is the inversion: a failed attack is one adversary's
+          # result and a quiet scanner is a statement about its own rule set,
+          # so neither promotes. If this test ever goes green with the caps
+          # removed, Mode 7 has become a scanner with extra steps.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.11"}
+          hypotheses: []
+          features:
+            - id: "SEC-F001"
+              tier: "K"
+              security_evidence: "scanner_silence"
+          coverage:
+            target: "api"
+            claim_tier: "K"
+            security_scope: true
+            phases:
+              - {id: "P0", slice: "scoping", status: "done"}
+              - {id: "MERGE", slice: "recon", status: "done", cross_slice: [{pair: "P0xP0", outcome: "holds"}]}
+          probes:
+            adversary:
+              supplied_by: "auditor"
+              written_before_work: true
+              boundaries:
+                - id: "TB-01"
+                  surface: "POST /api/import via the CI-published package"
+                  who: "authenticated tenant user"
+                  controls: "the whole JSON body, including per-row tenant_id"
+                  near_side_assumes: "rows were already scoped by the handler"
+                  scenarios:
+                    - {id: "AS-01", action: "tenant A sets row.tenant_id to B", outcome: "blocked_by", arbiter: "author"}
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          # an entry resting on silence cannot sit at [K]
+          echo "$out" | grep -q "R26:.*SEC-F001" || { echo "FAIL: R26 let a scanner's silence earn [K]" >&2; exit 1; }
+          # blocked_by with no named control is "it didn't work when I tried"
+          echo "$out" | grep -q "R26:.*control_ref" || { echo "FAIL: R26 accepted blocked_by with no control" >&2; exit 1; }
+          # ...and a self-run attempt is self-report, exactly as R8 says
+          echo "$out" | grep -q "R26:.*arbiter" || { echo "FAIL: R26 accepted an author-adjudicated block" >&2; exit 1; }
+          # scenarios the auditor invented are not a threat model
+          echo "$out" | grep -q "R27:" || { echo "FAIL: R27 accepted auditor-supplied attack scenarios" >&2; exit 1; }
+          # ...and the honest version passes
+          sed -i -e 's/supplied_by: "auditor"/supplied_by: "threat_model"/' \
+                 -e 's/outcome: "blocked_by", arbiter: "author"/outcome: "blocked_by", arbiter: "instrument", control_ref: "check_access, all 4 call sites"/' \
+                 -e 's/security_evidence: "scanner_silence"/security_evidence: "control_verified"/' \
+                 -e 's/tier: "K"/tier: "H"/' "$tmp"
+          out2="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out2"
+          echo "$out2" | grep -q "R26:\|R27:" && { echo "FAIL: R26/R27 still fire on the honest version" >&2; exit 1; }
+          echo "OK: R26 and R27 fired, and the filled-in version clears them."
+          # W7 is advisory: this boundary names CI but no dependency surface,
+          # so exactly one of the two outer boundaries should warn.
+          echo "$out2" | grep -q "W7:.*supply" || { echo "FAIL: W7 missed the unmapped supply boundary" >&2; exit 1; }
+          echo "$out2" | grep -q "W7:.*build" && { echo "FAIL: W7 warned about a build boundary that IS mapped" >&2; exit 1; }
+          echo "OK: W7 warns about the boundary that is missing, not the one that is there."
+          # migration: the same file at 1.10 is unenforced, the way R19-R21
+          # waited for 1.8 and R22 for 1.9.
+          sed -i 's/schema_version: "1.11"/schema_version: "1.10"/' "$tmp"
+          out3="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out3" | grep -q "R26:\|R27:\|W7:" && { echo "FAIL: R26-R27 fired on a 1.10 registry" >&2; exit 1; }
+          echo "OK: R26-R27 wait for schema 1.11."
+
       - name: Self-test — R4 must catch a deleted entry
         run: |
           set -e

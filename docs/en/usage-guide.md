@@ -10,7 +10,7 @@ rest was discarded:
 | Layer | Component | Responsibility | Where it lives |
 |---|---|---|---|
 | Behavior | userPreferences + Mizan Project Instructions | How the AI behaves | Claude settings + Project instructions |
-| Audit | Mizan skill (v2.7) | How a claim is evaluated | Installed as a skill |
+| Audit | Mizan skill (v2.8) | How a claim is evaluated | Installed as a skill |
 | Data | mizan-registry.yaml | How research knowledge is stored | Project knowledge / repo |
 
 The three layers work independently: the schema is readable without the
@@ -23,7 +23,7 @@ system.
 
 1. **Skill:** upload `mizan.skill` to Claude (Settings → Capabilities →
    Skills). On updates, upload the new version over the old one — it does
-   not auto-update. Current version: v2.7 (5 modes + schema).
+   not auto-update. Current version: v2.8 (7 modes + schema).
 2. **Project instructions:** paste the block from
    [`project-instructions.md`](project-instructions.md) into the
    "Project instructions" field of every Claude Project you run with Mizan.
@@ -93,6 +93,18 @@ cheaper alternative + the null alternative, on the same metric).
 Acceptance criteria are written as refutation conditions. Candidates from
 the Gap Map are an evidence-carrying, ready-made backlog.
 
+### 2.8b Security probe (Mode 7)
+"Run the security probe." Modes 3-5 start from a sentence someone wrote; a
+vulnerability is the sentence nobody wrote, so they cannot reach it. Mode 7
+maps the trust boundaries first -- who is on the far side, what they control,
+and what the near side ASSUMES about them -- and derives the scenarios from a
+threat model rather than from the builders, who cannot name an assumption they
+never knew they made. The tier rule is inverted: **not exploited is not a
+pass.** A failed attempt and a clean scanner are silence and cap the entry at
+`[KKE]` (R26); only a named control, shown on every path to the asset,
+promotes. A Mode 7 pass that finds nothing produces a `[KKE]` coverage
+statement, never a clean bill of health.
+
 ### 2.8 Meta-review (Mode 6 behavior)
 Every ~10 entries or on request: which hypothesis types hit, which
 instruments are reliable, where bias is accumulating. The output feeds the
@@ -100,7 +112,7 @@ methodology — the instructions and schema are themselves subject to
 revision (following their own discipline: changes are justified, history
 is never deleted).
 
-## 3. Hard rules (summary — R1–R25 in the schema)
+## 3. Hard rules (summary — R1–R27 in the schema)
 
 1. Threshold + refutation condition before any result (HARKing structurally closed).
 2. Baseline mandatory; a baseline-less result cannot produce `[K]`.
@@ -245,7 +257,7 @@ personal tool — which is also a valid outcome.
 
 | File | Contents |
 |---|---|
-| mizan.skill | Skill package v2.7 (5 modes + embedded schema) |
+| mizan.skill | Skill package v2.8 (7 modes + embedded schema) |
 | mizan-registry.yaml | Schema template (standalone copy) |
 | docs/en/project-instructions.md | Project instructions block + diff analysis |
 | skill/mizan/SKILL.md + references/ | Mode 1–5 English reference |
