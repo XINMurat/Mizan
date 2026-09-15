@@ -1224,9 +1224,13 @@ def _adversary_warnings(probes: Any, lang: str) -> list[str]:
         return []
     blob = " ".join(_s(b.get("surface")) + " " + _s(b.get("who"))
                     for b in boundaries).lower()
+    # Word boundaries, not substrings. "ci" lives inside "specific" and
+    # "decision", and a warning that fires on a coincidence teaches authors to
+    # ignore it -- which is the one thing an advisory channel cannot survive.
+    words_present = set(re.findall(r"[a-z0-9]+", blob))
     return [m("W7_no_outer_boundary", lang, which=which)
             for which, words in OUTER_BOUNDARIES.items()
-            if not any(w in blob for w in words)]
+            if not (words_present & set(words))]
 
 
 def _probe_warnings(probes: Any, cov: Any, lang: str) -> list[str]:

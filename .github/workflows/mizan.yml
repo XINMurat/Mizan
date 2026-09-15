@@ -375,7 +375,7 @@ jobs:
               written_before_work: true
               boundaries:
                 - id: "TB-01"
-                  surface: "POST /api/import via the CI-published package"
+                  surface: "POST /api/import, invoked from the release workflow"
                   who: "authenticated tenant user"
                   controls: "the whole JSON body, including per-row tenant_id"
                   near_side_assumes: "rows were already scoped by the handler"
@@ -401,8 +401,11 @@ jobs:
           echo "$out2"
           echo "$out2" | grep -q "R26:\|R27:" && { echo "FAIL: R26/R27 still fire on the honest version" >&2; exit 1; }
           echo "OK: R26 and R27 fired, and the filled-in version clears them."
-          # W7 is advisory: this boundary names CI but no dependency surface,
-          # so exactly one of the two outer boundaries should warn.
+          # W7 is advisory, and it is matched on WORDS: this boundary names a
+          # workflow (the build side) but nothing on the supply side, so
+          # exactly one of the two outer boundaries should warn. The substring
+          # version of this check passed for the wrong reason -- "package" sat
+          # inside the fixture's own prose -- which is why it matches tokens.
           echo "$out2" | grep -q "W7:.*supply" || { echo "FAIL: W7 missed the unmapped supply boundary" >&2; exit 1; }
           echo "$out2" | grep -q "W7:.*build" && { echo "FAIL: W7 warned about a build boundary that IS mapped" >&2; exit 1; }
           echo "OK: W7 warns about the boundary that is missing, not the one that is there."
