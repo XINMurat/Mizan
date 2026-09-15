@@ -914,6 +914,25 @@ probes:
             entry_ref: "SEC-H003"
             history: []
 
+      # W7. The two boundaries whose far side is NOT a person on the team.
+      # They are in the blank form because they are the two that get forgotten
+      # rather than waived -- and leaving them out of the form was the first
+      # thing W7 caught, on its own schema, in CI.
+      - id: "TB-02"
+        surface: "dependency resolution -- lockfile install at build time"
+        who: "the package registry and every transitive maintainer"
+        controls: "the bytes of any resolved version, and what a postinstall runs"
+        near_side_assumes: "pinned means verified. Pinned means pinned."
+        scenarios:
+          - {id: "AS-02", action: "a compromised transitive release publishes a new patch version", outcome: "unchecked"}
+      - id: "TB-03"
+        surface: "CI workflow -- build inputs and secrets"
+        who: "anyone who can open a PR, plus every third-party action"
+        controls: "the branch contents the workflow checks out and runs"
+        near_side_assumes: "a workflow only runs code a maintainer reviewed"
+        scenarios:
+          - {id: "AS-03", action: "a fork PR triggers a workflow that can read a secret", outcome: "unchecked"}
+
   escaped:
     # R21. One row per defect that got out — found by a user, in production,
     # or by anyone after this audit closed. `in_scope: true` is the expensive

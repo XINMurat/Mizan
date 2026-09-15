@@ -55,7 +55,7 @@ jobs:
             echo "::warning::No baseline commit reachable — R4 (append-only) did NOT run."
           fi
 
-      - name: Validate every registry (R1–R22, R4 against the baseline)
+      - name: Validate every registry (R1–R27, R4 against the baseline)
         run: |
           set -e
           base="${{ steps.baseline.outputs.base }}"
