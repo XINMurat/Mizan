@@ -645,7 +645,7 @@ def check(data: dict, lang: str,
     # methodology trusted something it never checked. R23 trusted that MERGE
     # would look between the slices; R24 trusted the auditor's own tools; R25
     # trusted that a runtime arbiter ran the code under audit. All three were
-    # false in a single real audit, and none of R1-R22 could see it.
+    # false in a single real audit, and none of R1-R25 could see it.
     if _schema_at_least(data, (1, 10)):
         errs += _check_merge_cross_slice(data.get("coverage"), lang)
         errs += _check_instrument_validation(hyps, features, bugs, lang)
@@ -1121,7 +1121,7 @@ def _check_instrument_validation(hyps: dict, features: list[dict], bugs: list[di
     rule, an auditor's ad-hoc scanners returned three different answers to one
     question on unchanged code, reported twelve endpoints as ungated when all
     twelve were gated through a shared helper, and flagged a correct component
-    because a regex matched `to=` but not `to:`. Nothing in R1-R22 fires on
+    because a regex matched `to=` but not `to:`. Nothing in R1-R25 fires on
     any of that.
     """
     errs: list[str] = []
@@ -1340,7 +1340,7 @@ def _append_only(new: dict, old: dict, lang: str) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(description="Mizan registry R1–R22 validator")
+    ap = argparse.ArgumentParser(description="Mizan registry R1–R25 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
     ap.add_argument("--lang", choices=["en", "tr"], default="en")
     ap.add_argument("--against", metavar="GITREF",

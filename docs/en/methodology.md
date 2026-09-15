@@ -279,7 +279,8 @@ re-scoped slice gets a new row, never an edit that erases the old one.
 
 **From schema 1.10, three rules close gaps the method itself had.** All three
 came from one audit that MISSED four defects a user found by hand the same
-day — every one of them lying BETWEEN slices, and none reachable by R1–R22.
+day — every one of them lying BETWEEN slices, and none reachable by the
+twenty-two rules that existed before them.
 Each closes a place the method trusted without checking:
 
 - **R23 — MERGE reconciles the pairs NOBODY LOOKED AT.** A `MERGE` row marked

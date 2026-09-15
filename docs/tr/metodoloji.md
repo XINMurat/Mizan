@@ -382,7 +382,7 @@ MERGE satırı `✅ tamam` olana dek `[H]` kalır — bkz. §A5.1 adım 3.
 Bu üç kural, bir şey **bulan** denetimden değil, bir şey **kaçıran** denetimden
 doğdu. Gerçek bir depoda koşan fazlı Mod 3 denetimi bütün fazlarını kapattı,
 19 girdi ve 10 sonuç yazdı, dört hakem betiği üretti — ve ürün sahibinin aynı
-öğleden sonra elle bulduğu dört kusuru kaçırdı. R1–R22'nin hiçbiri onları
+öğleden sonra elle bulduğu dört kusuru kaçırdı. Önceki yirmi iki kuralın hiçbiri onları
 yakalayamazdı, çünkü üçü de yöntemin **kontrol etmeden güvendiği** bir yeri
 kapatıyor:
 
