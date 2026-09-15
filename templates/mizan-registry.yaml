@@ -218,7 +218,7 @@
 registry:
   project: "ProjectName"            # e.g. SpectralLM
   owner: "your-org"
-  schema_version: "1.10"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21; 1.9 R22; 1.10 R23-R25
+  schema_version: "1.11"             # 1.2+ R8; 1.3+ R13-R15; 1.4+ R9-R12; 1.5 coverage; 1.6 R17; 1.7 R18; 1.8 R19-R21; 1.9 R22; 1.10 R23-R25; 1.11 R26-R27
   methodology: "mizan-v2"           # the installed skill version
   created: "2026-07-10"
   notes: >
@@ -571,6 +571,9 @@ coverage:
     surfaces, recently-churned files (git log --stat). Written down because
     a partition nobody can reconstruct is not a scope statement.
   claim_tier: "H"                   # K only when every row below is done (R16)
+  security_scope: false             # 1.11, R27. true = this coverage claim
+                                    # includes security, which is what makes a
+                                    # trust-boundary map mandatory below.
   phases:
     - id: "P0"
       slice: "scoping only — the partition plan"
@@ -650,6 +653,52 @@ probes:
         evidence: ""
         entry_ref: ""
         history: []
+
+  adversary:
+    # 1.11, R26-R27 -- Mode 7. Scenarios come from a THREAT MODEL, not from the
+    # builders: nobody can name the assumption they never knew they made.
+    # Procedure: skill/mizan/references/security-probe.md
+    supplied_by: ""                 # threat_model | third_party | red_team
+                                    # | auditor | none  (the last two are
+                                    # self-report and block a tier-K claim)
+    supplier_note: ""
+    phase: ""
+    written_before_work: true
+    boundaries:
+      - id: "TB-01"
+        surface: "Replace with the crossing point -- ingress, authz, deserialization, subprocess, SQL/template interpolation, secret load."
+        who: "Replace with who is on the far side."
+        controls: "Replace with what they control -- which bytes, which fields, which ordering."
+        near_side_assumes: "Replace with the sentence nobody wrote. Cannot fill it in? That IS the finding."
+        scenarios:
+          - id: "AS-01"
+            action: "Replace with an ACTION, not a bug class. A class names no test."
+            outcome: "unchecked"    # reachable | blocked_by | boundary_recorded | unchecked
+            control_ref: ""         # required for blocked_by: the control AND
+                                    # the evidence it is on EVERY path (R26)
+            arbiter: ""             # runtime | instrument | third_party | author | none
+            instrument: ""
+            evidence: ""
+            entry_ref: ""
+            history: []
+      # W7. The two boundaries whose far side is NOT a person on the team.
+      # They are pre-filled because they are the two that get forgotten rather
+      # than waived -- and the first thing that forgot them was this project's
+      # own schema sample, caught in CI.
+      - id: "TB-02"
+        surface: "dependency resolution -- lockfile install at build time"
+        who: "the package registry and every transitive maintainer"
+        controls: "the bytes of any resolved version, and what a postinstall runs"
+        near_side_assumes: "pinned means verified. Pinned means pinned."
+        scenarios:
+          - {id: "AS-02", action: "Replace, or delete this boundary and say in the report that it was waived.", outcome: "unchecked"}
+      - id: "TB-03"
+        surface: "CI workflow -- build inputs and secrets"
+        who: "anyone who can open a PR, plus every third-party action"
+        controls: "the branch contents the workflow checks out and runs"
+        near_side_assumes: "a workflow only runs code a maintainer reviewed"
+        scenarios:
+          - {id: "AS-03", action: "Replace, or delete this boundary and say in the report that it was waived.", outcome: "unchecked"}
 
   escaped: []
   # - id: "ESC-01"
