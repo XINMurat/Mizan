@@ -60,7 +60,7 @@ If the user's request contains elements of both ("audit this, then set up
 tracking so it doesn't happen again"), do the audit first, then seed the
 registry with the surviving `[H]` claims as its first entries.
 
-### Software modes (3, 4, 5)
+### Modes 3–7
 
 The same discipline applies to code, with one structural difference: in a
 codebase, the claim and its evidence live in DIFFERENT artifacts (name /
@@ -97,28 +97,31 @@ mode also generates feature candidates the user didn't ask for, via the
 Gap Map and alternative-forcing — see that file's "suggestion mechanism"
 section for what this can and cannot promise.
 
+**Mode 6 — Meta-review.** Every ~10 entries, or on request: which
+hypothesis TYPES hit, which instruments proved reliable, where bias is
+accumulating. Not a summary — a hit rate ACROSS entries, the one thing a
+per-entry discipline cannot see from inside any entry. Its output revises
+the methodology: these instructions and the schema are claim sets too,
+subject to their own rules, so a change is justified and the old version
+is never deleted.
+
 **Mode 7 — Security probe.** Modes 3–5 all start from a sentence someone
 wrote; a vulnerability is the sentence nobody wrote, so the engine that
 powers them cannot reach it (audit step 7 says why). Mode 7 changes the
 scenario source to a trust-boundary map plus an adversary model, and
 inverts what counts as evidence: **not exploited is not a pass** — a failed
 attempt and a clean scanner are silence and cap at `[KKE]` (R26); only a
-named control on every path to the asset promotes. Read
-`references/security-probe.md` before the first security pass. R27 is R19
-with the supplier changed, because the people who built the thing cannot
-name the assumption they never knew they made.
+named control on every path to the asset promotes. R27 is R19 with the
+supplier changed. Read `references/security-probe.md` before the first
+security pass.
 
 **Beyond software.** Modes 3/4/5 are domain-independent patterns
 (claim-vs-evidence hop audit; anomaly → rival-hypothesis registry;
-forward-commitment gate). When the user applies Mizan to marketing
-campaigns, sales deals, analytics reports, incident response,
-root-cause analysis, hiring, procurement, investment theses, content,
-program evaluation, or personal experiments — or any domain not listed —
-read `references/domain-adaptation.md`: it contains the five-question
-adaptation recipe, per-domain hop maps and confound catalogs, and the
-hard constraints that transfer unchanged (append-only, DC-001 on
-individual hit rates, permanent [KKE] where symmetric controls are
-impossible).
+forward-commitment gate). For ANY domain outside software, read
+`references/domain-adaptation.md` — the five-question adaptation recipe,
+14 per-domain hop maps and confound catalogs, and the constraints that
+transfer unchanged (append-only, DC-001 on individual hit rates,
+permanent [KKE] where symmetric controls are impossible).
 
 ### Audit mode — procedure
 
@@ -453,6 +456,7 @@ from the outside.
   (bug-hypothesis registry) procedures.
 - `references/feature-gate.md` — Mode 5 (feature/PRD gate) procedure and
   the suggestion mechanism.
+- Mode 6 needs no reference file — it reads the registry itself.
 - `references/security-probe.md` — Mode 7: the trust-boundary map,
   the inverted tier table, and what the pass cannot see.
 - `references/domain-adaptation.md` — Modes 3/4/5 beyond software:
