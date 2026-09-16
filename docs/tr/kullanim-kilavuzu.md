@@ -97,7 +97,7 @@ girdiyi `[KKE]` ile sınırlar (R26); yalnızca adı konmuş ve varlığa giden 
 yolda gösterilmiş bir kontrol terfi ettirir. Hiçbir şey bulamayan bir Mod 7
 pası, temiz kağıt değil `[KKE]` kapsam beyanı üretir.
 
-### 2.8 Meta-inceleme (Mod 6 davranışı)
+### 2.8 Meta-inceleme (Mod 6)
 Her ~10 girdide veya istekle: hangi hipotez türleri isabetli, hangi
 enstrümanlar güvenilir, yanlılık nerede birikiyor. Çıktı metodolojiyi
 besler — talimat ve şema da revizyona tabidir (kendi disiplinlerine

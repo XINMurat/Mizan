@@ -105,7 +105,7 @@ pass.** A failed attempt and a clean scanner are silence and cap the entry at
 promotes. A Mode 7 pass that finds nothing produces a `[KKE]` coverage
 statement, never a clean bill of health.
 
-### 2.8 Meta-review (Mode 6 behavior)
+### 2.8 Meta-review (Mode 6)
 Every ~10 entries or on request: which hypothesis types hit, which
 instruments are reliable, where bias is accumulating. The output feeds the
 methodology — the instructions and schema are themselves subject to
