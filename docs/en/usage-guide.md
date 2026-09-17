@@ -10,7 +10,7 @@ rest was discarded:
 | Layer | Component | Responsibility | Where it lives |
 |---|---|---|---|
 | Behavior | userPreferences + Mizan Project Instructions | How the AI behaves | Claude settings + Project instructions |
-| Audit | Mizan skill (v2.8) | How a claim is evaluated | Installed as a skill |
+| Audit | Mizan skill (v2.9) | How a claim is evaluated | Installed as a skill |
 | Data | mizan-registry.yaml | How research knowledge is stored | Project knowledge / repo |
 
 The three layers work independently: the schema is readable without the
@@ -23,7 +23,7 @@ system.
 
 1. **Skill:** upload `mizan.skill` to Claude (Settings → Capabilities →
    Skills). On updates, upload the new version over the old one — it does
-   not auto-update. Current version: v2.8 (7 modes + schema).
+   not auto-update. Current version: v2.9 (7 modes + schema).
 2. **Project instructions:** paste the block from
    [`project-instructions.md`](project-instructions.md) into the
    "Project instructions" field of every Claude Project you run with Mizan.
@@ -112,7 +112,7 @@ methodology — the instructions and schema are themselves subject to
 revision (following their own discipline: changes are justified, history
 is never deleted).
 
-## 3. Hard rules (summary — R1–R27 in the schema)
+## 3. Hard rules (summary — R1–R28 in the schema)
 
 1. Threshold + refutation condition before any result (HARKing structurally closed).
 2. Baseline mandatory; a baseline-less result cannot produce `[K]`.
@@ -257,7 +257,7 @@ personal tool — which is also a valid outcome.
 
 | File | Contents |
 |---|---|
-| mizan.skill | Skill package v2.8 (7 modes + embedded schema) |
+| mizan.skill | Skill package v2.9 (7 modes + embedded schema) |
 | mizan-registry.yaml | Schema template (standalone copy) |
 | docs/en/project-instructions.md | Project instructions block + diff analysis |
 | skill/mizan/SKILL.md + references/ | Mode 1–5 English reference |

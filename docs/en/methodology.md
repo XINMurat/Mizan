@@ -313,10 +313,25 @@ Each closes a place the method trusted without checking:
   two-sided red, full suite passing) against a build that did not contain it.
   Not a weaker measurement: a **false assurance**.
 
-The escapes, the numbers and what each rule would have caught are in
-`references/code-audit.md` and `checklist.md` item 14.
+- **R28 — the audit reads what was WRITTEN, not what gets PRODUCED.** The first
+  rule here that doubts the INVENTORY rather than the reading. Slices are cut
+  out of the source tree, which holds exactly what a human typed — so a
+  generated config sits in no slice at all. Six phases, a MERGE, a bug registry
+  and a security probe closed green while a packaging script wrote a BEL
+  character into a shipped `web.config`: source correct, output corrupt,
+  difference visible only in the generated file. `coverage.produced_artifacts`
+  names them; **running the producer and reading its output** is what catches
+  things.
+- **W8 (warning) — can the arbiter return a verdict AT ALL?** Two-sidedness
+  asks whether it can come out red; not whether it can come out. A hung run
+  says nothing while looking exactly like patience — a suite sat twenty-five
+  minutes at zero CPU, neither failing nor passing, and was about to be
+  reported as verified. `failure_is_loud` is one line on how it fails.
 
-The validator also has a **non-blocking warning channel** (W1–W6): a missing
+The escapes, the numbers and what each rule would have caught are in
+`references/code-audit.md` and `checklist.md` items 14–16.
+
+The validator also has a **non-blocking warning channel** (W1–W8): a missing
 two-sided statement, an entry written with no threshold or refutation and no
 result yet, a registry where every tiered entry is `[K]`, and — from 1.10 —
 **W6: every coverage phase done while the domain probe was never answered.**
@@ -419,7 +434,7 @@ from the outside.
   writing entries, `recovery.md` the moment a run stops behaving. Reading
   everything at the start spends the context the audit itself needs.
 - **The scripted part is the part that travels.** `mizan_validate.py`
-  enforces R1–R27 without a model, so it behaves identically in every
+  enforces R1–R28 without a model, so it behaves identically in every
   host. Whatever is enforced only by this prose is negotiable by the
   host's prose. When rigor must survive an unknown setup, put it in the
   validator, not in a paragraph.
@@ -466,7 +481,7 @@ from the outside.
 - `schemas/mizan-registry.yaml` — the machine-readable registry format.
   When the user keeps a registry file (in project knowledge, a repo, or
   uploads one), read it at session start, APPEND rather than overwrite,
-  propose new entries in this schema, and enforce its hard rules R1–R27
+  propose new entries in this schema, and enforce its hard rules R1–R28
   (mandatory baseline, mandatory confound controls, append-only history,
   no K-promotion without controls on surprising positives, and
   producer/auditor separation: propose tier changes, let the owner or a

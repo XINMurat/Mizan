@@ -19,7 +19,7 @@ Turkish full-text mirrors are in
 | Software modes 3–4 (code audit, bug registry) | [Software modes](software-modes.md) | [`docs/tr/yazilim-modlari.md`](../tr/yazilim-modlari.md) |
 | Software mode 5 (feature / PRD gate) | [Software modes](software-modes.md) | [`docs/tr/yazilim-modlari.md`](../tr/yazilim-modlari.md) |
 | Domain adaptation (14 domains beyond software) | [Domain adaptation](domain-adaptation.md) | [`docs/tr/alan-uyarlama.md`](../tr/alan-uyarlama.md) |
-| Machine-readable registry schema (R1–R27) | [`skill/mizan/schemas/mizan-registry.yaml`](../../skill/mizan/schemas/mizan-registry.yaml) | same file (comments EN) |
+| Machine-readable registry schema (R1–R28) | [`skill/mizan/schemas/mizan-registry.yaml`](../../skill/mizan/schemas/mizan-registry.yaml) | same file (comments EN) |
 
 ## English-only long-form docs
 

@@ -134,6 +134,19 @@ Procedure:
    boundaries existed; filling it here means naming them while drawing them.
    R23 will not let the MERGE row close empty. Write the plan into the Coverage Ledger
    (template in `templates.md` §5) with every phase marked `⏳ planned`.
+
+   **And in the same breath, list what the repository PRODUCES.** The partition
+   above is drawn over the source tree, which holds exactly the files a human
+   typed — so the config a packaging script emits, the settings file a publish
+   step composes, the client a generator writes are in no phase at all. Not
+   under-audited: **absent**. In the run that produced R28, six phases, a MERGE
+   pass, a bug registry and a security probe closed green over a packaging
+   script that was writing a BEL character into a shipped `web.config`; the
+   script's source was correct and the output was corrupt, so no amount of
+   careful reading could have produced the finding. Put them in
+   `coverage.produced_artifacts` now, while you are already mapping the repo —
+   then **run the producer and read its output** rather than its source. If the
+   repo produces nothing, `produced_artifacts_waived` says so in a sentence.
 2. **Phase k — one slice, fully.** Run Mode 3 (or 4) completely on slice
    Pk only. APPEND findings to the single registry / behavior report;
    never rewrite prior phases' entries. Update the Coverage Ledger row:

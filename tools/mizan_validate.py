@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mizan registry validator — LLM-free static enforcement of hard rules R1–R27.
+Mizan registry validator — LLM-free static enforcement of hard rules R1–R28.
 
 This is the cheap, judgment-free baseline of feature FEAT-M001 (in the
 project's roadmap registry). It does NOT evaluate the *quality* of a
@@ -17,7 +17,7 @@ to write registries that do not trigger it, and that is a different skill
 from writing honest ones. Some findings are usually-wrong-but-legitimately-
 right-often-enough that stopping on them would be false precision. So:
 
-  * VIOLATIONS (R1-R27) block. They mark a registry that is incomplete in a
+  * VIOLATIONS (R1-R28) block. They mark a registry that is incomplete in a
     way the prose forbids outright.
   * WARNINGS (W1-W4) do not block by default. They mark shapes worth a
     second look. `--strict` promotes them to violations; CI runs strict,
@@ -390,6 +390,36 @@ MSG = {
         "değildir. Bayat bir eser üzerindeki çalışma zamanı kararı, zayıf bir ölçüm değil, "
         "YANLIŞ BİR GÜVENCEDİR.",
     ),
+    "R28_no_produced_artifacts": (
+        "R28: coverage claims {n} finished phase(s) but records no produced_artifacts and no "
+        "produced_artifacts_waived — every phase read files a human WROTE. The files the build, "
+        "the packaging script or the generator PRODUCES were in nobody's slice, and a defect that "
+        "exists only in the output is invisible to all of them. Name them, or waive them in words.",
+        "R28: kapsam {n} bitmiş faz bildiriyor ama produced_artifacts da "
+        "produced_artifacts_waived da yok — bütün fazlar insanın YAZDIĞI dosyaları okudu. "
+        "Derlemenin, paketleme betiğinin ya da üreticinin ÜRETTİĞİ dosyalar hiçbir dilimde "
+        "değildi ve yalnızca ÇIKTIDA var olan bir kusur hepsine görünmezdir. Ya sayın, ya da "
+        "sözle feragat edin.",
+    ),
+    "R28_artifact_not_inspected": (
+        "R28: produced artifact {id} is listed with inspected: {got!r} — listing an output is not "
+        "looking at it. Use 'yes', or 'no'/'partial' WITH a why_not saying where the line was "
+        "drawn. The gap this rule closes was found by a USER, not an audit.",
+        "R28: {id} üretilen eseri inspected: {got!r} ile listelenmiş — bir çıktıyı saymak, ona "
+        "BAKMAK değildir. 'yes' yazın, ya da sınırın nereye çizildiğini söyleyen bir why_not ile "
+        "'no'/'partial' yazın. "
+        "Bu kuralın kapattığı boşluğu bir KULLANICI buldu, denetim değil.",
+    ),
+    "W8_silent_verification": (
+        "W8: result {id} rests on a runtime arbiter whose failure mode is silence ({why}) — a wait "
+        "with no deadline cannot tell 'still running' from 'never going to finish'. A verification "
+        "step that can hang instead of failing produces no verdict, and no verdict reads like "
+        "patience.",
+        "W8: {id} sonucu, başarısızlık biçimi SESSİZLİK olan bir çalışma zamanı hakemine "
+        "dayanıyor ({why}) — süresi olmayan bir bekleme, 'hâlâ koşuyor' ile 'hiç bitmeyecek'i "
+        "ayırt edemez. Asılabilen bir doğrulama adımı hiçbir karar üretmez ve karar yokluğu, "
+        "sabır gibi okunur.",
+    ),
     "W6_domain_probe_unanswered": (
         "W6: every coverage phase is done but the domain probe was never answered ({why}) and no "
         "domain_probe_waived is recorded — an audit can finish all its phases and still never ask "
@@ -481,8 +511,8 @@ MSG = {
         "için bu sınır muaf tutulmaz, unutulur.",
     ),
     "clean": (
-        "OK — {n} entries checked, no R1–R27 violations.",
-        "OK — {n} girdi kontrol edildi, R1–R27 ihlali yok.",
+        "OK — {n} entries checked, no R1–R28 violations.",
+        "OK — {n} girdi kontrol edildi, R1–R28 ihlali yok.",
     ),
     "found": (
         "{n} violation(s) found.",
@@ -715,6 +745,16 @@ def check(data: dict, lang: str,
     # the system. R27 is R19 with the supplier changed, because the people who
     # built the thing are the wrong witnesses for the assumption they did not
     # know they were making. Rationale: references/security-probe.md.
+    # R28 + W8 (schema 1.12) — the two blind spots a green audit still had.
+    # R28 is about WHICH FILES were in scope and is the first rule in this file
+    # that treats the source tree as an incomplete inventory. W8 is about
+    # whether a verification can return a verdict at all; every earlier rule
+    # assumes it can, and one of them (R25) is specifically about trusting a
+    # runtime result -- which is exactly the kind that can hang.
+    if _schema_at_least(data, (1, 12)):
+        errs += _check_produced_artifacts(data.get("coverage"), lang)
+        warns += _silent_verification_warning(results, lang)
+
     if _schema_at_least(data, (1, 11)):
         sec_entries = ([("hypothesis", h) for h in hyps.values()]
                        + [("feature", f) for f in features]
@@ -1379,6 +1419,100 @@ def _check_artifact_freshness(hyps: dict, results: list[dict], lang: str) -> lis
     return errs
 
 
+def _check_produced_artifacts(cov: Any, lang: str) -> list[str]:
+    """R28 — the audit reads what was WRITTEN, not what gets PRODUCED.
+
+    Every rule before this one is about how carefully you read a file. None of
+    them asks WHICH files. Coverage is declared in slices, slices are cut out
+    of the source tree, and the source tree contains exactly the files a human
+    typed. The `web.config` a packaging script emits, the settings file a
+    publish step composes, the client a code generator writes -- none of those
+    is in any slice, because no slice was ever drawn around them.
+
+    In the audit that produced this rule, six phases, a MERGE pass, a bug
+    registry and a security probe all closed green. A packaging script wrote a
+    `web.config` containing a BEL character, because its here-string was
+    interpolating and the text had a backtick in it. The SOURCE was correct.
+    The OUTPUT was corrupt. The difference existed only in the generated file,
+    so reading the script -- carefully, twice, by two different passes -- could
+    not produce the finding. The user found it, in an installation document,
+    weeks later.
+
+    The rule is deliberately cheap to satisfy and expensive to fake: list what
+    the repository produces, say whether you looked, or waive it in a sentence.
+    Two of those three are one line. The third is the one that would have
+    caught it.
+    """
+    if not isinstance(cov, dict):
+        return []
+    phases = [ph for ph in (cov.get("phases") or []) if isinstance(ph, dict)]
+    done = [ph for ph in phases if _s(ph.get("status")).lower() == "done"]
+    if not done:
+        return []
+
+    errs: list[str] = []
+    arts = cov.get("produced_artifacts")
+    if not arts:
+        if not _s(cov.get("produced_artifacts_waived")):
+            errs.append(m("R28_no_produced_artifacts", lang, n=len(done)))
+        return errs
+
+    if not isinstance(arts, list):
+        return errs
+    for a in arts:
+        if not isinstance(a, dict):
+            continue
+        seen = _s(a.get("inspected")).lower()
+        # "no" is allowed ONLY with a reason; anything else must say what was seen.
+        if seen in ("yes", "y", "true", "evet"):
+            continue
+        # "partial" is a real third state and it earned its place the first time
+        # this rule ran: a publish output whose OWN generated files were read
+        # while its hundreds of NuGet dependencies were not. Forcing that to
+        # "no" would have understated it and "yes" would have overstated it.
+        # It costs the same as "no": say in words where the line was drawn.
+        if seen in ("no", "n", "false", "hayir", "hayır",
+                    "partial", "kismi", "kısmi") and _s(a.get("why_not")):
+            continue
+        errs.append(m("R28_artifact_not_inspected", lang,
+                      id=a.get("id") or a.get("path") or "?", got=seen or None))
+    return errs
+
+
+def _silent_verification_warning(results: Any, lang: str) -> list[str]:
+    """W8 — a verification step that can HANG produces no verdict.
+
+    Mizan's two-sided rule asks whether an arbiter can come out red as well as
+    green. It does not ask whether it can come out at ALL. Those are different
+    failures and the second one is quieter: a red run tells you something is
+    wrong, a hung run tells you nothing while looking exactly like patience.
+
+    The run that produced this rule: a newly added network policy blocked the
+    loopback address a test fixture delivered to. The fixture awaited a request
+    that would now never arrive, with no deadline. The suite sat for twenty-five
+    minutes at zero CPU. It did not fail. It did not pass. The auditor was
+    about to report the change as verified.
+    """
+    if not isinstance(results, list):
+        return []
+    warns: list[str] = []
+    for r in results:
+        if not isinstance(r, dict):
+            continue
+        if _s(r.get("threshold_met")).lower() not in ("yes", "true", "y"):
+            continue
+        note = _s(r.get("failure_is_loud"))
+        if note:
+            continue
+        arb = _s(r.get("arbiter_ran"))
+        if not arb:
+            continue
+        warns.append(m("W8_silent_verification", lang, id=r.get("id"),
+                       why=("no failure_is_loud recorded" if lang != "tr"
+                            else "failure_is_loud kaydı yok")))
+    return warns
+
+
 def _domain_probe_warning(probes: Any, cov: Any, lang: str) -> list[str]:
     """W6 — the phases can all close while the field was never asked.
 
@@ -1552,7 +1686,7 @@ def _append_only(new: dict, old: dict, lang: str) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(description="Mizan registry R1–R27 validator")
+    ap = argparse.ArgumentParser(description="Mizan registry R1–R28 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
     ap.add_argument("--lang", choices=["en", "tr"], default="en")
     ap.add_argument("--against", metavar="GITREF",

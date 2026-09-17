@@ -278,3 +278,57 @@ things: a grep, a regex sweep, a small script to count endpoints.
 - **Cost of finding it late:** every finding the instrument touched has to
   be re-measured, and the ones it cleared are the expensive half — nobody
   goes back to re-check a green.
+
+## 15. The file nobody wrote (the defect that exists only in the output)
+
+- **What it looks like:** the audit reads source and finds nothing, because
+  the defect is not in the source. A packaging script emits a config file; a
+  publish step composes a settings file; a generator writes a client. Those
+  files ship, and a user opens one, and it is wrong — while the script that
+  wrote it is correct.
+- **The concrete escape:** a PowerShell here-string was written `@" ... "@`
+  (interpolating) and the text inside contained backticks, the way anyone
+  writes code identifiers in prose. PowerShell reads a backtick as an escape:
+  `` `a `` became **0x07 (BEL)** and `` `t `` became **0x09 (TAB)**. The
+  shipped `web.config` read *"all settings live in \<BEL\>ppsettings.Production.json"* —
+  the letter looked eaten. Six phases, a MERGE pass, a bug registry and a
+  security probe had all closed green over that script.
+- **Why no rule caught it:** coverage is declared in slices; slices are cut
+  out of the source tree; the source tree holds what humans typed. The
+  artifact was in nobody's slice because no slice was ever drawn around it.
+  And reading the script is not a weaker way to find this — it is a way that
+  **cannot** find it. The source was right.
+- **The check:** enumerate what the repository PRODUCES, not just what it
+  contains. Then **run the producer and read the output**. Cheap proxies that
+  work: count control characters in generated text, diff the generated file
+  against what the template says it should contain, byte-compare across two
+  runs.
+- **Where it is recorded:** `coverage.produced_artifacts[] { id, inspected,
+  why_not }` or `coverage.produced_artifacts_waived` (R28).
+- **Cost of finding it late:** it ships. Every installation carries it, and
+  the only people positioned to notice are the ones who cannot fix it.
+
+## 16. The value you checked is not the value you used
+
+- **What it looks like:** the guard is present, correct, and reviewed. It
+  validates X. The code then acts on Y, where Y was obtained separately and is
+  only *usually* equal to X.
+- **The concrete escape:** a policy blocking outbound requests to internal
+  addresses resolved the hostname, checked every returned IP, and then
+  connected **by hostname** — a second resolution, which does not have to
+  return the first one's answer. The check was right, the connection was
+  unguarded, and the window it reopened was precisely the one the policy had
+  been written to close. The line looked correct at review.
+- **The general shape:** validate-then-refetch. Resolve twice, read a file
+  twice, fetch a record twice, re-parse a token twice. Anything where the
+  validated value and the used value are obtained by two separate acts.
+- **The check:** for every guard, name the value it validated and the value
+  the next line consumes, and ask whether they are the **same object** or two
+  results of the same question. If the latter, pass the validated value
+  forward instead of asking again.
+- **Why it belongs in a checklist and not a validator rule:** no registry
+  field can see it. It is found by reading a guard and its caller **together**
+  — which is the same relation-not-container blindness R23 names, at the
+  scale of a single method.
+- **Cost of finding it late:** the audit records a closed hole that is open,
+  which is worse than recording nothing.

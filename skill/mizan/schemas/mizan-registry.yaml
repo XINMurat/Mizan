@@ -1,5 +1,5 @@
 # =====================================================================
-# Mizan Registry Schema v1.11  (mizan-registry.yaml)
+# Mizan Registry Schema v1.12  (mizan-registry.yaml)
 # =====================================================================
 # Machine-readable research/engineering registry aligned with the Mizan
 # methodology. Human-editable, AI-readable, git-diff friendly.
@@ -189,6 +189,28 @@
 #        one is loaded on every registry write and that one only in Mode 7.
 #        Same move R22 made into feature-gate.md.
 #
+#   R28. A coverage block with finished phases lists what the repository
+#        PRODUCES -- `coverage.produced_artifacts`, each saying whether it was
+#        `inspected` (yes | no | partial; the last two need a `why_not`) -- or
+#        waives it in one sentence with `produced_artifacts_waived`.
+#
+#        This is the first rule here that doubts the INVENTORY rather than the
+#        reading. Slices are cut out of the source tree; the source tree holds
+#        what a human typed; a generated config sits in no slice at all. The
+#        escape that produced it, and the cheap checks that would have caught
+#        it, are in references/checklist.md item 15 -- one file away, because
+#        this one is paid on every registry write. Same move R22 and R26 made.
+#
+#        Enforced from schema_version 1.12.
+#
+#   W8.  (warning) A result claiming a met threshold on a runtime arbiter
+#        records `failure_is_loud` -- one line on how that arbiter FAILS.
+#        Two-sidedness asks whether it can come out red; this asks whether it
+#        can come out AT ALL. A hung verification returns no verdict, and no
+#        verdict reads like patience. Warning, not violation: many arbiters
+#        fail loudly by construction and forcing the field on all of them would
+#        buy ritual. Narrative: checklist.md item 15's sibling case.
+#
 # Tiers: K (proven) | H (plausible hypothesis) | S (speculative)
 #        R (refuted) | KKE (critical control missing) | Y (misleading)
 #
@@ -217,6 +239,9 @@
 #        Closed, refuted and dormant entries are settled and exempt.
 #
 # SCHEMA VERSIONS:
+#   1.12 — adds `coverage.produced_artifacts` / `produced_artifacts_waived`
+#         and `results[].failure_is_loud`; activates R28 and W8.
+#         MIGRATION: 1.0-1.11 unaffected.
 #   1.0 — base format.
 #   1.1 — adds an OPTIONAL result.statistics block (effect_size, n,
 #         uncertainty, seeds_variance) for machine-readable meta-analysis.
@@ -537,6 +562,14 @@ results:
       code under audit — not that a suite passed, but which BUILD passed.
       Naming the command is not enough if that command can silently reuse a
       stale artifact; say what was checked and how.
+    failure_is_loud: >
+      schema 1.12, W8. One line on HOW this arbiter fails. Two-sidedness asks
+      whether it can come out red; this asks whether it can come out AT ALL.
+      A wait with no deadline, a poll with no cap, a fixture that blocks on a
+      request that will never arrive — each returns no verdict, and no verdict
+      reads like patience. Say what bounds it: a timeout, a retry cap, a
+      watchdog. A warning rather than a violation, because many arbiters fail
+      loudly by construction; it fires so the question gets asked once.
     honesty_annexes:                # MANDATORY, non-empty (R5)
       - "n=1 dataset, single seed"
       - "instrument dependence: ..."
@@ -743,6 +776,24 @@ coverage:
                                     # asked, and why. Empty + all phases done +
                                     # an unanswered domain probe = W6 warns.
                                     # Waiving is a decision; silence is not.
+  # schema 1.12, R28 — WHAT THIS REPOSITORY PRODUCES.
+  # Every slice above is cut out of the source tree, which holds exactly the
+  # files a human typed. The config a packaging script emits, the settings file
+  # a publish step composes, the client a generator writes are in NO slice. Not
+  # under-audited: absent. Fill this while mapping the repo, then RUN the
+  # producer and read its output — the escape that made this rule had a correct
+  # script and a corrupt output, so reading the source could not find it.
+  produced_artifacts:
+    - id: "PA-01"
+      path: "dist/web.config"
+      produced_by: "infra/publish.ps1"
+      inspected: "yes"              # yes | no | partial
+      evidence: "generated and read: 0 control characters, template text intact"
+      why_not: ""                   # REQUIRED when inspected is no/partial —
+                                    # say where the line was drawn, in words
+  produced_artifacts_waived: ""     # one sentence, ONLY if this repo produces
+                                    # nothing worth reading. Empty + finished
+                                    # phases + no produced_artifacts = R28.
   phases:
     - id: "P0"
       slice: "scoping only — the partition plan"

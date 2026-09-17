@@ -24,7 +24,7 @@ maintaining living hypothesis registries.
 hypothesis carries a refutation condition; surprising positives require a
 symmetric confound control before promotion; history is append-only;
 refuted entries are kept `[R]`, never deleted; the producer of a result is
-not the sole auditor who promotes it (R1–R27).
+not the sole auditor who promotes it (R1–R28).
 
 ### Install
 
@@ -156,13 +156,13 @@ are entry points rather than the only way in.
   · [Yazılım modları](https://xinmurat.github.io/Mizan/tr/yazilim-modlari.html)
   · [Alan uyarlama](https://xinmurat.github.io/Mizan/tr/alan-uyarlama.html) —
   or press **TR** on any page.
-- **Contributing:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — the R1–R27
+- **Contributing:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — the R1–R28
   discipline for PRs, bilingual-parity rule (bilingual).
 
 ### Tooling (`tools/`)
 
 A **judgment-free, LLM-free** validator enforces the mechanical hard rules
-R1–R27 on any `mizan-registry.yaml`:
+R1–R28 on any `mizan-registry.yaml`:
 
 ```bash
 pip install -r tools/requirements.txt
@@ -182,7 +182,7 @@ skill/mizan/                    raw skill: SKILL.md, references/, schemas/  (EN 
 docs/en/                        English long-form docs
 docs/tr/                        Türkçe uzun-metin dokümanlar
 templates/                      copy-and-fill templates (registry schema)
-examples/                       worked registry that passes R1–R27;
+examples/                       worked registry that passes R1–R28;
                                 portability tests across hostile + neutral hosts;
                                 auditing a document whose source you cannot reach
 tools/                          mizan_validate.py + pre-commit hook
@@ -206,7 +206,7 @@ taşınabilir bir araca dönüştürür.
 her hipotez bir çürütme koşulu taşır; sürpriz pozitifler terfiden önce
 simetrik confound kontrolü ister; geçmiş append-only'dir; çürüyen girdiler
 `[R]` olarak tutulur, silinmez; bir sonucun üreticisi onu terfi ettiren tek
-denetçi olamaz (R1–R27).
+denetçi olamaz (R1–R28).
 
 ### Kurulum
 
@@ -316,13 +316,13 @@ giriş yolu değil, birer giriş noktasıdır.
 - **İngilizce:** [Usage guide](https://xinmurat.github.io/Mizan/en/usage-guide.html)
   · [Reference](https://xinmurat.github.io/Mizan/en/reference.html) — ya da
   herhangi bir sayfada **EN**'e basın.
-- **Katkı:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — PR'lar için R1–R27
+- **Katkı:** [`CONTRIBUTING.md`](CONTRIBUTING.md) — PR'lar için R1–R28
   disiplini ve iki-dillilik kuralı (iki dilli).
 
 ### Araçlar (`tools/`)
 
 **Yargısız, LLM'siz** bir doğrulayıcı, herhangi bir `mizan-registry.yaml`
-üzerinde mekanik sert kuralları (R1–R27) uygular:
+üzerinde mekanik sert kuralları (R1–R28) uygular:
 
 ```bash
 pip install -r tools/requirements.txt

@@ -416,6 +416,40 @@ doğru ama **dar**: `[H]` ile yetinen bir denetim ona hiç çarpmaz. W6'yı doğ
 koşuda prob ilk gün `supplied_by: none` ile açıldı ve yedi faz etrafında
 kapandı. **Feragat bir karardır; sessizlik değildir.**
 
+## 2.5c Şema 1.12 — envanterden ve sessizlikten doğan iki kural
+
+**R28 — denetim, YAZILANI okur; ÜRETİLENİ değil.** Buraya kadarki her kural bir
+dosyanın ne kadar dikkatli okunduğunu sorar. Hiçbiri **hangi dosyalar** diye
+sormaz. Kapsam dilimlerle ilan edilir, dilimler kaynak ağacından kesilir ve
+kaynak ağacı tam olarak bir insanın yazdığı dosyaları tutar — paketleme
+betiğinin ürettiği `web.config`, yayın adımının kurduğu ayar dosyası, bir
+üreticinin yazdığı istemci hiçbir dilimde değildir. Az denetlenmiş değil:
+**yok**.
+
+Kuralı doğuran kaçak: altı faz, bir MERGE pası, bir hata registry'si ve bir
+güvenlik probu yeşil kapandı; bu sırada bir paketleme betiği gönderilen
+`web.config`'e **ZİL karakteri** yazıyordu, çünkü here-string'i interpolasyonlu
+ve metinde tersvurgu vardı. **Kaynak doğruydu. Çıktı bozuktu.** Fark yalnızca
+üretilen dosyada vardı; betiği okumak — dikkatlice, iki kez, iki ayrı pasta —
+bu bulguyu **üretemezdi**. Kullanıcı haftalar sonra bir kurulum belgesinde
+gördü.
+
+Bu yüzden `coverage.produced_artifacts` deponun **ÜRETTİĞİ** şeyleri sayar ve
+her biri `inspected` der (`yes` / `no` / `partial`; son ikisi bir `why_not`
+ile). Saymak bir satır, feragat bir cümle — ve **üretip bakmak** üçüncü
+seçenektir; bir şey yakalayan da odur.
+
+**W8 — bir hakem hiç karar verebiliyor mu?** İki uçluluk, hakemin yeşil kadar
+kırmızı da verebilmesini sorar. Karar verebilmesini **sormaz**. İkisi farklı
+biçimde bozulur ve ikincisi daha sessizdir: kırmızı bir koşu bir şeyin yanlış
+olduğunu söyler, **asılı** bir koşu hiçbir şey söylemez ve tam olarak sabır
+gibi görünür. Yeni bir ağ politikası, bir test düzeneğinin teslimat yaptığı
+loopback adresini kesti; düzenek asla gelmeyecek bir isteği süresiz bekledi ve
+süit yirmi beş dakika **sıfır CPU'da** oturdu. Ne kırmızı, ne yeşil. Değişiklik
+"doğrulandı" diye raporlanmak üzereydi. `failure_is_loud`, hakemin nasıl
+başarısız olduğunu söyleyen tek satırdır — ihlal değil uyarıdır, çünkü pek çok
+hakem yapısı gereği gürültülü başarısız olur; soru **bir kez sorulsun** diye var.
+
 ---
 
 ## 2.6 Prob blokları (madde 3.12 ve 3.13'ün kaydı)
@@ -755,7 +789,58 @@ uçları sayan küçük bir betik.
 > üretici-tarafı iddia, madde 11 denetçinin kör noktasıdır; buradaki 3.10 ve
 > 3.11 bu ikisinin yeri değişmiş hâlidir. 12 ve 13 iki dilde aynı numarayı
 > taşır — kurallar (R19/R20) ve rampalar onlara numarayla atıf yapar. Madde 14
-> iki dilde de 14'tür (R24/R25).
+> iki dilde de 14'tür (R24/R25). Madde 15 (yalnızca çıktıda var olan kusur,
+> R28) ve madde 16 (denetlenen değer ile kullanılan değerin ayrışması) da iki
+> dilde aynı numarayı taşır.
+
+## 3.15 Kimsenin yazmadığı dosya (yalnızca çıktıda var olan kusur)
+
+- **Neye benzer:** denetim kaynağı okur ve bir şey bulamaz, çünkü kusur
+  kaynakta değildir. Paketleme betiği bir ayar dosyası üretir, yayın adımı bir
+  yapılandırma kurar, bir üretici istemci yazar. O dosyalar gönderilir, bir
+  kullanıcı birini açar ve yanlıştır — oysa onu yazan betik doğrudur.
+- **Somut kaçak:** bir PowerShell here-string'i `@" ... "@` (interpolasyonlu)
+  yazılmıştı ve içindeki metin, herkesin kod adlarını yazdığı gibi tersvurgu
+  içeriyordu. PowerShell tersvurguyu kaçış olarak okur: `` `a `` → **0x07
+  (ZİL)**, `` `t `` → **0x09 (SEKME)**. Gönderilen `web.config`'te
+  *"Bütün ayarlar \<ZİL\>ppsettings.Production.json'da duruyor"* yazıyordu —
+  harf yenmiş görünüyordu.
+- **Neden hiçbir kural yakalamadı:** kapsam dilimlerle ilan edilir, dilimler
+  kaynak ağacından kesilir. Eser hiçbir dilimde değildi çünkü etrafına hiç
+  dilim çizilmemişti. Ve betiği okumak bunu bulmanın **zayıf** bir yolu değil,
+  **bulamayan** bir yoludur. Kaynak doğruydu.
+- **Denetim:** deponun **ürettiğini** sayın, içerdiğini değil. Sonra
+  **üreticiyi koşturup çıktıyı okuyun**. Ucuz ve işe yarayan vekiller:
+  üretilen metindeki denetim karakterlerini saymak, çıktıyı şablonun söylediği
+  şeyle karşılaştırmak, iki koşuyu bayt bayt karşılaştırmak.
+- **Nereye yazılır:** `coverage.produced_artifacts[]` ya da
+  `produced_artifacts_waived` (R28).
+- **Geç bulmanın bedeli:** gönderilir. Her kurulum onu taşır ve fark edebilecek
+  tek kişiler, düzeltemeyecek olanlardır.
+
+## 3.16 Denetlediğiniz değer, kullandığınız değer değil
+
+- **Neye benzer:** muhafız yerinde, doğru ve gözden geçirilmiş. X'i doğruluyor.
+  Sonra kod Y üzerinde işlem yapıyor — Y ayrıca elde edilmiş ve X'e yalnızca
+  *genellikle* eşit.
+- **Somut kaçak:** giden isteklerin iç ağ adreslerine çıkmasını engelleyen bir
+  politika, adı çözdü, dönen her IP'yi denetledi ve sonra **ada göre**
+  bağlandı — ikinci bir çözüm, ki birincinin yanıtını vermek zorunda değildir.
+  Denetim doğruydu, bağlantı korumasızdı ve yeniden açtığı pencere, politikanın
+  kapatmak için yazıldığı pencerenin ta kendisiydi. Satır, incelemede doğru
+  görünüyordu.
+- **Genel biçim:** doğrula-sonra-yeniden-al. İki kez çöz, iki kez oku, iki kez
+  getir, iki kez ayrıştır. Doğrulanan değerle kullanılan değerin **iki ayrı
+  eylemle** elde edildiği her yer.
+- **Denetim:** her muhafız için, doğruladığı değeri ve bir sonraki satırın
+  tükettiği değeri adlandırın ve **aynı nesne mi**, yoksa aynı sorunun iki
+  yanıtı mı diye sorun. İkincisiyse, yeniden sormak yerine doğrulanan değeri
+  ileriye taşıyın.
+- **Neden kontrol listesinde, doğrulayıcıda değil:** hiçbir registry alanı bunu
+  göremez. Muhafızla çağıranı **birlikte** okuyunca bulunur — R23'ün adını
+  koyduğu "kapsayıcı değil ilişki" körlüğünün tek bir metot ölçeğindeki hâli.
+- **Geç bulmanın bedeli:** denetim, açık olan bir deliği kapalı diye kaydeder;
+  bu, hiç kaydetmemekten kötüdür.
 
 ---
 

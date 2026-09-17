@@ -416,6 +416,65 @@ jobs:
           echo "$out3" | grep -q "R26:\|R27:\|W7:" && { echo "FAIL: R26-R27 fired on a 1.10 registry" >&2; exit 1; }
           echo "OK: R26-R27 wait for schema 1.11."
 
+      - name: Self-test — R28/W8 must refuse a coverage claim over unread outputs
+        run: |
+          set -e
+          # Every rule before R28 asks how carefully a file was read; none asks
+          # WHICH files existed to read. This test exists because a green audit --
+          # six phases, a MERGE, a bug registry, a security probe -- sat on top of a
+          # packaging script writing a BEL character into a shipped web.config.
+          # The source was correct. The output was corrupt. A user found it.
+          tmp="$(mktemp --suffix=.yaml)"
+          cat > "$tmp" <<'YAML'
+          registry: {project: "P", schema_version: "1.12"}
+          hypotheses: []
+          results:
+            - id: "SONUC-001"
+              hypothesis: "H-001"
+              threshold_met: "yes"
+              arbiter_ran: "xUnit -- the full suite"
+              honesty_annexes: ["n=1, one machine"]
+          coverage:
+            target: "api"
+            phases:
+              - {id: "P0", slice: "scoping", status: "done"}
+              - {id: "MERGE", slice: "recon", status: "done", cross_slice: [{pair: "P0xP0", outcome: "holds"}]}
+          YAML
+          out="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out"
+          # finished phases, and nobody said what the repo PRODUCES
+          echo "$out" | grep -q "R28:.*produced_artifacts" || { echo "FAIL: R28 let a phased audit close over an unlisted output set" >&2; exit 1; }
+          # a runtime verdict whose failure mode is silence
+          echo "$out" | grep -q "W8:.*SONUC-001" || { echo "FAIL: W8 missed a runtime arbiter with no stated failure mode" >&2; exit 1; }
+          # LISTING is not LOOKING: an artifact with no verdict is still a violation
+          python - "$tmp" <<'PY28'
+          import io, sys
+          p = sys.argv[1]; s = io.open(p, encoding="utf-8").read()
+          add = '  produced_artifacts:\n    - {id: "PA-01", path: "dist/web.config", inspected: ""}\n  phases:'
+          io.open(p, "w", encoding="utf-8").write(s.replace("  phases:", add, 1))
+          PY28
+          out2="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out2" | grep -q "R28:.*PA-01" || { echo "FAIL: R28 accepted an artifact that was listed but never inspected" >&2; exit 1; }
+          echo "OK: R28 fires on an unlisted output set AND on a listed-but-unread one."
+          # ...and the honest version clears both. 'partial' is a real third state and
+          # it earns its place the same way 'no' does: with a why_not.
+          python - "$tmp" <<'PY29'
+          import io, sys
+          p = sys.argv[1]; s = io.open(p, encoding="utf-8").read()
+          s = s.replace('inspected: ""', 'inspected: "partial", why_not: "own generated files read; vendored deps not"')
+          s = s.replace('    arbiter_ran:', '    failure_is_loud: "blame-hang 5m; every fixture wait has a deadline"\n    arbiter_ran:')
+          io.open(p, "w", encoding="utf-8").write(s)
+          PY29
+          out3="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out3"
+          echo "$out3" | grep -q "R28:\|W8:" && { echo "FAIL: R28/W8 still fire on the filled-in version" >&2; exit 1; }
+          echo "OK: a named, partially-inspected artifact and a stated failure mode clear both."
+          # migration: the same file at 1.11 is unenforced, as every predecessor waited.
+          sed -i 's|schema_version: "1.12"|schema_version: "1.11"|' "$tmp"
+          out4="$(python tools/mizan_validate.py "$tmp" || true)"
+          echo "$out4" | grep -q "R28:\|W8:" && { echo "FAIL: R28/W8 fired on a 1.11 registry" >&2; exit 1; }
+          echo "OK: R28/W8 wait for schema 1.12."
+
       - name: Self-test — R4 must catch a deleted entry
         run: |
           set -e
