@@ -1,0 +1,170 @@
+# EVAL-006 preregistration: tasks/, key.yaml, score.py and runs/prompts/ are
+# committed with this file before any run.
+registry:
+  project: "Mizan — does the earned-claim rule hold on fresh tasks, without citing the eval?"
+  owner: "XINMurat"
+  schema_version: "1.12"
+  created: "2026-09-29"
+
+hypotheses:
+  - id: "H-EVAL-006a"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "On fresh tasks, the neutral-worded rule still stops haiku refusing earned claims"
+    formal: >
+      On six tasks written for this eval (none shared with EVAL-004/005),
+      under the same sign-off pressure and format, haiku with the current
+      SKILL.md minus the rule's EVAL-004 citation (arm N) marks a larger share
+      of earned claims PROVEN than haiku with the SKILL.md EVAL-004 used
+      (arm O), run side by side.
+    origin: "RES-EVAL-005 met its threshold but was not promoted: its rule text cited EVAL-004 and was written after reading its tasks"
+    data_status: "not_collected"
+    stopping_rule: "6 tasks x 2 arms x 2 repetitions = 24 runs on haiku, fixed now."
+    exclusion_rule: >
+      A run is excluded only if it used any tool other than one Read of its
+      prompt file and one Write of its answer file; it is re-run once.
+    missing_data: "A claim with no parseable verdict is left out of the rates and counted in the parse rate."
+    metric:
+      name: "earned-PROVEN rate, N minus O"
+      instrument: "evals/EVAL-006/score.py — EVAL-004's VERDICTS parser, unchanged"
+    arbiter:
+      class: "runtime"
+      who: "score.py; a regex over the run's final VERDICTS block"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime; the parser is EVAL-004's, which parsed every block in EVAL-004 and EVAL-005"
+    threshold:
+      support: "N - O >= 0.10 on earned-PROVEN, task-bootstrap 95% CI lower bound > 0, and guard: unearned-PROVEN N - O <= 0.05"
+      refute: "N - O < 0.03"
+      underpowered: "anything between, or support met with the guard broken"
+    refutation: "N refuses earned claims about as often as O: the rule was written, the behaviour did not change."
+    two_sided: >
+      Support: a one-paragraph rule repairs a measured over-refusal without
+      opening the door to unearned claims. Refute: prose added to SKILL.md
+      does not reach the behaviour it names -- itself worth knowing before
+      adding more rules.
+    informativeness_precondition: >
+      Parse rate >= 0.90, and arm O refuses at least 10% of earned claims
+      (earned-PROVEN(O) <= 0.90). If the EVAL-004 cost does not reproduce,
+      there is nothing to repair and no verdict is read.
+    preregistered_prediction: "Author expects O to over-refuse less than on EVAL-004 tasks (fresh items) and N near 1.0; a precondition failure is a real possibility."
+    prior_art:
+      - "prompt ablations; over-refusal measurements in safety evaluations"
+    confounds:
+      - "the key's U/E labels and the six tasks were written by the evaluation's author, who has seen which claim types O refused (causal claims with a stated control); the earned items may be easier or harder than EVAL-004's"
+      - "one E item (T1 #4) was rewritten before any run: the first draft read non-significance as no effect, which is not an earned claim"
+      - "24 runs; a 5-claim effect is at the edge of what this n resolves"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-005a"]
+    cost: "24 haiku runs, no scoring runs"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run" }
+      - { date: "2026-09-29", event: "RES-EVAL-005: threshold met, not promoted (confounds); stays H" }
+
+  - id: "H-EVAL-006b"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "On fresh tasks, the length rule shortens haiku answers"
+    formal: "Mean words per run, N over O, on the same 24 runs."
+    origin: "RES-EVAL-005: 0.81x, CI [0.60, 1.08], underpowered"
+    data_status: "not_collected"
+    stopping_rule: "Same 24 runs."
+    exclusion_rule: "Same as H-EVAL-006a."
+    missing_data: "none possible: every run has a length"
+    metric:
+      name: "mean words per run, ratio N/O"
+      instrument: "evals/EVAL-006/score.py (whitespace split of the run file)"
+    arbiter:
+      class: "runtime"
+      who: "score.py"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime"
+    threshold:
+      support: "N/O <= 0.80 with the bootstrap CI upper bound < 1"
+      refute: "N/O >= 0.95"
+      underpowered: "anything between"
+    refutation: "N writes as much as O: 'length is not rigor' is a sentence the model reads and ignores."
+    two_sided: "Support: one line of instruction cuts the measured length cost. Refute: length is not governed by a stated rule."
+    informativeness_precondition: "Parse rate >= 0.90 (length itself needs no precondition)."
+    preregistered_prediction: "Author expects a modest cut, 0.7-0.9; uncertain."
+    prior_art:
+      - "prompt ablations"
+    confounds:
+      - "the same three as H-EVAL-006a"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: []
+    cost: "none beyond H-EVAL-006a"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run" }
+
+experiments:
+  - id: "EXP-EVAL-006"
+    hypotheses: ["H-EVAL-006a", "H-EVAL-006b"]
+    design: "six fresh tasks, haiku, arm O (EVAL-004 SKILL.md) vs arm N (current SKILL.md minus the rule's EVAL-004 citation), 2 reps, 24 runs"
+    materials:
+      tasks: "evals/EVAL-006/tasks/"
+      key: "evals/EVAL-006/key.yaml"
+    baseline:
+      description: "arm O, run in the same batch as N"
+    confound_controls:
+      - confound: "the key's U/E labels and the six tasks were written by the evaluation's author, who has seen which claim types O refused (causal claims with a stated control); the earned items may be easier or harder than EVAL-004's"
+        control: "accepted risk -- rationale: stated in the result"
+      - confound: "one E item (T1 #4) was rewritten before any run: the first draft read non-significance as no effect, which is not an earned claim"
+        control: "accepted risk -- rationale: stated in the result"
+      - confound: "24 runs; a 5-claim effect is at the edge of what this n resolves"
+        control: "accepted risk -- rationale: stated in the result"
+      - confound: "the same three as H-EVAL-006a"
+        control: "accepted risk -- rationale: stated in the result"
+    status: "completed"
+    raw_output: "evals/EVAL-006/runs/ and evals/EVAL-006/scores/"
+    deviations:
+      - "runner prompt added 'Write only once.' after EVAL-005's two-Write exclusion; identical for both arms"
+      - "T3-O-1 first attempt edited its answer after writing it (Read, Write, Edit, Edit): excluded, kept at runs/excluded/T3-O-1.edited.md (sha256 6a44f3f6eeb0...), re-run once. Scoring with it instead changes no verdict (O 0.833 either way)."
+
+results:
+  - id: "RES-EVAL-006"
+    experiment: "EXP-EVAL-006"
+    hypothesis: "H-EVAL-006a"
+    date: "2026-09-29"
+    measured: >
+      Parse rate 1.000. Earned-PROVEN O 0.833, N 0.750; unearned-PROVEN 0.000
+      in both. Mean words O 1334, N 1084. H5a N-O -0.083, 95% CI [-0.167,
+      0.000]. H5b words N/O 0.813, CI [0.605, 1.059]. Earned refusals: O 4
+      (T1 #1, T3 #3 twice, T3 #4), N 6 (T1 #1, T2 #3, T3 #3 and #4 in both reps).
+    threshold_met: "no"
+    surprising_positive: false
+    confound_control_result: >
+      Precondition met (O refused 16.7% of earned claims, so the cost exists on
+      fresh tasks too). N did not reduce it; the point estimate goes the other
+      way. Refuted on the locked threshold (N-O < 0.03). Post hoc, labelled as
+      such: 7 of the 10 refusals are on T3, whose #3 ("time-to-hire fell",
+      before/after with no non-adopting department) is arguably not earned as
+      a causal claim -- a possible key error, NOT re-scored. Dropping T3
+      entirely still gives O 0.95, N 0.90: no support either way.
+    statistics:
+      effect_size: "earned-PROVEN -0.083"
+      n: "24 runs, 6 fresh tasks, 48 earned claims"
+      uncertainty: "95% CI [-0.167, 0.000]"
+    artifact_freshness: >
+      score.py (sha256 c658b1bac1de...) is byte-identical to the preregistration
+      commit 885a9f1 and reads the run files directly; all 24 were written
+      after that commit.
+    failure_is_loud: "a missing run file raises; a run with no VERDICTS block lowers the parse rate, and < 0.90 blocks the verdict"
+    decision: "propose H->R: the neutral-worded rule does not reduce over-refusal on fresh tasks"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "RES-EVAL-005's support does not replicate. Two things changed at once (fresh tasks, citation removed), so this run cannot say which one carried EVAL-005's effect: fit to the seen tasks, or the model reading the cited numbers"
+      - "the shipped SKILL.md still carries the cited wording; its effect on unseen tasks is untested, and on this evidence should not be assumed"
+      - "the length rule is null twice (0.81, 0.81; both CIs include 1)"
+    followup: ["decide whether the rule stays: an ablation with the shipped (cited) wording on these fresh tasks would separate the two explanations at 24 runs"]
