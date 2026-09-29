@@ -74,9 +74,9 @@ jobs:
             esac
             echo "::group::$rel ${strict:-(advisory)}"
             if [ -n "$base" ]; then
-              python tools/mizan_validate.py $strict --against "$base" "$rel"
+              python tools/mizan_validate.py $strict --format github --against "$base" "$rel"
             else
-              python tools/mizan_validate.py $strict "$rel"
+              python tools/mizan_validate.py $strict --format github "$rel"
             fi
             echo "::endgroup::"
           done < <(find . -path ./.git -prune -o -name '*mizan-registry*.y*ml' -print)
@@ -84,6 +84,21 @@ jobs:
             echo "No registry files found to validate." >&2
             exit 1
           fi
+
+      - name: Self-test — the output format never changes the verdict
+        run: |
+          set -e
+          # --format github turns findings into PR annotations; it must not
+          # turn a failing file into a passing one, or the reverse.
+          tmp="$(mktemp --suffix=.yaml)"
+          printf 'registry: {project: \"P\", schema_version: \"1.2\"}\nhypotheses:\n  - id: \"H-001\"\n    tier: \"K\"\n    formal: \"x\"\nexperiments: []\nresults: []\n' > "$tmp"
+          for fmt in text json github; do
+            set +e; python tools/mizan_validate.py --format $fmt "$tmp" > /tmp/out.$fmt; rc=$?; set -e
+            [ "$rc" -eq 1 ] || { echo "FAIL: --format $fmt exited $rc on a failing file" >&2; exit 1; }
+          done
+          python -c "import json; d=json.load(open('/tmp/out.json')); assert not d['clean'] and d['violations'], d"
+          grep -q '^::error file=' /tmp/out.github || { echo "FAIL: no annotation emitted" >&2; exit 1; }
+          echo "OK: text, json and github agree on the verdict."
 
       - name: Self-test — a file that is not a registry is refused, not passed
         run: |

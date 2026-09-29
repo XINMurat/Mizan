@@ -38,12 +38,17 @@ pip install -r tools/requirements.txt
 python tools/mizan_validate.py path/to/mizan-registry.yaml
 python tools/mizan_validate.py --lang tr registry.yaml      # Turkish messages
 python tools/mizan_validate.py --against HEAD registry.yaml  # append-only check
+python tools/mizan_validate.py --format github registry.yaml  # PR annotations (json also)
 ```
 
 Exit codes: `0` clean · `1` violations · `2` usage/parse error. A file that
 is not a registry — none of the known top-level sections, a section of the
 wrong type, an entry that is not a mapping — is a parse error (`2`), never a
 clean `0 entries`: an empty verdict computed from missing input is not a pass.
+
+`--format json` gives machine-readable output and `--format github` emits
+workflow annotations that show on the PR diff; the exit code never depends on
+the format.
 
 ### Pre-commit hook
 
@@ -83,6 +88,9 @@ python tools/mizan_validate.py --lang tr --against HEAD registry.yaml
 Registry olmayan bir dosya — bilinen üst düzey bölümlerin hiçbiri yok, bir
 bölüm yanlış tipte, bir girdi mapping değil — ayrıştırma hatasıdır (`2`), asla
 temiz bir `0 girdi` değil: eksik girdiden hesaplanan boş hüküm geçiş değildir.
+
+`--format json` makinece okunur çıktı, `--format github` PR diff'inde görünen
+annotation'lar üretir; çıkış kodu biçimden bağımsızdır.
 
 ### Pre-commit kancası
 
