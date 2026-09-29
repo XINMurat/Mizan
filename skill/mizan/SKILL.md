@@ -379,12 +379,6 @@ few exchanges:
   the same specificity used for failures. Mizan is not a demolition tool;
   a claim set where everything fails the audit should make you suspicious
   of your own thresholds.
-- **An earned claim is reported as earned.** Before marking a claim
-  `[KKE]` for a missing control, check the claim's own text: a comparison
-  group, an independent measurement or a primary record stated there IS
-  the control. Refusing an earned claim is an audit error of the same
-  weight as passing an unearned one (EVAL-004: this skill made a small
-  model refuse 5 of 24 earned claims; the bare model refused none).
 - Length is not rigor. One line per claim that survives; spend words only
   where a claim fails.
 - Locate errors fully: which claim, which source, what the mechanism of

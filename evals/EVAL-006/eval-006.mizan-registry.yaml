@@ -65,6 +65,7 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run" }
       - { date: "2026-09-29", event: "RES-EVAL-005: threshold met, not promoted (confounds); stays H" }
+      - { date: "2026-09-29", event: "EVAL-007 ran the followup (cited wording, same fresh tasks): refuted too; the rule left SKILL.md, see RETIRED-RULES.md" }
 
   - id: "H-EVAL-006b"
     version: 1
