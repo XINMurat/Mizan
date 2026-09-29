@@ -43,7 +43,9 @@ python tools/mizan_validate.py --format github registry.yaml  # PR annotations (
 
 Exit codes: `0` clean · `1` violations · `2` usage/parse error. A file that
 is not a registry — none of the known top-level sections, a section of the
-wrong type, an entry that is not a mapping — is a parse error (`2`), never a
+wrong type, an entry that is not a mapping, a sibling family's file (ux-mizan
+`flows`/`findings`, Kıyas `seeds`/`batch`) with none of Mizan's sections — is
+a parse error (`2`), never a
 clean `0 entries`: an empty verdict computed from missing input is not a pass.
 
 `--format json` gives machine-readable output and `--format github` emits
@@ -86,7 +88,8 @@ python tools/mizan_validate.py --lang tr --against HEAD registry.yaml
 
 Çıkış kodları: `0` temiz · `1` ihlal · `2` kullanım/ayrıştırma hatası.
 Registry olmayan bir dosya — bilinen üst düzey bölümlerin hiçbiri yok, bir
-bölüm yanlış tipte, bir girdi mapping değil — ayrıştırma hatasıdır (`2`), asla
+bölüm yanlış tipte, bir girdi mapping değil, Mizan bölümü olmayan bir kardeş
+aile dosyası (ux-mizan `flows`/`findings`, Kıyas `seeds`/`batch`) — ayrıştırma hatasıdır (`2`), asla
 temiz bir `0 girdi` değil: eksik girdiden hesaplanan boş hüküm geçiş değildir.
 
 `--format json` makinece okunur çıktı, `--format github` PR diff'inde görünen

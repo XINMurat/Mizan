@@ -118,6 +118,8 @@ jobs:
           printf 'hypotheses: 5\n'                 > "$tmp"; expect2 "section not a list"
           printf 'hypotheses:\n  - null\n  - 3\n'  > "$tmp"; expect2 "entry not a mapping"
           printf 'registry: []\n'                  > "$tmp"; expect2 "registry not a mapping"
+          printf 'registry: {project: P}\nflows: []\nfindings: []\n' > "$tmp"; expect2 "a ux-mizan registry"
+          printf 'batch: {}\nseeds: []\ndiscards: []\n' > "$tmp"; expect2 "a Kiyas batch"
           echo "OK: non-registries are refused with exit 2."
 
       - name: Self-test — the warning channel warns without blocking
