@@ -75,6 +75,7 @@ hypotheses:
     cost: "36 review runs + 6 scoring runs, model-hours; EVAL-001 cost the same"
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
+      - { date: "2026-09-29", event: "deviation, recorded before scoring: one launch hit the 20-subagent limit and never started; misreading which cell it was, T4-B-2 was launched a second time. The FIRST T4-B-2 output (sha256 0198c295..., committed in 9f03d9f before the second finished) is the one scored; the second was discarded unread. The cell that never started, T4-C-2, was launched once." }
 
   - id: "H-EVAL-002b"
     version: 1
@@ -125,6 +126,7 @@ hypotheses:
     cost: "none beyond H-EVAL-002a"
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
+      - { date: "2026-09-29", event: "deviation, recorded before scoring: one launch hit the 20-subagent limit and never started; misreading which cell it was, T4-B-2 was launched a second time. The FIRST T4-B-2 output (sha256 0198c295..., committed in 9f03d9f before the second finished) is the one scored; the second was discarded unread. The cell that never started, T4-C-2, was launched once." }
 
 experiments: []
 results: []
