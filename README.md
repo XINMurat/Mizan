@@ -74,7 +74,10 @@ already shaped for a Mizan registry (illet, breaking point, cheapest
 refutation, named prior art, and an **arbiter** block that mirrors Mizan's
 R8), and the loop closes both ways: `tools/mizan_export_refuted.py` turns this
 registry's `[R]`/`[Y]` entries into negative constraints Kıyas consults before
-proposing a relative of something already killed.
+proposing a relative of something already killed. `tools/mizan_export_results.py` sends the
+other half back — decided tiers for Kıyas' survival ledger, exported only for
+entries with a confirmed result (an untested H would otherwise count as a
+survivor).
 
 ```bash
 python tools/mizan_export_refuted.py registry.yaml -o refuted-patterns.yaml
@@ -236,7 +239,9 @@ biçimde üretir (illet, kırılma noktası, en ucuz çürütme, isimli prior-ar
 Mizan'ın R8'ini aynalayan bir **hakem** bloğu); döngü iki yönde de kapanır:
 `tools/mizan_export_refuted.py`, bu registry'nin `[R]`/`[Y]` girdilerini,
 Kıyas'ın çürütülmüş bir şeyin akrabasını önermeden önce baktığı
-negatif-kısıtlara çevirir.
+negatif-kısıtlara çevirir. `tools/mizan_export_results.py` diğer yarıyı geri yollar —
+Kıyas sağ-kalım defteri için karara bağlanmış tier'lar; yalnız onaylı sonucu
+olan girdiler için (test edilmemiş bir H aksi halde sağ kalmış sayılırdı).
 
 ```bash
 python tools/mizan_export_refuted.py registry.yaml -o refuted-patterns.yaml

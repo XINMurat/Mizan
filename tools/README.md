@@ -137,6 +137,26 @@ anlaşamaz. Anahtar-kelime çıkarımı bilerek kabadır: eşleşme, bakmak içi
 uyarıdır, otomatik ret değil. Yanlış pozitifin bedeli bir bakış; kaçırılmış
 çürütülmüş akrabanın bedeli tekrarlanmış bir deney.
 
+## `mizan_export_results.py` — decided tiers for the Kıyas ledger
+
+```bash
+python tools/mizan_export_results.py registry.yaml -o mizan-results.yaml
+# then, in the Kıyas repo:
+python tools/kiyas_ledger.py --sync mizan-results.yaml ledger/kiyas-ledger.yaml
+```
+
+The ledger counts K and H as survival, and every hypothesis starts at H. So a
+tier is exported only for an entry with a result whose `decision_confirmed_by`
+is filled (R7); everything else is listed as `pending` with its reason and no
+tier. `--sync` fills only EMPTY ledger tiers and reports any disagreement
+instead of overwriting.
+
+Kıyas sağ-kalım defteri için karara bağlanmış tier'lar. Defter K ve H'yi
+sağ-kalım sayar ve her hipotez H'de başlar; bu yüzden tier yalnız
+`decision_confirmed_by` dolu bir sonucu olan girdi için çıkar, gerisi
+gerekçesiyle `pending` listelenir. `--sync` yalnız BOŞ tier'ları doldurur,
+çelişkiyi üzerine yazmaz, raporlar.
+
 ## `token_budget.py` — the context budget, checked
 
 A skill costs tokens the way a dependency costs bytes: to everyone who installs

@@ -122,6 +122,31 @@ jobs:
           printf 'batch: {}\nseeds: []\ndiscards: []\n' > "$tmp"; expect2 "a Kiyas batch"
           echo "OK: non-registries are refused with exit 2."
 
+      - name: Self-test — an untested H is never exported as a survivor
+        run: |
+          set -e
+          cat > /tmp/r.yaml <<'Y'
+          registry: {project: t}
+          hypotheses:
+            - {id: H-1, tier: R}
+            - {id: H-2, tier: H}
+            - {id: H-3, tier: H}
+          results:
+            - {id: RES-1, hypothesis: H-1, decision_confirmed_by: owner}
+            - {id: RES-3, hypothesis: H-3, decision_confirmed_by: "pending owner review"}
+          Y
+          python tools/mizan_export_results.py /tmp/r.yaml -o /tmp/x.yaml
+          python - <<'PY'
+          import sys, yaml
+          x = yaml.safe_load(open("/tmp/x.yaml"))
+          got = [d["id"] for d in x["decided"]], sorted(p["id"] for p in x["pending"])
+          print(got)
+          if got != (["H-1"], ["H-2", "H-3"]):
+              print("FAIL: an undecided entry was exported with a tier"); sys.exit(1)
+          PY
+          set +e; python tools/mizan_export_results.py README.md >/dev/null 2>&1; rc=$?; set -e
+          [ "$rc" -eq 2 ] || { echo "FAIL: non-registry exited $rc" >&2; exit 1; }
+
       - name: Self-test — the warning channel warns without blocking
         run: |
           set -e
