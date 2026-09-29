@@ -8,6 +8,10 @@
 # base_ops lift the shipped example to the newest schema and add the blocks
 # the example does not carry (coverage, probes, cost_actual), so that R16-R28
 # are exercised too — the example alone stops at 1.7 and R19+ would never run.
+validator: tools/mizan_validate.py
+args: ["{file}", "--as-of", "2026-09-29", "--strict"]
+codes: "^[RW]\\d+_"
+baseline_loader: load_git_baseline
 base: examples/mizan-registry.example.yaml
 base_ops:
   - { path: registry.schema_version, set: "1.12" }
