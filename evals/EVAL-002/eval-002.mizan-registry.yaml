@@ -76,6 +76,7 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
       - { date: "2026-09-29", event: "deviation, recorded before scoring: one launch hit the 20-subagent limit and never started; misreading which cell it was, T4-B-2 was launched a second time. The FIRST T4-B-2 output (sha256 0198c295..., committed in 9f03d9f before the second finished) is the one scored; the second was discarded unread. The cell that never started, T4-C-2, was launched once." }
+      - { date: "2026-09-29", event: "run complete: precondition FAILED again (ceiling) -- arm A detected 0.958 > 0.85; no [R] and no [K]; stays [H], see RES-EVAL-002" }
 
   - id: "H-EVAL-002b"
     version: 1
@@ -127,6 +128,76 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
       - { date: "2026-09-29", event: "deviation, recorded before scoring: one launch hit the 20-subagent limit and never started; misreading which cell it was, T4-B-2 was launched a second time. The FIRST T4-B-2 output (sha256 0198c295..., committed in 9f03d9f before the second finished) is the one scored; the second was discarded unread. The cell that never started, T4-C-2, was launched once." }
+      - { date: "2026-09-29", event: "run complete: precondition FAILED again (ceiling) -- arm A detected 0.958 > 0.85; no [R] and no [K]; stays [H], see RES-EVAL-002" }
 
-experiments: []
-results: []
+experiments:
+  - id: "EXP-EVAL-002"
+    hypotheses: ["H-EVAL-002a", "H-EVAL-002b"]
+    design: >
+      EVAL-001's design unchanged, on six harder claim sets: no defect
+      signposted in its own item, four needing arithmetic, five needing
+      another item, unscored distractors, varied positions.
+    materials:
+      tasks: "evals/EVAL-002/tasks/"
+      key: "evals/EVAL-002/key.yaml"
+    baseline:
+      description: "arm A (task only) and arm C (45-word generic instruction)"
+    confound_controls:
+      - confound: "length: B may write more and so mention more -- mean words per arm is reported beside every rate"
+        control: "controlled by reporting: mean words per arm printed beside every rate (A 664, B 1438, C 847)"
+      - confound: "blinding is imperfect: tier tags are stripped, style and length are not"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+      - confound: "distractor items are not scored, so a review that also criticises them costs nothing in the score"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+      - confound: "the same model family writes the reviews and scores them"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+      - confound: "the answer key was written by the evaluation's author"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+      - confound: "the same five as H-EVAL-002a"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+      - confound: "six tasks give a wide CI; underpowered is a likely and legitimate outcome"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+    status: "completed"
+    raw_output: "evals/EVAL-002/runs/ and evals/EVAL-002/scores/"
+
+results:
+  - id: "RES-EVAL-002"
+    experiment: "EXP-EVAL-002"
+    hypothesis: "H-EVAL-002a"
+    date: "2026-09-29"
+    measured: >
+      Detection A 0.958, B 1.000, C 1.000. False flags A 0.167, B 0.167,
+      C 0.042. Mean words A 664, B 1438, C 847. Calibration passed in all six
+      packets. The only detection difference: T5-D3 (ROI is 200%, not 300%),
+      missed by both arm-A runs and caught by every B and C run.
+    threshold_met: "precondition_failed"
+    surprising_positive: false
+    confound_control_result: >
+      Ceiling again. The harder material moved arm A from 1.000 to 0.958,
+      not below the preregistered 0.85, so no verdict is read. The
+      false-flag guard reads 'broken' (B - C = +0.125), but the flags were
+      read by hand afterwards and most are ANSWER-KEY errors, not arm
+      errors: T4-S2 (the alert threshold was validated on the same incident
+      it was tuned on -- circular; 4 of the 9 flags, raised in all three
+      arms) and T1-S2 (0.5% prevalence in 41,200 people is about 206 cases,
+      yet 312 are confirmed -- a real contradiction the author did not
+      plant). The key is NOT corrected and nothing is re-scored: changing
+      the ruler after reading the result is the move this registry exists
+      to prevent.
+    statistics:
+      effect_size: "B-A +0.042 detection (one defect in one task); B-C 0.000"
+      n: "36 runs, 6 tasks"
+      uncertainty: "95% CI B-A [0.000, 0.125]"
+    decision: "no verdict; H-EVAL-002a/b stay [H]"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "two of the author's six 'sound' claims were not sound; the models found it -- the key's author is a fallible arbiter, exactly as the confounds list said"
+      - "measured across EVAL-001 and EVAL-002, not in dispute: the skill more than doubles output length (1370/1438 vs 619/664 words) with no detection gain on either task set"
+      - "the ceiling is a property of this model on short claim sets, observed twice; it is not evidence that the skill does nothing"
+    post_hoc_reasoning: >
+      Two explanations formed after the result, both [H]: (1) the base model
+      is already at ceiling on this task format, so any benefit would only
+      show with a weaker model or a different task (tier calibration,
+      promotion discipline over a long registry); (2) the skill's value lies
+      in properties this rubric does not score.
+    followup: ["EVAL-003 candidate: same tasks on a smaller model, where there is headroom", "EVAL-004 candidate: score what the skill claims beyond detection (does a [K] ever go to a claim without an independent arbiter?)"]
