@@ -25,8 +25,9 @@ hypotheses:
       Exactly 6 tasks x 3 arms x 2 repetitions = 36 runs, fixed now. No run is
       added or repeated because of what a result shows.
     exclusion_rule: >
-      A run is excluded only if it used any tool other than writing its answer
-      file (contamination: it could have loaded a skill). Excluded runs are
+      A run is excluded only if it used any tool other than one Read of its
+      prompt file and one Write of its answer file (contamination: it could
+      have loaded a skill or seen another run). Excluded runs are
       re-run once with the same prompt; a second contamination is reported as
       precondition failed for that cell.
     missing_data: "A run that returns no answer is re-run once; a second failure is reported."
@@ -73,6 +74,7 @@ hypotheses:
     cost: "36 review runs + 6 scoring runs, model-hours"
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run" }
+      - { date: "2026-09-29", event: "clarified before any run: each run reads its prompt from a file (the only way to hand arm B the skill text); all arms do the same, so the tool budget is one Read + one Write" }
 
   - id: "H-EVAL-001b"
     version: 1
