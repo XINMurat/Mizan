@@ -40,7 +40,10 @@ python tools/mizan_validate.py --lang tr registry.yaml      # Turkish messages
 python tools/mizan_validate.py --against HEAD registry.yaml  # append-only check
 ```
 
-Exit codes: `0` clean · `1` violations · `2` usage/parse error.
+Exit codes: `0` clean · `1` violations · `2` usage/parse error. A file that
+is not a registry — none of the known top-level sections, a section of the
+wrong type, an entry that is not a mapping — is a parse error (`2`), never a
+clean `0 entries`: an empty verdict computed from missing input is not a pass.
 
 ### Pre-commit hook
 
@@ -77,6 +80,9 @@ python tools/mizan_validate.py --lang tr --against HEAD registry.yaml
 ```
 
 Çıkış kodları: `0` temiz · `1` ihlal · `2` kullanım/ayrıştırma hatası.
+Registry olmayan bir dosya — bilinen üst düzey bölümlerin hiçbiri yok, bir
+bölüm yanlış tipte, bir girdi mapping değil — ayrıştırma hatasıdır (`2`), asla
+temiz bir `0 girdi` değil: eksik girdiden hesaplanan boş hüküm geçiş değildir.
 
 ### Pre-commit kancası
 
@@ -200,3 +206,27 @@ build'i diff'i okumadan yeşile çevirmek için koşturmak, eşik alışverişid
 **Alet, beyanıyla:** çevrimdışı erişilebilir bir tokenizer sözlüğü yok, bu yüzden
 token sayısı config'teki orandan karakterle tahmin edilir. Mutlak sayılar `[H]`;
 kapının yakaladığı kayma `[K]`, çünkü iki taraf da tek aletle ölçülür.
+
+---
+
+## `build_skill.py` — the package, byte for byte
+
+```bash
+python tools/build_skill.py           # writes mizan.skill from skill/mizan/
+python tools/build_skill.py --check   # CI: fails on any byte difference
+```
+
+Same file in all four repositories; it packages the one directory under
+`skill/`. LF line endings, a fixed timestamp and a sorted file list, so the
+same source always gives the same archive. `--check` compares the package as
+packaged: the check it replaced normalised CRLF on both sides, and a package
+zipped on Windows passed as in sync with `#!/usr/bin/env python3\r` inside.
+
+## `build_skill.py` — paket, bayt bayt
+
+`python tools/build_skill.py` paketi üretir, `--check` (CI) her bayt farkında
+düşer. Dört repoda aynı dosyadır ve `skill/` altındaki tek dizini paketler. LF,
+sabit zaman damgası, sıralı dosya listesi: aynı kaynak her zaman aynı arşivi
+verir. Yerine geçtiği kontrol CRLF'yi iki tarafta da normalleştiriyordu; içinde
+`#!/usr/bin/env python3\r` olan, Windows'ta sıkıştırılmış bir paket senkron
+göründü.

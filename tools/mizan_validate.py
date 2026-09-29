@@ -564,7 +564,37 @@ def load(path: str) -> dict:
         data = yaml.safe_load(fh)
     if not isinstance(data, dict):
         raise ValueError("top-level YAML is not a mapping")
+    _check_shape(data)
     return data
+
+
+# The sections the rules read. "No violations" is computed from their contents,
+# so a file that has none of them -- a typo in the key, the wrong file passed --
+# would otherwise be reported clean with 0 entries: a verdict derived from an
+# absence. Same guard as the sibling validators (ux-mizan: "does not look like a
+# registry"; kiyas: G7). Unknown extra keys stay allowed; excerpts use them.
+_LIST_SECTIONS = ("hypotheses", "experiments", "results", "features", "bugs")
+_KNOWN_SECTIONS = ("registry",) + _LIST_SECTIONS + ("coverage", "probes")
+
+
+def _check_shape(data: dict) -> None:
+    if not any(k in data for k in _KNOWN_SECTIONS):
+        raise ValueError(
+            "does not look like a Mizan registry (none of: %s)" % ", ".join(_KNOWN_SECTIONS))
+    reg = data.get("registry")
+    if reg is not None and not isinstance(reg, dict):
+        raise ValueError("'registry' must be a mapping, got %s" % type(reg).__name__)
+    for key in _LIST_SECTIONS:
+        val = data.get(key)
+        if val is None:
+            continue
+        if not isinstance(val, list):
+            raise ValueError("'%s' must be a list, got %s" % (key, type(val).__name__))
+        for i, item in enumerate(val):
+            if not isinstance(item, dict):
+                # Skipping it would shrink the entry count and pass silently.
+                raise ValueError("'%s'[%d] must be a mapping, got %s"
+                                 % (key, i, type(item).__name__))
 
 
 def load_git_baseline(ref: str, path: str) -> dict | None:

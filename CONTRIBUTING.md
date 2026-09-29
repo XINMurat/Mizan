@@ -62,15 +62,7 @@ The badge at the top of the README —
 find . -path ./.git -prune -o -name '*mizan-registry*.y*ml' -print \
   | xargs -I{} python tools/mizan_validate.py {}
 # job 2: skill package in sync with source
-python - <<'PY'
-import zipfile, os, sys
-n = lambda b: b.replace(b"\r\n", b"\n"); z = zipfile.ZipFile("mizan.skill")
-bad = [k for k in z.namelist()
-       if not os.path.exists(os.path.join("skill", k))
-       or n(z.read(k)) != n(open(os.path.join("skill", k), "rb").read())]
-print("skill in sync" if not bad else "OUT OF SYNC: " + ", ".join(bad))
-sys.exit(1 if bad else 0)
-PY
+python tools/build_skill.py --check   # byte for byte: a CRLF inside fails
 ```
 
 **Check a run's status:** the **Actions** tab on GitHub, the README badge,
@@ -87,16 +79,15 @@ If you change **any** file under `skill/mizan/`, rebuild the one-file
 package so it stays in sync (the shipped `mizan.skill` embeds those files):
 
 ```bash
-python - <<'PY'
-import zipfile, os
-with zipfile.ZipFile("mizan.skill", "w", zipfile.ZIP_DEFLATED) as z:
-    for root, _, files in os.walk("skill/mizan"):
-        for f in files:
-            p = os.path.join(root, f)
-            z.write(p, os.path.relpath(p, "skill"))
-print("rebuilt mizan.skill")
-PY
+python tools/build_skill.py           # writes mizan.skill
+python tools/build_skill.py --check   # what CI runs
 ```
+
+The builder is the same file in all four repositories. It writes LF line
+endings whatever the checkout has, a fixed timestamp and a sorted file list,
+and skips `__pycache__`/`*.pyc`. A package zipped by hand on Windows once
+shipped `#!/usr/bin/env python3\r` shebangs, and the old check normalised
+CRLF on both sides, so it passed as in sync.
 
 ### What lives where
 
@@ -185,8 +176,8 @@ request'te çalışan iki iş geçtiğinde **`main` için yeşildir**
 # 1. iş: her registry'yi doğrula
 find . -path ./.git -prune -o -name '*mizan-registry*.y*ml' -print \
   | xargs -I{} python tools/mizan_validate.py --lang tr {}
-# 2. iş: skill paketi kaynakla senkron mu — yukarıdaki İngilizce bölümdeki
-#    tek-satırlık Python bloğunun aynısı.
+# 2. iş: skill paketi kaynakla bayt bayt senkron mu (içinde CRLF varsa düşer)
+python tools/build_skill.py --check
 ```
 
 **Bir koşunun durumunu kontrol et:** GitHub'daki **Actions** sekmesi, README
@@ -201,7 +192,10 @@ CI kırmızıyken PR "bitti" sayılmaz.
 
 `skill/mizan/` altında **herhangi** bir dosyayı değiştirirsen, tek-dosya
 paketini yeniden derle (yayınlanan `mizan.skill` o dosyaları içinde
-gömülü tutar) — komut yukarıdaki İngilizce bölümde.
+gömülü tutar): `python tools/build_skill.py`. Paketleyici dört repoda aynı
+dosyadır; checkout ne olursa olsun LF yazar. Windows'ta elle sıkıştırılmış bir
+paket bir kez `#!/usr/bin/env python3\r` shebang'leriyle çıktı ve eski kontrol
+CRLF'yi iki tarafta da normalleştirdiği için senkron göründü.
 
 ### Ne nerede yaşar
 

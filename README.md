@@ -345,6 +345,24 @@ verirsiniz.
 
 ### Version / Sürüm
 
+**Unreleased (on `main`, after v2.9.0)** — tooling only, no rule change.
+`mizan_validate.py` refuses a file that is not a registry (none of the known
+sections, a section of the wrong type, an entry that is not a mapping) with
+exit 2 instead of reporting `OK — 0 entries` or crashing with exit 1.
+`tools/build_skill.py` builds and checks `mizan.skill` byte for byte: the
+previous check normalised CRLF on both sides, so a package with CRLF inside
+passed. `leak_check.py --require` makes an empty CI secret fail.
+
+**v2.9** — the first rule in this family that doubts the inventory rather
+than the reading. R28: the audit reads what was written, not what gets
+produced — slices are cut from the source tree, so a generated config sits in
+no slice at all; six phases, a MERGE, a bug registry and a security probe
+closed green while a packaging script wrote a BEL character into a shipped
+`web.config`. W8 asks whether an arbiter can return a verdict at all, after a
+suite sat twenty-five minutes at zero CPU, neither failing nor passing.
+Checklist items 15 (the file nobody wrote) and 16 (the value you checked is
+not the value you used). Registry schema 1.12.
+
 **v2.8** — Mode 7, the security probe, and the first rule in this family
 that refuses to score a passing check as evidence. R26: not exploited is not
 a pass — a failed attempt is one adversary's result and a clean scanner is a
