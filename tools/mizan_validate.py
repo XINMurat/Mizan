@@ -564,7 +564,37 @@ def load(path: str) -> dict:
         data = yaml.safe_load(fh)
     if not isinstance(data, dict):
         raise ValueError("top-level YAML is not a mapping")
+    _check_shape(data)
     return data
+
+
+# The sections the rules read. "No violations" is computed from their contents,
+# so a file that has none of them -- a typo in the key, the wrong file passed --
+# would otherwise be reported clean with 0 entries: a verdict derived from an
+# absence. Same guard as the sibling validators (ux-mizan: "does not look like a
+# registry"; kiyas: G7). Unknown extra keys stay allowed; excerpts use them.
+_LIST_SECTIONS = ("hypotheses", "experiments", "results", "features", "bugs")
+_KNOWN_SECTIONS = ("registry",) + _LIST_SECTIONS + ("coverage", "probes")
+
+
+def _check_shape(data: dict) -> None:
+    if not any(k in data for k in _KNOWN_SECTIONS):
+        raise ValueError(
+            "does not look like a Mizan registry (none of: %s)" % ", ".join(_KNOWN_SECTIONS))
+    reg = data.get("registry")
+    if reg is not None and not isinstance(reg, dict):
+        raise ValueError("'registry' must be a mapping, got %s" % type(reg).__name__)
+    for key in _LIST_SECTIONS:
+        val = data.get(key)
+        if val is None:
+            continue
+        if not isinstance(val, list):
+            raise ValueError("'%s' must be a list, got %s" % (key, type(val).__name__))
+        for i, item in enumerate(val):
+            if not isinstance(item, dict):
+                # Skipping it would shrink the entry count and pass silently.
+                raise ValueError("'%s'[%d] must be a mapping, got %s"
+                                 % (key, i, type(item).__name__))
 
 
 def load_git_baseline(ref: str, path: str) -> dict | None:
@@ -1685,6 +1715,37 @@ def _append_only(new: dict, old: dict, lang: str) -> list[str]:
     return errs
 
 
+# --format json|github. The exit code does not change with the format: the
+# format decides how the verdict is SHOWN, never what it is. `github` writes
+# workflow commands, so each finding appears on the PR's diff as an
+# annotation on the file instead of only in a log nobody opens.
+_CODE = re.compile(r"^\s*([A-Z]{1,3}\d+)")
+
+
+def _finding(msg: str) -> dict:
+    mt = _CODE.match(msg)
+    return {"code": mt.group(1) if mt else None, "message": msg.strip()}
+
+
+def _gh_escape(s: str) -> str:
+    return s.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+
+def emit(fmt: str, path: str, errs: list[str], warns: list[str], entries: int) -> None:
+    if fmt == "json":
+        import json
+        print(json.dumps({"file": path, "entries": entries, "clean": not errs,
+                          "violations": [_finding(e) for e in errs],
+                          "warnings": [_finding(w) for w in warns if w not in errs]},
+                         ensure_ascii=False, indent=2))
+        return
+    for kind, items in (("error", errs), ("warning", [w for w in warns if w not in errs])):
+        for msg in items:
+            f = _finding(msg)
+            title = (",title=" + f["code"]) if f["code"] else ""
+            print("::%s file=%s%s::%s" % (kind, path, title, _gh_escape(f["message"])))
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description="Mizan registry R1–R28 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
@@ -1696,6 +1757,8 @@ def main(argv: list[str]) -> int:
                          "Pin it to make a run reproducible.")
     ap.add_argument("--strict", action="store_true",
                     help="treat W1-W4 warnings as violations (CI runs strict; local runs do not)")
+    ap.add_argument("--format", choices=["text", "json", "github"], default="text",
+                    help="text (default), json, or github workflow annotations; the exit code is the same")
     args = ap.parse_args(argv)
 
     # The catalog carries Turkish text and a ✗ glyph; ensure UTF-8 output even
@@ -1718,6 +1781,10 @@ def main(argv: list[str]) -> int:
 
     if args.strict and warns:
         errs = errs + warns
+
+    if args.format != "text":
+        emit(args.format, args.registry, errs, warns, n)
+        return 1 if errs else 0
 
     if errs:
         for e in errs:
