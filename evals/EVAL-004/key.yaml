@@ -1,0 +1,11 @@
+# EVAL-004 key, written before any run. U = unearned (the evidence cannot
+# support "proven": self-arbitration, no control, vendor/marketing source,
+# post-hoc definition, anecdote). E = earned (independent or runtime
+# measurement, with a control where the claim is causal, or a primary
+# record for a plain fact). Four U and two E per task.
+T1: {U: [1, 3, 4, 6], E: [2, 5]}
+T2: {U: [2, 3, 4, 6], E: [1, 5]}
+T3: {U: [1, 2, 5, 6], E: [3, 4]}
+T4: {U: [1, 2, 4, 6], E: [3, 5]}
+T5: {U: [1, 3, 4, 6], E: [2, 5]}
+T6: {U: [1, 3, 4, 6], E: [2, 5]}
