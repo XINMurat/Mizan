@@ -122,6 +122,45 @@ jobs:
           printf 'batch: {}\nseeds: []\ndiscards: []\n' > "$tmp"; expect2 "a Kiyas batch"
           echo "OK: non-registries are refused with exit 2."
 
+      - name: Self-test — lite profile demotes R9+ but never hides it
+        run: |
+          set -e
+          printf 'registry: {project: t, schema_version: "1.12"}\nhypotheses:\n  - id: H-1\n    tier: H\n    arbiter: {class: runtime, who: pytest, independent_of_author: true, latency: s, calibration: det}\n    threshold: {support: "improves things", refute: "does not"}\n    refutation: "x"\n' > /tmp/lite.yaml
+          set +e; python tools/mizan_validate.py /tmp/lite.yaml >/dev/null; full=$?; set -e
+          python tools/mizan_validate.py --profile lite /tmp/lite.yaml > /tmp/lite.out
+          [ "$full" -eq 1 ] || { echo "FAIL: full profile passed a registry with R12 gaps" >&2; exit 1; }
+          grep -q "(lite: deferred) R12" /tmp/lite.out || { echo "FAIL: lite hid a deferred rule" >&2; exit 1; }
+          # A core rule still blocks under lite: a result with no honesty annex (R5).
+          printf 'results:\n  - {id: RES-1, hypothesis: H-1, threshold_met: "no", decision: "propose H->R"}\n' >> /tmp/lite.yaml
+          set +e; python tools/mizan_validate.py --profile lite /tmp/lite.yaml > /tmp/lite.out; rc=$?; set -e
+          [ "$rc" -eq 1 ] && grep -q "✗ R5" /tmp/lite.out || { echo "FAIL: lite passed an R5 violation" >&2; exit 1; }
+
+      - name: Self-test — calibration counts verdicts before rates
+        run: |
+          set -e
+          python tools/mizan_calibration.py evals/*/*.mizan-registry.yaml | tee /tmp/cal.out
+          grep -q "hit rate: not reported" /tmp/cal.out || { echo "FAIL: a rate from n<5" >&2; exit 1; }
+          set +e; python tools/mizan_calibration.py README.md >/dev/null 2>&1; rc=$?; set -e
+          [ "$rc" -eq 2 ] || { echo "FAIL: non-registry exited $rc" >&2; exit 1; }
+
+      - name: Self-test — a review sample cannot be swapped for a friendlier one
+        run: |
+          set -e
+          R=docs/registry-excerpt.yaml
+          python tools/mizan_sample.py draw $R -n 3 -o /tmp/s.yaml
+          set +e; python tools/mizan_sample.py check $R /tmp/s.yaml >/dev/null; rc=$?; set -e
+          [ "$rc" -eq 1 ] || { echo "FAIL: an unreviewed sample passed" >&2; exit 1; }
+          python - <<'PY'
+          import yaml
+          s = yaml.safe_load(open("/tmp/s.yaml")); s["sample"]["reviewer"] = "not-the-owner"
+          for e in s["entries"]: e["can_refute"] = "yes"
+          yaml.safe_dump(s, open("/tmp/s.yaml", "w"))
+          s["entries"] = s["entries"][::-1]; yaml.safe_dump(s, open("/tmp/swap.yaml", "w"))
+          PY
+          python tools/mizan_sample.py check $R /tmp/s.yaml
+          set +e; python tools/mizan_sample.py check $R /tmp/swap.yaml >/dev/null; rc=$?; set -e
+          [ "$rc" -eq 1 ] || { echo "FAIL: a reordered sample passed" >&2; exit 1; }
+
       - name: Self-test — an untested H is never exported as a survivor
         run: |
           set -e
@@ -869,6 +908,9 @@ jobs:
           # a copy edited alone is how the CRLF-blind package check survived.
           # Manifest and reasoning: tools/check_shared_tools.py.
           python tools/check_shared_tools.py
+          # Shared CONCEPTS too: each validator's tier/class/status sets
+          # must equal tools/family-vocabulary.yaml.
+          python tools/check_vocabulary.py
 
       - name: Self-test — a shared tool edited alone is caught
         run: |

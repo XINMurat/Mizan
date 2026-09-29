@@ -1755,6 +1755,15 @@ def emit(fmt: str, path: str, errs: list[str], warns: list[str], entries: int) -
             print("::%s file=%s%s::%s" % (kind, path, title, _gh_escape(f["message"])))
 
 
+LITE_MAX = 8  # rules up to R8: threshold, baseline, confounds, append-only, annexes,
+              # surprising positives, producer != auditor, named arbiter.
+
+
+def _rule_no(msg: str):
+    mm = re.match(r"\s*R(\d+)\b", msg)
+    return int(mm.group(1)) if mm else None
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description="Mizan registry R1–R28 validator")
     ap.add_argument("registry", help="path to mizan-registry.yaml")
@@ -1766,6 +1775,9 @@ def main(argv: list[str]) -> int:
                          "Pin it to make a run reproducible.")
     ap.add_argument("--strict", action="store_true",
                     help="treat W1-W4 warnings as violations (CI runs strict; local runs do not)")
+    ap.add_argument("--profile", choices=["full", "lite"], default="full",
+                    help="lite: rules up to R8 block, R9+ are shown as warnings (a first-week "
+                         "profile; CI should run full)")
     ap.add_argument("--format", choices=["text", "json", "github"], default="text",
                     help="text (default), json, or github workflow annotations; the exit code is the same")
     args = ap.parse_args(argv)
@@ -1787,6 +1799,16 @@ def main(argv: list[str]) -> int:
     baseline = load_git_baseline(args.against, args.registry) if args.against else None
     errs, warns = check(data, args.lang, baseline, args.as_of)
     n = getattr(check, "n_entries", 0)
+
+    if args.profile == "lite":
+        # Lite DEMOTES, never hides: a rule the profile does not enforce yet is
+        # still printed, so adopting the full set later holds no surprises.
+        core = [e for e in errs if _rule_no(e) is None or _rule_no(e) <= LITE_MAX]
+        deferred = [e for e in errs if e not in core]
+        errs, warns = core, [f"(lite: deferred) {e}" for e in deferred] + warns
+        if args.strict:
+            sys.stderr.write("note: --strict with --profile lite promotes the "
+                             "deferred rules back; that is the full profile.\n")
 
     if args.strict and warns:
         errs = errs + warns
