@@ -348,7 +348,8 @@ verirsiniz.
 **Unreleased (on `main`, after v2.9.0)** — tooling only, no rule change.
 `mizan_validate.py` refuses a file that is not a registry (none of the known
 sections, a section of the wrong type, an entry that is not a mapping) with
-exit 2 instead of reporting `OK — 0 entries` or crashing with exit 1.
+exit 2 instead of reporting `OK — 0 entries` or crashing with exit 1 —
+including a ux-mizan or Kıyas file, which opens with `registry:` too.
 `tools/build_skill.py` builds and checks `mizan.skill` byte for byte: the
 previous check normalised CRLF on both sides, so a package with CRLF inside
 passed. `leak_check.py --require` makes an empty CI secret fail.

@@ -575,12 +575,21 @@ def load(path: str) -> dict:
 # registry"; kiyas: G7). Unknown extra keys stay allowed; excerpts use them.
 _LIST_SECTIONS = ("hypotheses", "experiments", "results", "features", "bugs")
 _KNOWN_SECTIONS = ("registry",) + _LIST_SECTIONS + ("coverage", "probes")
+_FOREIGN = {"ux-mizan": ("flows", "findings"), "Kiyas": ("seeds", "batch", "discards")}
 
 
 def _check_shape(data: dict) -> None:
     if not any(k in data for k in _KNOWN_SECTIONS):
         raise ValueError(
             "does not look like a Mizan registry (none of: %s)" % ", ".join(_KNOWN_SECTIONS))
+    # A sibling family's file also opens with `registry:`, so that key alone
+    # let a ux-mizan registry through as "OK -- 0 entries". Its own sections
+    # name it; when they are present and none of Mizan's are, it is not ours.
+    if not any(k in data for k in _LIST_SECTIONS):
+        for family, keys in _FOREIGN.items():
+            if any(k in data for k in keys):
+                raise ValueError("looks like a %s file (has %s), not a Mizan registry"
+                                 % (family, ", ".join(k for k in keys if k in data)))
     reg = data.get("registry")
     if reg is not None and not isinstance(reg, dict):
         raise ValueError("'registry' must be a mapping, got %s" % type(reg).__name__)
