@@ -63,6 +63,7 @@ hypotheses:
     cost: "24 haiku runs, no scoring runs"
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run" }
+      - { date: "2026-09-29", event: "RES-EVAL-005: threshold met, not promoted (confounds); stays H" }
 
   - id: "H-EVAL-005b"
     version: 1
@@ -106,5 +107,66 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run" }
 
-experiments: []
-results: []
+experiments:
+  - id: "EXP-EVAL-005"
+    hypotheses: ["H-EVAL-005a", "H-EVAL-005b"]
+    design: "EVAL-004 tasks, key and parser on haiku; arm O (EVAL-004 SKILL.md) and arm N (current) side by side, 2 reps, 24 runs"
+    materials:
+      tasks: "evals/EVAL-005/tasks/"
+      key: "evals/EVAL-005/key.yaml"
+    baseline:
+      description: "arm O, run in the same batch as N"
+    confound_controls:
+      - confound: "the new rule's text cites EVAL-004 and its numbers, so N is told the answer the eval scores; this is the rule as shipped, not a neutral wording"
+        control: "accepted risk -- rationale: stated in the result; it is why the tier does not move on this run"
+      - confound: "the key's U/E labels were written by the evaluation's author"
+        control: "accepted risk -- rationale: stated in the result; it is why the tier does not move on this run"
+      - confound: "same six tasks as EVAL-004: the rules were written after reading those runs, so a fit to these tasks is possible"
+        control: "accepted risk -- rationale: stated in the result; it is why the tier does not move on this run"
+      - confound: "24 runs; a 5-claim effect is at the edge of what this n resolves"
+        control: "accepted risk -- rationale: stated in the result; it is why the tier does not move on this run"
+      - confound: "the same four as H-EVAL-005a"
+        control: "accepted risk -- rationale: stated in the result; it is why the tier does not move on this run"
+    status: "completed"
+    raw_output: "evals/EVAL-005/runs/ and evals/EVAL-005/scores/"
+    deviations:
+      - "T2-O-2 first attempt wrote its answer file twice (Read, Write, Write): excluded per the exclusion rule, kept at runs/excluded/T2-O-2.two-writes.md (sha256 dc0241ff7daf...), re-run once. Scoring with the excluded file instead changes no verdict (earned O 0.792 either way)."
+      - "every run shows a third tool call, SubagentHandback: the harness's return channel, not a task tool; read as compliant with 'one Read, one Write'."
+
+results:
+  - id: "RES-EVAL-005"
+    experiment: "EXP-EVAL-005"
+    hypothesis: "H-EVAL-005a"
+    date: "2026-09-29"
+    measured: >
+      Parse rate 1.000. Earned-PROVEN O 0.792, N 0.958; unearned-PROVEN O 0.042,
+      N 0.000. Mean words O 1446, N 1173. H5a N-O +0.167, 95% CI [+0.042,
+      +0.333]. Guard N-O -0.042. H5b words N/O 0.811, CI [0.596, 1.081].
+      Refusals of earned claims: O 5 (T2 #1 #5, T3 #3 twice, T4 #3), N 1 (T2 #1).
+    threshold_met: "yes"
+    surprising_positive: false
+    confound_control_result: >
+      Precondition met: O refused 20.8% of earned claims, reproducing
+      EVAL-004's 0.792 exactly, so the cost is real and repeatable. H5a meets
+      its support threshold and the guard holds. H5b (length) is underpowered:
+      a 19% cut whose CI includes no change. Two accepted confounds can still
+      flip H5a -- the rule text cites the eval that scores it, and the rules
+      were written after reading these same tasks -- so the result is not
+      promoted.
+    statistics:
+      effect_size: "earned-PROVEN +0.167 (5 refusals -> 1); words x0.81"
+      n: "24 runs, 6 tasks, 48 earned claims"
+      uncertainty: "95% CI [+0.042, +0.333]; words [0.596, 1.081]"
+    artifact_freshness: >
+      score.py (sha256 98addb87d753...) is byte-identical to the preregistration
+      commit 684bfc6; it reads the run files directly from runs/, all 24 written
+      after that commit, so no cached or stale artifact sits between the runs
+      and the verdict. scores/analysis.txt is its output on the committed runs.
+    failure_is_loud: "a missing run file raises FileNotFoundError; a run with no VERDICTS block lowers the printed parse rate, and < 0.90 blocks the verdict"
+    decision: "no tier change: support on the locked threshold, but a replication on fresh tasks with a rule text that does not cite EVAL-004 is required before H->K"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "arm O reproduced EVAL-004 exactly (0.792): the over-refusal is a stable property of the old SKILL.md on haiku, not noise"
+      - "one earned refusal remains in N (T2 #1, recall on held-out data): the rule reduced the cost, it did not remove it"
+      - "the length rule's effect is within noise; the skill still writes ~4x arm A's EVAL-004 length"
+    followup: ["EVAL-006 candidate: six fresh tasks, rule text without the EVAL-004 citation, O vs N on haiku"]

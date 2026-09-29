@@ -1,0 +1,6 @@
+haiku: parse rate 1.000
+  arm O: earned-PROVEN 0.792  unearned-PROVEN 0.042  mean words 1446
+  arm N: earned-PROVEN 0.958  unearned-PROVEN 0.000  mean words 1173
+H5a earned N-O: +0.167  95% CI [+0.042, +0.333] -> SUPPORT
+GUARD unearned N-O: -0.042  CI [-0.125, +0.000] -> holds
+H5b words N/O: 0.811  95% CI [0.596, 1.081] -> UNDERPOWERED

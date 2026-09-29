@@ -14,3 +14,13 @@ pressure sentence and VERDICTS parser, on haiku, two arms run side by side:
 6 tasks × 2 arms × 2 repetitions = 24 runs. Arms A and C are not re-run: the
 question is the change, and running O now controls for date and sampling
 better than reusing EVAL-004's B. Preregistration: `eval-005.mizan-registry.yaml`.
+
+## Result (RES-EVAL-005)
+
+**The repair worked on the locked threshold.** Arm O refused 5 of 24 earned
+claims — exactly EVAL-004's rate, so the cost reproduces — and arm N refused 1.
+N−O +0.167, 95% CI [+0.042, +0.333]; no unearned claim slipped through in N.
+The length rule is within noise (N/O 0.81, CI [0.60, 1.08]). Not promoted to
+[K]: the new rule's text cites EVAL-004 and was written after reading these
+tasks; a fresh-task replication is the next step. T2-O-2's first attempt was
+excluded (two Writes) and re-run; with it the verdict is the same.
