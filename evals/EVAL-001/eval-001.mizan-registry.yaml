@@ -1,0 +1,193 @@
+# EVAL-001 preregistration. This file, key.yaml, tasks/, arms/, SCORER.md,
+# blind.py and analyze.py are committed BEFORE any file under runs/ exists;
+# the git history is the timestamp. Results are appended, never edited in.
+registry:
+  project: "Mizan — does the skill change what an audit finds?"
+  owner: "XINMurat"
+  schema_version: "1.12"
+  created: "2026-09-29"
+
+hypotheses:
+  - id: "H-EVAL-001a"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "With the skill loaded, an audit finds more planted defects than with no instruction"
+    formal: >
+      Across six claim sets with four planted defects and two sound claims
+      each, arm B (Mizan SKILL.md as instructions) detects a larger share of
+      planted defects than arm A (the task alone).
+    origin: "family evaluation, priority 1: the central claim had no control arm"
+    data_status: "not_collected"
+    stopping_rule: >
+      Exactly 6 tasks x 3 arms x 2 repetitions = 36 runs, fixed now. No run is
+      added or repeated because of what a result shows.
+    exclusion_rule: >
+      A run is excluded only if it used any tool other than one Read of its
+      prompt file and one Write of its answer file (contamination: it could
+      have loaded a skill or seen another run). Excluded runs are
+      re-run once with the same prompt; a second contamination is reported as
+      precondition failed for that cell.
+    missing_data: "A run that returns no answer is re-run once; a second failure is reported."
+    metric:
+      name: "planted-defect detection rate"
+      instrument: "evals/EVAL-001/analyze.py over blinded scores (SCORER.md rubric, key.yaml)"
+    arbiter:
+      class: "third_party"
+      who: "a separate model instance given blinded, shuffled reviews, the answer key and SCORER.md; it never sees arm labels"
+      independent_of_author: true
+      latency: "hours"
+      calibration: >
+        Every scoring packet hides a known positive (written from the key,
+        must score 4/4 detected, 0/2 flagged) and a known negative (finds
+        nothing, must score 0/4, 0/2). Any calibration miss = precondition
+        failed, no verdict.
+    threshold:
+      support: "B - A >= 0.15 and the task-bootstrap 95% CI lower bound > 0"
+      refute: "B - A < 0.05"
+      underpowered: "anything between: reported as underpowered, not [R] and not [K]"
+    refutation: >
+      B detects less than 5 points more than A: the skill does not change
+      what an audit finds on claims like these.
+    two_sided: >
+      Support: loading the skill measurably changes audit output. Refute:
+      the model audits this well without it, and the skill's cost (context
+      tokens, rules) buys nothing measurable here.
+    informativeness_precondition: >
+      Arm A detection <= 0.85. Above that the tasks are too easy to separate
+      arms, and no [R] may be read from the run.
+    preregistered_prediction: "Author expects B > A by about 0.15-0.25."
+    prior_art:
+      - "LLM-as-judge with reference answers; planted-error detection benchmarks"
+    confounds:
+      - "length: B may write more and so mention more -- mean words per arm is reported beside every rate"
+      - "blinding is imperfect: tier tags are stripped, style and length are not"
+      - "position: defects are items 1-4 and sound claims 5-6 in every task, identical across arms"
+      - "the same model family writes the reviews and scores them"
+      - "the answer key was written by the evaluation's author"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: []
+    cost: "36 review runs + 6 scoring runs, model-hours"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run" }
+      - { date: "2026-09-29", event: "clarified before any run: each run reads its prompt from a file (the only way to hand arm B the skill text); all arms do the same, so the tool budget is one Read + one Write" }
+      - { date: "2026-09-29", event: "run 1 complete: precondition FAILED (ceiling) -- arm A detected 1.000 > 0.85; no [R] and no [K] may be read; stays [H], see RES-EVAL-001" }
+
+  - id: "H-EVAL-001b"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "The skill beats a one-paragraph 'be skeptical' instruction"
+    formal: >
+      Arm B detects a larger share of planted defects than arm C, a
+      45-word generic rigor instruction, without buying it with false flags.
+    origin: "the question that matters: is 486 lines of skill worth more than one paragraph?"
+    data_status: "not_collected"
+    stopping_rule: "Same 36 runs as H-EVAL-001a."
+    exclusion_rule: "Same as H-EVAL-001a."
+    missing_data: "Same as H-EVAL-001a."
+    metric:
+      name: "planted-defect detection rate, with false-flag rate as a guard"
+      instrument: "evals/EVAL-001/analyze.py"
+    arbiter:
+      class: "third_party"
+      who: "the blinded scorer of H-EVAL-001a"
+      independent_of_author: true
+      latency: "hours"
+      calibration: "Same known positive / known negative per packet as H-EVAL-001a."
+    threshold:
+      support: "B - C >= 0.10, CI lower bound > 0, and false-flag B - C <= 0.10"
+      refute: "B - C < 0.03"
+      underpowered: "anything between, or support met with the guard broken"
+    refutation: >
+      B detects less than 3 points more than C: a one-paragraph instruction
+      does the measurable work of the skill on claims like these.
+    two_sided: >
+      Support: the skill's structure carries information a generic
+      instruction does not. Refute: its measurable value here is the
+      instruction to be skeptical, and the rest is not shown to matter.
+    informativeness_precondition: "Same as H-EVAL-001a, and arm C detection <= 0.90."
+    preregistered_prediction: "Author is uncertain; expects a smaller gap than B - A, possibly none."
+    prior_art:
+      - "prompt ablations: long system prompts vs short instructions"
+    confounds:
+      - "the same five as H-EVAL-001a"
+      - "six tasks give a wide CI; underpowered is a likely and legitimate outcome"
+    relations:
+      depends_on: ["H-EVAL-001a"]
+      contradicts: []
+      refines: []
+    cost: "none beyond H-EVAL-001a"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run" }
+      - { date: "2026-09-29", event: "run 1 complete: precondition FAILED (ceiling) -- arm A detected 1.000 > 0.85; no [R] and no [K] may be read; stays [H], see RES-EVAL-001" }
+
+experiments:
+  - id: "EXP-EVAL-001"
+    hypotheses: ["H-EVAL-001a", "H-EVAL-001b"]
+    design: >
+      6 planted-defect claim sets x 3 arms (none / SKILL.md / 45-word
+      instruction) x 2 repetitions; blinded third-party scoring with a
+      hidden known positive and known negative per packet.
+    materials:
+      tasks: "evals/EVAL-001/tasks/"
+      key: "evals/EVAL-001/key.yaml"
+      runner: "fresh model instances, one Read of the prompt file + one Write of the answer"
+    baseline:
+      description: "arm A (task only) and arm C (a 45-word generic rigor instruction)"
+    confound_controls:
+      - confound: "length: B may write more and so mention more -- mean words per arm is reported beside every rate"
+        control: "controlled by reporting: mean words per arm printed beside every rate (A 619, B 1370, C 760)"
+      - confound: "blinding is imperfect: tier tags are stripped, style and length are not"
+        control: "accepted risk -- rationale: moot at ceiling; every arm scored 4/4 regardless"
+      - confound: "position: defects are items 1-4 and sound claims 5-6 in every task, identical across arms"
+        control: "accepted risk -- rationale: identical across arms, so it cannot favour one; EVAL-002 shuffles positions"
+      - confound: "the same model family writes the reviews and scores them"
+        control: "accepted risk -- rationale: calibration (known positive / negative) passed in all six packets; a human rescoring is the stronger control, not run"
+      - confound: "the answer key was written by the evaluation's author"
+        control: "accepted risk -- rationale: the scorer only matches against it; the key is public for anyone to dispute"
+      - confound: "the same five as H-EVAL-001a"
+        control: "see the five entries above"
+      - confound: "six tasks give a wide CI; underpowered is a likely and legitimate outcome"
+        control: "accepted risk -- rationale: moot at ceiling; EVAL-002 sizes the task set from this run's variance"
+    status: "completed"
+    raw_output: "evals/EVAL-001/runs/ and evals/EVAL-001/scores/"
+
+results:
+  - id: "RES-EVAL-001"
+    experiment: "EXP-EVAL-001"
+    hypothesis: "H-EVAL-001a"
+    date: "2026-09-29"
+    measured: >
+      Detection A 1.000, B 1.000, C 1.000; false flags 0.000 in every arm;
+      36/36 runs detected 4/4 planted defects and flagged 0/2 sound claims.
+      Calibration passed in all six packets. Mean words A 619, B 1370, C 760.
+    threshold_met: "precondition_failed"
+    surprising_positive: false
+    confound_control_result: >
+      Ceiling. The scorer was not lenient: the two subtlest defects were
+      checked by hand in arm A's raw output -- both reps computed that
+      12,400 -> 15,100 is ~1.22x, not 3x (T5), and both named the skipped
+      tests as exactly the legacy parser tests (T4). The tasks signposted
+      their defects (e.g. the price cut stated in parentheses beside the
+      churn claim), so the baseline had nothing left to miss.
+    statistics:
+      effect_size: "0.000 (B-A and B-C)"
+      n: "36 runs, 6 tasks"
+      uncertainty: "undefined at ceiling"
+    decision: "no verdict; H-EVAL-001a/b stay [H]; design EVAL-002 with unsignposted defects"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "a ceiling run says nothing about the skill's effect; it says these tasks cannot measure it"
+      - "measured, and not in dispute: on these tasks the skill roughly doubled output length (1370 vs 619 words) for no detection gain"
+      - "arm A invented evidence tiers of its own ([K], [Ç]) -- the base model already does part of what the skill asks"
+    post_hoc_reasoning: >
+      The signposting explanation was formed after seeing the result and is
+      a hypothesis about the task set, not a finding; EVAL-002 tests it.
+    followup: ["EVAL-002: defects without hints, longer documents with distractors, defects that need computation or cross-referencing"]
