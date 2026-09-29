@@ -75,6 +75,7 @@ hypotheses:
     cost: "36 review runs + 6 scoring runs, model-hours; EVAL-001 cost the same"
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
+      - { date: "2026-09-29", event: "RES-EVAL-003: underpowered; tier unchanged" }
 
   - id: "H-EVAL-003b"
     version: 1
@@ -125,6 +126,64 @@ hypotheses:
     cost: "none beyond H-EVAL-003a"
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
+      - { date: "2026-09-29", event: "RES-EVAL-003: underpowered; tier unchanged" }
 
-experiments: []
-results: []
+experiments:
+  - id: "EXP-EVAL-003"
+    hypotheses: ["H-EVAL-003a", "H-EVAL-003b"]
+    design: >
+      EVAL-002 tasks and prompts byte-identical; review runs on haiku, blinded
+      scoring on the default model; T1-S2 and T4-S2 removed from the key
+      before any run.
+    materials:
+      tasks: "evals/EVAL-002/tasks/"
+      key: "evals/EVAL-003/key.yaml"
+    baseline:
+      description: "arm A (task only) and arm C (45-word generic instruction)"
+    confound_controls:
+      - confound: "length: B may write more and so mention more -- mean words per arm is reported beside every rate"
+        control: "controlled by reporting: A 385, B 1803, C 494 words"
+      - confound: "blinding is imperfect: tier tags are stripped, style and length are not"
+        control: "accepted risk -- rationale: every rate is printed beside mean words; no verdict was read (both hypotheses underpowered)"
+      - confound: "distractor items are not scored, so a review that also criticises them costs nothing in the score"
+        control: "accepted risk -- rationale: every rate is printed beside mean words; no verdict was read (both hypotheses underpowered)"
+      - confound: "the same model family writes the reviews and scores them"
+        control: "accepted risk -- rationale: every rate is printed beside mean words; no verdict was read (both hypotheses underpowered)"
+      - confound: "the answer key was written by the evaluation's author"
+        control: "accepted risk -- rationale: every rate is printed beside mean words; no verdict was read (both hypotheses underpowered)"
+      - confound: "the same five as H-EVAL-003a"
+        control: "accepted risk -- rationale: every rate is printed beside mean words; no verdict was read (both hypotheses underpowered)"
+      - confound: "six tasks give a wide CI; underpowered is a likely and legitimate outcome"
+        control: "accepted risk -- rationale: every rate is printed beside mean words; no verdict was read (both hypotheses underpowered)"
+    status: "completed"
+    raw_output: "evals/EVAL-003/runs/ and evals/EVAL-003/scores/"
+
+results:
+  - id: "RES-EVAL-003"
+    experiment: "EXP-EVAL-003"
+    hypothesis: "H-EVAL-003a"
+    date: "2026-09-29"
+    measured: >
+      Calibration passed. Detection A 0.771, B 0.875, C 0.812. False flags
+      A 0.083, B 0.208, C 0.083. Mean words A 385, B 1803, C 494. B-A
+      +0.104, 95% CI [-0.062, +0.250]; B-C +0.062, CI [0.000, +0.146].
+      False-flag guard B-C +0.125, CI [-0.125, +0.500].
+    threshold_met: "underpowered"
+    surprising_positive: false
+    confound_control_result: >
+      Precondition met for the first time (arm A 0.771 <= 0.85), so the run is
+      informative. Both CIs cross the refute region's edge and the support
+      threshold: neither support nor refute can be read. The point estimate
+      favours B, but B also raised 2.5x the false flags and wrote 4.7x the
+      words of A; the length confound is not separated from the gain.
+    statistics:
+      effect_size: "B-A +0.104 detection; B-C +0.062"
+      n: "36 runs, 6 tasks, task-level bootstrap"
+      uncertainty: "95% CI B-A [-0.062, +0.250], B-C [0.000, +0.146]"
+    decision: "no verdict; H-EVAL-003a/b stay [H]"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "the positive direction is a point estimate inside a CI that includes zero; reporting it as 'the skill helps' would be [Y]"
+      - "B's detection gain comes with more false flags and 4.7x length; a longer answer mentions more by construction"
+      - "one scorer model family scores all arms; calibration entries passed, which bounds but does not remove this"
+    followup: ["more tasks (n>=18) on haiku to narrow the CI", "length-matched arm C to separate length from instruction content"]

@@ -20,3 +20,10 @@ only judge is its author. EVAL-004 measures that behaviour directly.
 The metric is the share of unearned claims marked PROVEN (lower is better),
 with the share of earned claims marked PROVEN as a guard — refusing
 everything is not rigor. Preregistration: `eval-004.mizan-registry.yaml`.
+
+## Result (RES-EVAL-004)
+
+**Floor, no verdict.** Under the pressure sentence arm A marked 0/48
+(default) and 2/48 (haiku) unearned claims PROVEN — nothing for the skill to
+reduce. The guard broke on haiku: arm B refused 5 of 24 **earned** claims
+(A and C: none). The skill's measured effect here is a cost, not a benefit.

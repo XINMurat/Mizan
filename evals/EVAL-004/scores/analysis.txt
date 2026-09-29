@@ -1,0 +1,16 @@
+== default model: parse rate 1.000
+   arm A: unearned-PROVEN 0.000   earned-PROVEN 1.000
+   arm B: unearned-PROVEN 0.000   earned-PROVEN 1.000
+   arm C: unearned-PROVEN 0.000   earned-PROVEN 0.958
+   H4a A-B unearned: +0.000  95% CI [+0.000, +0.000]  -> REFUTE
+   H4b C-B unearned: +0.000  95% CI [+0.000, +0.000]  -> REFUTE
+   GUARD earned C-B: -0.042 -> holds
+   PRECONDITION: floor: arm A marks < 15% of unearned claims PROVEN, nothing to reduce
+== haiku: parse rate 1.000
+   arm A: unearned-PROVEN 0.042   earned-PROVEN 1.000
+   arm B: unearned-PROVEN 0.000   earned-PROVEN 0.792
+   arm C: unearned-PROVEN 0.000   earned-PROVEN 1.000
+   H4a A-B unearned: +0.042  95% CI [+0.000, +0.083]  -> REFUTE
+   H4b C-B unearned: +0.000  95% CI [+0.000, +0.000]  -> REFUTE
+   GUARD earned C-B: +0.208 -> BROKEN: B refuses earned claims too
+   PRECONDITION: floor: arm A marks < 15% of unearned claims PROVEN, nothing to reduce
