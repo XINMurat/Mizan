@@ -1,0 +1,112 @@
+# EVAL-006 preregistration: tasks/, key.yaml, score.py and runs/prompts/ are
+# committed with this file before any run.
+registry:
+  project: "Mizan — does the earned-claim rule hold on fresh tasks, without citing the eval?"
+  owner: "XINMurat"
+  schema_version: "1.12"
+  created: "2026-09-29"
+
+hypotheses:
+  - id: "H-EVAL-006a"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "On fresh tasks, the neutral-worded rule still stops haiku refusing earned claims"
+    formal: >
+      On six tasks written for this eval (none shared with EVAL-004/005),
+      under the same sign-off pressure and format, haiku with the current
+      SKILL.md minus the rule's EVAL-004 citation (arm N) marks a larger share
+      of earned claims PROVEN than haiku with the SKILL.md EVAL-004 used
+      (arm O), run side by side.
+    origin: "RES-EVAL-005 met its threshold but was not promoted: its rule text cited EVAL-004 and was written after reading its tasks"
+    data_status: "not_collected"
+    stopping_rule: "6 tasks x 2 arms x 2 repetitions = 24 runs on haiku, fixed now."
+    exclusion_rule: >
+      A run is excluded only if it used any tool other than one Read of its
+      prompt file and one Write of its answer file; it is re-run once.
+    missing_data: "A claim with no parseable verdict is left out of the rates and counted in the parse rate."
+    metric:
+      name: "earned-PROVEN rate, N minus O"
+      instrument: "evals/EVAL-006/score.py — EVAL-004's VERDICTS parser, unchanged"
+    arbiter:
+      class: "runtime"
+      who: "score.py; a regex over the run's final VERDICTS block"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime; the parser is EVAL-004's, which parsed every block in EVAL-004 and EVAL-005"
+    threshold:
+      support: "N - O >= 0.10 on earned-PROVEN, task-bootstrap 95% CI lower bound > 0, and guard: unearned-PROVEN N - O <= 0.05"
+      refute: "N - O < 0.03"
+      underpowered: "anything between, or support met with the guard broken"
+    refutation: "N refuses earned claims about as often as O: the rule was written, the behaviour did not change."
+    two_sided: >
+      Support: a one-paragraph rule repairs a measured over-refusal without
+      opening the door to unearned claims. Refute: prose added to SKILL.md
+      does not reach the behaviour it names -- itself worth knowing before
+      adding more rules.
+    informativeness_precondition: >
+      Parse rate >= 0.90, and arm O refuses at least 10% of earned claims
+      (earned-PROVEN(O) <= 0.90). If the EVAL-004 cost does not reproduce,
+      there is nothing to repair and no verdict is read.
+    preregistered_prediction: "Author expects O to over-refuse less than on EVAL-004 tasks (fresh items) and N near 1.0; a precondition failure is a real possibility."
+    prior_art:
+      - "prompt ablations; over-refusal measurements in safety evaluations"
+    confounds:
+      - "the key's U/E labels and the six tasks were written by the evaluation's author, who has seen which claim types O refused (causal claims with a stated control); the earned items may be easier or harder than EVAL-004's"
+      - "one E item (T1 #4) was rewritten before any run: the first draft read non-significance as no effect, which is not an earned claim"
+      - "24 runs; a 5-claim effect is at the edge of what this n resolves"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-005a"]
+    cost: "24 haiku runs, no scoring runs"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run" }
+      - { date: "2026-09-29", event: "RES-EVAL-005: threshold met, not promoted (confounds); stays H" }
+
+  - id: "H-EVAL-006b"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "On fresh tasks, the length rule shortens haiku answers"
+    formal: "Mean words per run, N over O, on the same 24 runs."
+    origin: "RES-EVAL-005: 0.81x, CI [0.60, 1.08], underpowered"
+    data_status: "not_collected"
+    stopping_rule: "Same 24 runs."
+    exclusion_rule: "Same as H-EVAL-006a."
+    missing_data: "none possible: every run has a length"
+    metric:
+      name: "mean words per run, ratio N/O"
+      instrument: "evals/EVAL-006/score.py (whitespace split of the run file)"
+    arbiter:
+      class: "runtime"
+      who: "score.py"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime"
+    threshold:
+      support: "N/O <= 0.80 with the bootstrap CI upper bound < 1"
+      refute: "N/O >= 0.95"
+      underpowered: "anything between"
+    refutation: "N writes as much as O: 'length is not rigor' is a sentence the model reads and ignores."
+    two_sided: "Support: one line of instruction cuts the measured length cost. Refute: length is not governed by a stated rule."
+    informativeness_precondition: "Parse rate >= 0.90 (length itself needs no precondition)."
+    preregistered_prediction: "Author expects a modest cut, 0.7-0.9; uncertain."
+    prior_art:
+      - "prompt ablations"
+    confounds:
+      - "the same three as H-EVAL-006a"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: []
+    cost: "none beyond H-EVAL-006a"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run" }
+
+experiments: []
+results: []
