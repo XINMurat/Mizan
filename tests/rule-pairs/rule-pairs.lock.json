@@ -1,0 +1,213 @@
+{
+ "base_fired": [],
+ "mutations": {
+  "r1-no-refutation": [
+   "R1_no_refutation"
+  ],
+  "r1-no-threshold": [
+   "R1_no_threshold"
+  ],
+  "r1-threshold-half": [
+   "R1_threshold_incomplete"
+  ],
+  "r10-not-numeric": [
+   "R10_threshold_not_numeric"
+  ],
+  "r11-no-tier": [
+   "R11_no_tier"
+  ],
+  "r12-no-cost": [
+   "R12_missing_field"
+  ],
+  "r12-no-instrument": [
+   "R12_metric_no_instrument"
+  ],
+  "r13-no-kill": [
+   "R13_no_kill_condition"
+  ],
+  "r14-no-alternatives": [
+   "R14_no_alternatives"
+  ],
+  "r14-no-null": [
+   "R14_missing_kind"
+  ],
+  "r15-no-rivals": [
+   "R15_no_rivals"
+  ],
+  "r16-phase-open": [
+   "R16_coverage_claim_unearned"
+  ],
+  "r17-bad-date": [
+   "R17_bad_date"
+  ],
+  "r17-no-review-by": [
+   "R17_no_review_by"
+  ],
+  "r17-overdue": [
+   "R17_review_overdue"
+  ],
+  "r18-bad-data-status": [
+   "R18_bad_data_status"
+  ],
+  "r18-no-data-status": [
+   "R18_no_data_status"
+  ],
+  "r18-no-exclusion": [
+   "R18_no_exclusion_rule"
+  ],
+  "r18-no-stopping": [
+   "R18_no_stopping_rule"
+  ],
+  "r18-seen": [
+   "R18_seen_data_preregistered"
+  ],
+  "r19-bad-outcome": [
+   "R19_bad_outcome"
+  ],
+  "r19-scenario-half": [
+   "R19_scenario_incomplete"
+  ],
+  "r19-self-supplied": [
+   "R19_coverage_unprobed"
+  ],
+  "r2-no-baseline": [
+   "R2_baseless_promotes_K",
+   "R2_no_baseline"
+  ],
+  "r2-none-baseline-K": [
+   "R2_baseless_promotes_K"
+  ],
+  "r20-bad-outcome": [
+   "R20_bad_outcome"
+  ],
+  "r20-pair-half": [
+   "R20_pair_incomplete"
+  ],
+  "r20-unpaired": [
+   "R20_coverage_unpaired"
+  ],
+  "r21-escape-half": [
+   "R21_escape_incomplete"
+  ],
+  "r21-unclassed": [
+   "R21_escape_unclassed"
+  ],
+  "r22-bad-baseline": [
+   "R22_bad_baseline"
+  ],
+  "r22-baseless-K": [
+   "R22_baseless_K"
+  ],
+  "r22-no-note": [
+   "R22_no_baseline_note"
+  ],
+  "r22-no-window": [
+   "R22_missing_field"
+  ],
+  "r23-no-cross-slice": [
+   "R23_merge_no_cross_slice"
+  ],
+  "r24-unvalidated": [
+   "R24_unvalidated_instrument"
+  ],
+  "r25-no-freshness": [
+   "R25_no_artifact_freshness"
+  ],
+  "r26-no-control-ref": [
+   "R26_blocked_without_control"
+  ],
+  "r26-self-arbiter": [
+   "R26_blocked_self_arbiter"
+  ],
+  "r26-silence-K": [
+   "R26_silence_K"
+  ],
+  "r27-bad-outcome": [
+   "R27_bad_outcome"
+  ],
+  "r27-boundary-half": [
+   "R27_boundary_incomplete"
+  ],
+  "r27-scenario-half": [
+   "R27_scenario_incomplete"
+  ],
+  "r27-unprobed": [
+   "R27_coverage_unprobed"
+  ],
+  "r28-no-artifacts": [
+   "R28_no_produced_artifacts"
+  ],
+  "r28-not-inspected": [
+   "R28_artifact_not_inspected"
+  ],
+  "r3-no-controls": [
+   "R3_no_controls"
+  ],
+  "r3-one-uncontrolled": [
+   "R3_confound_uncontrolled"
+  ],
+  "r4-entry-deleted": [
+   "R4_entry_deleted"
+  ],
+  "r4-history-shrank": [
+   "R4_history_shrank"
+  ],
+  "r5-no-annexes": [
+   "R5_empty_annexes"
+  ],
+  "r6-no-control": [
+   "R6_surprising_no_control"
+  ],
+  "r7-self-confirmed": [
+   "R7_self_confirmed"
+  ],
+  "r8-author-K": [
+   "R8_author_promotes_K"
+  ],
+  "r8-bad-class": [
+   "R8_bad_class"
+  ],
+  "r8-independence": [
+   "R8_independence_contradiction"
+  ],
+  "r8-no-arbiter": [
+   "R8_no_arbiter"
+  ],
+  "r8-no-calibration": [
+   "R8_no_calibration"
+  ],
+  "r8-no-who": [
+   "R8_no_who"
+  ],
+  "r8-none-not-S": [
+   "R8_none_leaves_S"
+  ],
+  "r9-K-no-evidence": [
+   "R9_K_without_evidence"
+  ],
+  "w1-no-two-sided": [
+   "W1_no_two_sided"
+  ],
+  "w2-open-no-refutation": [
+   "W2_open_no_threshold"
+  ],
+  "w3-all-K": [
+   "W3_all_K"
+  ],
+  "w4-no-merge": [
+   "W4_no_merge_row"
+  ],
+  "w5-no-probe": [
+   "W5_no_probe"
+  ],
+  "w6-domain-unanswered": [
+   "W6_domain_probe_unanswered"
+  ],
+  "w7-no-outer": [
+   "W7_no_outer_boundary"
+  ],
+  "w8-silent": [
+   "W8_silent_verification"
+  ]
+ }
+}

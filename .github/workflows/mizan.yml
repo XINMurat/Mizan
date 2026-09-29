@@ -999,6 +999,13 @@ jobs:
           print(f"ok  schema v{declared} agrees in schema, template and SKILL.md")
           PY
 
+      - name: Rule pairs — every rule satisfiable together, overlaps locked
+        # One clean base shows the rules do not contradict each other; one
+        # mutation per catalog code shows which rules report the same defect.
+        # A changed fired set, a rule that went silent, or a new code with no
+        # fixture fails here; review, then `python tools/rule_pairs.py --update`.
+        run: python tools/rule_pairs.py
+
       - name: Docs claim the rule range the validator actually has
         run: |
           set -e
