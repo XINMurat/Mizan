@@ -62,6 +62,13 @@ git config core.hooksPath tools/hooks
 The hook validates any staged `*mizan-registry*.yaml` file, including the
 append-only check against `HEAD`. Set `MIZAN_LANG=tr` for Turkish output.
 
+When the hook blocks a commit it also logs the rule codes to
+`.git/rule-hits.jsonl` (local, never pushed). `python tools/rule_hits.py
+summary` shows them; `python tools/rule_hits.py export` writes the counts only
+to `rule-hits/` for you to commit, and the site's daily rule-health report
+reads that directory. Until 2026-09-29 the hook was stored without its
+executable bit, so `core.hooksPath` skipped it silently; CI now checks the bit.
+
 ---
 
 ## Türkçe
