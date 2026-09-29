@@ -160,13 +160,13 @@ gerekçesiyle `pending` listelenir. `--sync` yalnız BOŞ tier'ları doldurur,
 ## `--profile lite`, `mizan_calibration.py`, `mizan_sample.py`
 
 ```bash
-python tools/mizan_validate.py --profile lite registry.yaml   # R1-R8 block; R9+ shown as warnings
+python tools/mizan_validate.py --profile lite registry.yaml   # rules up to R8 block; R9+ shown as warnings
 python tools/mizan_calibration.py evals/*/*.mizan-registry.yaml
 python tools/mizan_sample.py draw registry.yaml -n 3 -o review-sample.yaml
 python tools/mizan_sample.py check registry.yaml review-sample.yaml
 ```
 
-- **lite** is a first-week profile: R1–R8 block, everything above is still
+- **lite** is a first-week profile: rules up to R8 block, everything above is still
   printed as `(lite: deferred)`. It demotes, never hides. CI runs full.
 - **calibration** reports first how many results returned a verdict at all,
   then a hit rate only when at least 5 did. On this repository's four evals it
@@ -176,7 +176,7 @@ python tools/mizan_sample.py check registry.yaml review-sample.yaml
   or owner-reviewed sample. The validator checks that a refutation exists;
   this records that someone checked it could refute.
 
-/ **lite** ilk hafta profilidir: R1–R8 engeller, üstü `(lite: deferred)` olarak
+/ **lite** ilk hafta profilidir: R8'e kadar olan kurallar engeller, üstü `(lite: deferred)` olarak
 görünür kalır; gizlemez, düşürür. **calibration** önce kaç sonucun hüküm
 döndürdüğünü, ancak en az 5 hüküm varsa isabet oranını basar. **sample**,
 registry'nin kendi sha256'sıyla tohumlanmış, seçilemez bir örneklemi yazar

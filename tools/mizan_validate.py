@@ -1755,7 +1755,7 @@ def emit(fmt: str, path: str, errs: list[str], warns: list[str], entries: int) -
             print("::%s file=%s%s::%s" % (kind, path, title, _gh_escape(f["message"])))
 
 
-LITE_MAX = 8  # R1-R8: threshold, baseline, confounds, append-only, annexes,
+LITE_MAX = 8  # rules up to R8: threshold, baseline, confounds, append-only, annexes,
               # surprising positives, producer != auditor, named arbiter.
 
 
@@ -1776,7 +1776,7 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--strict", action="store_true",
                     help="treat W1-W4 warnings as violations (CI runs strict; local runs do not)")
     ap.add_argument("--profile", choices=["full", "lite"], default="full",
-                    help="lite: R1-R8 block, R9+ are shown as warnings (a first-week "
+                    help="lite: rules up to R8 block, R9+ are shown as warnings (a first-week "
                          "profile; CI should run full)")
     ap.add_argument("--format", choices=["text", "json", "github"], default="text",
                     help="text (default), json, or github workflow annotations; the exit code is the same")
