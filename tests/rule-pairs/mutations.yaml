@@ -1,0 +1,151 @@
+# Rule-pair fixtures for tools/rule_pairs.py.
+#
+# base + base_ops must be CLEAN under every rule (no violation, no warning).
+# That one fact is the conflict test: it shows every rule exercised below can
+# be satisfied at the same time. Each mutation then breaks ONE thing and
+# names the catalog code it expects; anything else it fires is an overlap.
+#
+# base_ops lift the shipped example to the newest schema and add the blocks
+# the example does not carry (coverage, probes, cost_actual), so that R16-R28
+# are exercised too — the example alone stops at 1.7 and R19+ would never run.
+base: examples/mizan-registry.example.yaml
+base_ops:
+  - { path: registry.schema_version, set: "1.12" }
+  - path: features.0.cost_actual
+    set:
+      instrument: "billing export"
+      window: { from: "2026-07-12", to: "2026-08-12" }
+      attribution: "project tag"
+      baseline: { kind: "parallel-arm", note: "flag-off configs over the same window" }
+  - path: coverage
+    set:
+      claim_tier: "K"
+      security_scope: "true"
+      phases:
+        - { id: "P1", status: "done" }
+        - id: "MERGE"
+          status: "done"
+          cross_slice: [ { id: "X1", outcome: "holds" } ]
+      produced_artifacts: [ { id: "A1", path: "dist/", inspected: "yes" } ]
+  - path: probes
+    set:
+      domain:
+        supplied_by: "domain owner"
+        written_before_work: "true"
+        scenarios: [ { id: "D1", situation: "shard rollover mid-epoch", outcome: "expressible" } ]
+      conjunction:
+        pairs: [ { id: "C1", feature: "FEAT-001", guarantee: "R4 append-only", outcome: "holds" } ]
+      escaped: [ { id: "E1", symptom: "stale cache", found_by: "user report", class_ref: "C1" } ]
+      adversary:
+        supplied_by: "threat model (third party)"
+        written_before_work: "true"
+        boundaries:
+          - id: "B1"
+            surface: "package registry dependency"
+            who: "anyone publishing to pypi"
+            controls: "lockfile hashes"
+            near_side_assumes: "the lockfile is honoured"
+            scenarios: [ { id: "S1", action: "typosquat", outcome: "blocked_by", control_ref: "lockfile hashes", arbiter: "third_party" } ]
+          - id: "B2"
+            surface: "ci build pipeline"
+            who: "a workflow author"
+            controls: "branch protection"
+            near_side_assumes: "only reviewed workflows run"
+            scenarios: [ { id: "S2", action: "edit workflow in a PR", outcome: "boundary_recorded" } ]
+
+mutations:
+  # --- R1-R3, R5-R7: the hypothesis -> experiment -> result core
+  - { id: r1-no-threshold, target: R1_no_threshold, ops: [ { path: hypotheses.0.threshold, delete: true } ] }
+  - { id: r1-threshold-half, target: R1_threshold_incomplete, ops: [ { path: hypotheses.0.threshold.refute, delete: true } ] }
+  - { id: r1-no-refutation, target: R1_no_refutation, ops: [ { path: hypotheses.0.refutation, delete: true } ] }
+  - { id: r2-no-baseline, target: R2_no_baseline, ops: [ { path: experiments.0.baseline, delete: true } ] }
+  - { id: r2-none-baseline-K, target: R2_baseless_promotes_K, ops: [ { path: experiments.0.baseline, set: { description: "none", justification: "no comparable arm exists" } } ] }
+  - { id: r3-no-controls, target: R3_no_controls, ops: [ { path: experiments.0.confound_controls, delete: true } ] }
+  - { id: r3-one-uncontrolled, target: R3_confound_uncontrolled, ops: [ { path: experiments.0.confound_controls, set: [ { confound: parameter_count, control: "matched" } ] } ] }
+  - { id: r5-no-annexes, target: R5_empty_annexes, ops: [ { path: results.0.honesty_annexes, set: [] } ] }
+  - { id: r6-no-control, target: R6_surprising_no_control, ops: [ { path: results.0.confound_control_result, delete: true } ] }
+  - { id: r7-self-confirmed, target: R7_self_confirmed, ops: [ { path: results.0.decision_confirmed_by, delete: true } ] }
+
+  # --- R4: append-only needs a baseline; the base IS the baseline
+  - { id: r4-entry-deleted, target: R4_entry_deleted, baseline_is_base: true, ops: [ { path: bugs, set: [] } ] }
+  - { id: r4-history-shrank, target: R4_history_shrank, baseline_is_base: true, ops: [ { path: hypotheses.0.history, set: [ { date: "2026-07-11", event: "preregistered v1" } ] } ] }
+
+  # --- R8: arbiter (on the bug, whose tier H keeps R9 out of it)
+  - { id: r8-no-arbiter, target: R8_no_arbiter, ops: [ { path: bugs.0.arbiter, delete: true } ] }
+  - { id: r8-bad-class, target: R8_bad_class, ops: [ { path: bugs.0.arbiter.class, set: "oracle" } ] }
+  - { id: r8-no-who, target: R8_no_who, ops: [ { path: bugs.0.arbiter.who, delete: true } ] }
+  - { id: r8-author-K, target: R8_author_promotes_K, ops: [ { path: hypotheses.0.arbiter, set: { class: "author", who: "the author", independent_of_author: false } } ] }
+  - { id: r8-none-not-S, target: R8_none_leaves_S, ops: [ { path: bugs.0.arbiter, set: { class: "none", who: "nobody" } } ] }
+  - { id: r8-no-calibration, target: R8_no_calibration, ops: [ { path: features.0.arbiter.calibration, delete: true } ] }
+  - { id: r8-independence, target: R8_independence_contradiction, ops: [ { path: features.0.arbiter, set: { class: "author", who: "the proposer", independent_of_author: true } } ] }
+
+  # --- R9-R12: entry discipline
+  - { id: r9-K-no-evidence, target: R9_K_without_evidence, ops: [ { path: bugs.0.tier, set: "K" } ] }
+  - { id: r10-not-numeric, target: R10_threshold_not_numeric, ops: [ { path: features.0.threshold.support, set: "a clear improvement" } ] }
+  - { id: r11-no-tier, target: R11_no_tier, ops: [ { path: bugs.0.tier, delete: true } ] }
+  - { id: r12-no-cost, target: R12_missing_field, ops: [ { path: bugs.0.cost, delete: true } ] }
+  - { id: r12-no-instrument, target: R12_metric_no_instrument, ops: [ { path: bugs.0.metric.instrument, delete: true } ] }
+
+  # --- R13-R15: feature gate, bug rivals
+  - { id: r13-no-kill, target: R13_no_kill_condition, ops: [ { path: features.0.kill_condition, delete: true } ] }
+  - { id: r14-no-alternatives, target: R14_no_alternatives, ops: [ { path: features.0.alternatives, set: [] } ] }
+  - { id: r14-no-null, target: R14_missing_kind, ops: [ { path: features.0.alternatives, set: [ { kind: "proposed", option: "x", cost: "1d" }, { kind: "cheaper", option: "y", cost: "1h" } ] } ] }
+  - { id: r15-no-rivals, target: R15_no_rivals, ops: [ { path: bugs.0.rival_hypotheses, delete: true } ] }
+
+  # --- R16, R23, R28: the coverage claim
+  - { id: r16-phase-open, target: R16_coverage_claim_unearned, ops: [ { path: coverage.phases.0.status, set: "running" } ] }
+  - { id: r23-no-cross-slice, target: R23_merge_no_cross_slice, ops: [ { path: coverage.phases.1.cross_slice, set: [] } ] }
+  - { id: r28-no-artifacts, target: R28_no_produced_artifacts, ops: [ { path: coverage.produced_artifacts, delete: true } ] }
+  - { id: r28-not-inspected, target: R28_artifact_not_inspected, ops: [ { path: coverage.produced_artifacts.0.inspected, set: "no" } ] }
+
+  # --- R17, R18: deadlines and preregistration (on the open bug-free path: H-001 reopened)
+  - { id: r17-no-review-by, target: R17_no_review_by, ops: [ { path: hypotheses.0.status, set: "testing" } ] }
+  - { id: r17-overdue, target: R17_review_overdue, ops: [ { path: hypotheses.0.status, set: "testing" }, { path: hypotheses.0.review_by, set: "2026-01-01" } ] }
+  - { id: r17-bad-date, target: R17_bad_date, ops: [ { path: hypotheses.0.status, set: "testing" }, { path: hypotheses.0.review_by, set: "next month" } ] }
+  - { id: r18-no-data-status, target: R18_no_data_status, ops: [ { path: hypotheses.0.data_status, delete: true } ] }
+  - { id: r18-bad-data-status, target: R18_bad_data_status, ops: [ { path: hypotheses.0.data_status, set: "fresh" } ] }
+  - { id: r18-seen, target: R18_seen_data_preregistered, ops: [ { path: hypotheses.0.data_status, set: "exists_seen" } ] }
+  - { id: r18-no-stopping, target: R18_no_stopping_rule, ops: [ { path: hypotheses.0.stopping_rule, delete: true } ] }
+  - { id: r18-no-exclusion, target: R18_no_exclusion_rule, ops: [ { path: hypotheses.0.exclusion_rule, delete: true } ] }
+
+  # --- R19-R21: probes
+  - { id: r19-scenario-half, target: R19_scenario_incomplete, ops: [ { path: probes.domain.scenarios.0.situation, delete: true } ] }
+  - { id: r19-bad-outcome, target: R19_bad_outcome, ops: [ { path: probes.domain.scenarios.0.outcome, set: "fine" } ] }
+  - { id: r19-self-supplied, target: R19_coverage_unprobed, ops: [ { path: probes.domain.written_before_work, set: "false" } ] }
+  - { id: r20-pair-half, target: R20_pair_incomplete, ops: [ { path: probes.conjunction.pairs.0.guarantee, delete: true } ] }
+  - { id: r20-bad-outcome, target: R20_bad_outcome, ops: [ { path: probes.conjunction.pairs.0.outcome, set: "ok" } ] }
+  - { id: r20-unpaired, target: R20_coverage_unpaired, ops: [ { path: probes.conjunction.pairs.0.outcome, set: "unchecked" } ] }
+  - { id: r21-escape-half, target: R21_escape_incomplete, ops: [ { path: probes.escaped.0.found_by, delete: true } ] }
+  - { id: r21-unclassed, target: R21_escape_unclassed, ops: [ { path: probes.escaped.0.class_ref, delete: true } ] }
+
+  # --- R22: cost_actual
+  - { id: r22-no-window, target: R22_missing_field, ops: [ { path: features.0.cost_actual.window, delete: true } ] }
+  - { id: r22-bad-baseline, target: R22_bad_baseline, ops: [ { path: features.0.cost_actual.baseline.kind, set: "gut feeling" } ] }
+  - { id: r22-no-note, target: R22_no_baseline_note, ops: [ { path: features.0.cost_actual.baseline.note, delete: true } ] }
+  - { id: r22-baseless-K, target: R22_baseless_K, ops: [ { path: features.0.cost_actual.baseline, set: { kind: "none" } }, { path: features.0.tier, set: "K" }, { path: features.0.external_evidence, set: "nightly eval log 2026-08" } ] }
+
+  # --- R24, R25: the auditor's own instrument; stale runtime artifact
+  - { id: r24-unvalidated, target: R24_unvalidated_instrument, ops: [ { path: hypotheses.0.metric.instrument_built_by, set: "auditor" } ] }
+  - { id: r25-no-freshness, target: R25_no_artifact_freshness, ops: [ { path: hypotheses.0.arbiter.class, set: "runtime" } ] }
+
+  # --- R26, R27: the adversary pass
+  - { id: r26-no-control-ref, target: R26_blocked_without_control, ops: [ { path: probes.adversary.boundaries.0.scenarios.0.control_ref, delete: true } ] }
+  - { id: r26-self-arbiter, target: R26_blocked_self_arbiter, ops: [ { path: probes.adversary.boundaries.0.scenarios.0.arbiter, set: "author" } ] }
+  - { id: r26-silence-K, target: R26_silence_K, ops: [ { path: hypotheses.0.security_evidence, set: "scanner_silence" } ] }
+  - { id: r27-boundary-half, target: R27_boundary_incomplete, ops: [ { path: probes.adversary.boundaries.0.near_side_assumes, delete: true } ] }
+  - { id: r27-scenario-half, target: R27_scenario_incomplete, ops: [ { path: probes.adversary.boundaries.1.scenarios.0.action, delete: true } ] }
+  - { id: r27-bad-outcome, target: R27_bad_outcome, ops: [ { path: probes.adversary.boundaries.1.scenarios.0.outcome, set: "safe" } ] }
+  - { id: r27-unprobed, target: R27_coverage_unprobed, ops: [ { path: probes.adversary.written_before_work, set: "false" } ] }
+
+  # --- W1-W8: advisories are codes too; an advisory that duplicates a rule is an overlap
+  - { id: w1-no-two-sided, target: W1_no_two_sided, ops: [ { path: bugs.0.two_sided, delete: true } ] }
+  - { id: w2-open-no-refutation, target: W2_open_no_threshold, ops: [ { path: bugs.0.refutation, delete: true } ] }
+  - { id: w3-all-K, target: W3_all_K, ops: [ { path: bugs.0.tier, set: "K" }, { path: bugs.0.external_evidence, set: "repro log" }, { path: features.0.tier, set: "K" }, { path: features.0.external_evidence, set: "nightly eval log" } ] }
+  - { id: w4-no-merge, target: W4_no_merge_row, ops: [ { path: coverage.claim_tier, set: "H" }, { path: coverage.phases, set: [ { id: "P1", status: "done" } ] } ] }
+  - { id: w5-no-probe, target: W5_no_probe, ops: [ { path: probes.conjunction.pairs, set: [] }, { path: coverage.claim_tier, set: "H" } ] }
+  - { id: w6-domain-unanswered, target: W6_domain_probe_unanswered, ops: [ { path: probes.domain.supplied_by, set: "auditor" }, { path: coverage.claim_tier, set: "H" } ] }
+  - { id: w7-no-outer, target: W7_no_outer_boundary, ops: [ { path: probes.adversary.boundaries.1.surface, set: "admin panel" }, { path: probes.adversary.boundaries.1.who, set: "an operator" } ] }
+  - { id: w8-silent, target: W8_silent_verification, ops: [ { path: results.0.arbiter_ran, set: "eval/ppl.py, 2026-07-11" } ] }
+
+# A code with no mutation must say why here, or the run fails.
+uncovered: {}

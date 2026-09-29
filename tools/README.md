@@ -69,6 +69,17 @@ to `rule-hits/` for you to commit, and the site's daily rule-health report
 reads that directory. Until 2026-09-29 the hook was stored without its
 executable bit, so `core.hooksPath` skipped it silently; CI now checks the bit.
 
+`python tools/rule_pairs.py` asks the question rule health cannot answer
+without field data: do the rules overlap or contradict each other? A single
+base registry (the example, lifted to the newest schema, with coverage and
+probe blocks added) is clean under every rule, which shows they can all be
+satisfied at once. Then each of the 69 catalog codes (R and W) has one
+mutation in `tests/rule-pairs/mutations.yaml` that breaks one thing; the codes
+it fires are locked in `rule-pairs.lock.json`. A mutation that fires more than
+its target is an overlap. The first run: 68 isolated, one overlap (a missing
+baseline is reported as both `R2_no_baseline` and `R2_baseless_promotes_K`).
+"Isolated" means isolated for that mutation, not for every possible defect.
+
 ---
 
 ## Türkçe
