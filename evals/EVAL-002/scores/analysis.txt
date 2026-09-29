@@ -1,0 +1,9 @@
+calibration (known positive = 1.0/0.0, known negative = 0.0/0.0): PASS
+arm A: detection 0.958  false-flag 0.167
+arm B: detection 1.000  false-flag 0.167
+arm C: detection 1.000  false-flag 0.042
+mean words: {'A': 664, 'B': 1438, 'C': 847}
+H1 B-A detection: +0.042  95% CI [+0.000, +0.125]  -> REFUTE
+H2 B-C detection: +0.000  95% CI [+0.000, +0.000]  -> REFUTE
+GUARD B-C false-flag: +0.125  95% CI [+0.042, +0.208]  -> BROKEN: detection bought by over-flagging
+PRECONDITION: arm A detection > 0.85 -> tasks too easy; no [R] can be read from this run

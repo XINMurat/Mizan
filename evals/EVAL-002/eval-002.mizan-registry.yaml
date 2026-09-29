@@ -1,0 +1,203 @@
+# EVAL-002 preregistration. This file, key.yaml, tasks/, arms/, SCORER.md,
+# blind.py and analyze.py are committed BEFORE any file under runs/ exists;
+# the git history is the timestamp. Results are appended, never edited in.
+registry:
+  project: "Mizan — does the skill change what an audit finds? (harder task set)"
+  owner: "XINMurat"
+  schema_version: "1.12"
+  created: "2026-09-29"
+
+hypotheses:
+  - id: "H-EVAL-002a"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "With the skill loaded, an audit finds more planted defects than with no instruction"
+    formal: >
+      Across six claim sets with four unsignposted planted defects (four
+      needing arithmetic, five needing another item), two sound claims and
+      unscored distractors each, arm B (Mizan SKILL.md as instructions) detects a larger share of
+      planted defects than arm A (the task alone).
+    origin: "EVAL-001 hit the ceiling (every arm 4/4): its tasks signposted their defects. Same design, harder tasks."
+    data_status: "not_collected"
+    stopping_rule: >
+      Exactly 6 tasks x 3 arms x 2 repetitions = 36 runs, fixed now. No run is
+      added or repeated because of what a result shows.
+    exclusion_rule: >
+      A run is excluded only if it used any tool other than one Read of its
+      prompt file and one Write of its answer file (contamination: it could
+      have loaded a skill or seen another run). Excluded runs are
+      re-run once with the same prompt; a second contamination is reported as
+      precondition failed for that cell.
+    missing_data: "A run that returns no answer is re-run once; a second failure is reported."
+    metric:
+      name: "planted-defect detection rate"
+      instrument: "evals/EVAL-002/analyze.py over blinded scores (SCORER.md rubric, key.yaml)"
+    arbiter:
+      class: "third_party"
+      who: "a separate model instance given blinded, shuffled reviews, the answer key and SCORER.md; it never sees arm labels"
+      independent_of_author: true
+      latency: "hours"
+      calibration: >
+        Every scoring packet hides a known positive (written from the key,
+        must score 4/4 detected, 0/2 flagged) and a known negative (finds
+        nothing, must score 0/4, 0/2). Any calibration miss = precondition
+        failed, no verdict.
+    threshold:
+      support: "B - A >= 0.15 and the task-bootstrap 95% CI lower bound > 0"
+      refute: "B - A < 0.05"
+      underpowered: "anything between: reported as underpowered, not [R] and not [K]"
+    refutation: >
+      B detects less than 5 points more than A: the skill does not change
+      what an audit finds on claims like these.
+    two_sided: >
+      Support: loading the skill measurably changes audit output. Refute:
+      the model audits this well without it, and the skill's cost (context
+      tokens, rules) buys nothing measurable here.
+    informativeness_precondition: >
+      Arm A detection <= 0.85. Above that the tasks are too easy to separate
+      arms, and no [R] may be read from the run.
+    preregistered_prediction: "After EVAL-001 the author is less sure: expects A around 0.6-0.8 and B above it by 0.05-0.20."
+    prior_art:
+      - "LLM-as-judge with reference answers; planted-error detection benchmarks"
+    confounds:
+      - "length: B may write more and so mention more -- mean words per arm is reported beside every rate"
+      - "blinding is imperfect: tier tags are stripped, style and length are not"
+      - "distractor items are not scored, so a review that also criticises them costs nothing in the score"
+      - "the same model family writes the reviews and scores them"
+      - "the answer key was written by the evaluation's author"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: []
+    cost: "36 review runs + 6 scoring runs, model-hours; EVAL-001 cost the same"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
+      - { date: "2026-09-29", event: "deviation, recorded before scoring: one launch hit the 20-subagent limit and never started; misreading which cell it was, T4-B-2 was launched a second time. The FIRST T4-B-2 output (sha256 0198c295..., committed in 9f03d9f before the second finished) is the one scored; the second was discarded unread. The cell that never started, T4-C-2, was launched once." }
+      - { date: "2026-09-29", event: "run complete: precondition FAILED again (ceiling) -- arm A detected 0.958 > 0.85; no [R] and no [K]; stays [H], see RES-EVAL-002" }
+
+  - id: "H-EVAL-002b"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "The skill beats a one-paragraph 'be skeptical' instruction"
+    formal: >
+      Arm B detects a larger share of planted defects than arm C, a
+      45-word generic rigor instruction, without buying it with false flags.
+    origin: "the question that matters: is 486 lines of skill worth more than one paragraph?"
+    data_status: "not_collected"
+    stopping_rule: "Same 36 runs as H-EVAL-002a."
+    exclusion_rule: "Same as H-EVAL-002a."
+    missing_data: "Same as H-EVAL-002a."
+    metric:
+      name: "planted-defect detection rate, with false-flag rate as a guard"
+      instrument: "evals/EVAL-002/analyze.py"
+    arbiter:
+      class: "third_party"
+      who: "the blinded scorer of H-EVAL-002a"
+      independent_of_author: true
+      latency: "hours"
+      calibration: "Same known positive / known negative per packet as H-EVAL-002a."
+    threshold:
+      support: "B - C >= 0.10, CI lower bound > 0, and false-flag B - C <= 0.10"
+      refute: "B - C < 0.03"
+      underpowered: "anything between, or support met with the guard broken"
+    refutation: >
+      B detects less than 3 points more than C: a one-paragraph instruction
+      does the measurable work of the skill on claims like these.
+    two_sided: >
+      Support: the skill's structure carries information a generic
+      instruction does not. Refute: its measurable value here is the
+      instruction to be skeptical, and the rest is not shown to matter.
+    informativeness_precondition: "Same as H-EVAL-002a, and arm C detection <= 0.90."
+    preregistered_prediction: "Author is uncertain; expects a smaller gap than B - A, possibly none."
+    prior_art:
+      - "prompt ablations: long system prompts vs short instructions"
+    confounds:
+      - "the same five as H-EVAL-002a"
+      - "six tasks give a wide CI; underpowered is a likely and legitimate outcome"
+    relations:
+      depends_on: ["H-EVAL-002a"]
+      contradicts: []
+      refines: []
+    cost: "none beyond H-EVAL-002a"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
+      - { date: "2026-09-29", event: "deviation, recorded before scoring: one launch hit the 20-subagent limit and never started; misreading which cell it was, T4-B-2 was launched a second time. The FIRST T4-B-2 output (sha256 0198c295..., committed in 9f03d9f before the second finished) is the one scored; the second was discarded unread. The cell that never started, T4-C-2, was launched once." }
+      - { date: "2026-09-29", event: "run complete: precondition FAILED again (ceiling) -- arm A detected 0.958 > 0.85; no [R] and no [K]; stays [H], see RES-EVAL-002" }
+
+experiments:
+  - id: "EXP-EVAL-002"
+    hypotheses: ["H-EVAL-002a", "H-EVAL-002b"]
+    design: >
+      EVAL-001's design unchanged, on six harder claim sets: no defect
+      signposted in its own item, four needing arithmetic, five needing
+      another item, unscored distractors, varied positions.
+    materials:
+      tasks: "evals/EVAL-002/tasks/"
+      key: "evals/EVAL-002/key.yaml"
+    baseline:
+      description: "arm A (task only) and arm C (45-word generic instruction)"
+    confound_controls:
+      - confound: "length: B may write more and so mention more -- mean words per arm is reported beside every rate"
+        control: "controlled by reporting: mean words per arm printed beside every rate (A 664, B 1438, C 847)"
+      - confound: "blinding is imperfect: tier tags are stripped, style and length are not"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+      - confound: "distractor items are not scored, so a review that also criticises them costs nothing in the score"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+      - confound: "the same model family writes the reviews and scores them"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+      - confound: "the answer key was written by the evaluation's author"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+      - confound: "the same five as H-EVAL-002a"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+      - confound: "six tasks give a wide CI; underpowered is a likely and legitimate outcome"
+        control: "accepted risk -- rationale: moot, the ceiling precondition failed and no verdict is read"
+    status: "completed"
+    raw_output: "evals/EVAL-002/runs/ and evals/EVAL-002/scores/"
+
+results:
+  - id: "RES-EVAL-002"
+    experiment: "EXP-EVAL-002"
+    hypothesis: "H-EVAL-002a"
+    date: "2026-09-29"
+    measured: >
+      Detection A 0.958, B 1.000, C 1.000. False flags A 0.167, B 0.167,
+      C 0.042. Mean words A 664, B 1438, C 847. Calibration passed in all six
+      packets. The only detection difference: T5-D3 (ROI is 200%, not 300%),
+      missed by both arm-A runs and caught by every B and C run.
+    threshold_met: "precondition_failed"
+    surprising_positive: false
+    confound_control_result: >
+      Ceiling again. The harder material moved arm A from 1.000 to 0.958,
+      not below the preregistered 0.85, so no verdict is read. The
+      false-flag guard reads 'broken' (B - C = +0.125), but the flags were
+      read by hand afterwards and most are ANSWER-KEY errors, not arm
+      errors: T4-S2 (the alert threshold was validated on the same incident
+      it was tuned on -- circular; 4 of the 9 flags, raised in all three
+      arms) and T1-S2 (0.5% prevalence in 41,200 people is about 206 cases,
+      yet 312 are confirmed -- a real contradiction the author did not
+      plant). The key is NOT corrected and nothing is re-scored: changing
+      the ruler after reading the result is the move this registry exists
+      to prevent.
+    statistics:
+      effect_size: "B-A +0.042 detection (one defect in one task); B-C 0.000"
+      n: "36 runs, 6 tasks"
+      uncertainty: "95% CI B-A [0.000, 0.125]"
+    decision: "no verdict; H-EVAL-002a/b stay [H]"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "two of the author's six 'sound' claims were not sound; the models found it -- the key's author is a fallible arbiter, exactly as the confounds list said"
+      - "measured across EVAL-001 and EVAL-002, not in dispute: the skill more than doubles output length (1370/1438 vs 619/664 words) with no detection gain on either task set"
+      - "the ceiling is a property of this model on short claim sets, observed twice; it is not evidence that the skill does nothing"
+    post_hoc_reasoning: >
+      Two explanations formed after the result, both [H]: (1) the base model
+      is already at ceiling on this task format, so any benefit would only
+      show with a weaker model or a different task (tier calibration,
+      promotion discipline over a long registry); (2) the skill's value lies
+      in properties this rubric does not score.
+    followup: ["EVAL-003 candidate: same tasks on a smaller model, where there is headroom", "EVAL-004 candidate: score what the skill claims beyond detection (does a [K] ever go to a claim without an independent arbiter?)"]

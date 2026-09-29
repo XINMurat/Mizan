@@ -1,0 +1,48 @@
+# EVAL-002 answer key, written before any run. Same scoring rules as
+# EVAL-001 (see SCORER.md). Differences from EVAL-001, all aimed at its
+# ceiling: no defect is signposted in its own item; four need arithmetic,
+# five need another item to see; items not in the key are distractors and are
+# not scored; defect positions vary; some sound claims look suspicious (large
+# effects, measured properly).
+T1:
+  D1: {item: 2, mechanism: "accuracy is uninformative at 0.5% prevalence (item 7): predicting 'healthy' for everyone scores 99.5%; sensitivity/PPV are what matter"}
+  D2: {item: 5, mechanism: "arithmetic: 312/400 is 78%, not 82%"}
+  D3: {item: 3, mechanism: "regression to the mean: patients selected for the highest scores will score lower on re-test with no intervention; no control group"}
+  D4: {item: 8, mechanism: "claim covers all ages but 94% of the evaluation set was 40-65; other ages are barely measured"}
+  S1: {item: 6, why: "large effect, but measured against non-pilot hospitals with the same definition"}
+  S2: {item: 7, why: "sourced prevalence figure"}
+T2:
+  D1: {item: 2, mechanism: "arithmetic: 2.4M -> 3.0M is +25%, not +40%"}
+  D2: {item: 5, mechanism: "churn fell mechanically: annual-plan customers (60% of new) cannot churn monthly, so the metric's denominator changed, not retention"}
+  D3: {item: 7, mechanism: "multiple comparisons: one p=0.04 out of 20 metrics is about what chance produces"}
+  D4: {item: 4, mechanism: "selection / correlation read as causation: high-value customers may adopt integrations, not the reverse"}
+  S1: {item: 3, why: "same instrument, same question, stated n"}
+  S2: {item: 8, why: "audited source"}
+T3:
+  D1: {item: 2, mechanism: "control schools improved more (9% vs 8%): the data show no program effect, the conclusion contradicts it"}
+  D2: {item: 4, mechanism: "Simpson's paradox: lower in both subgroups, higher only in aggregate (composition); the 'helps both groups' conclusion is the opposite of the data"}
+  D3: {item: 6, mechanism: "instrument built by the program's developer and aligned with program material: teaching to the test / self-arbitration"}
+  D4: {item: 7, mechanism: "attrition: 610 of 2,400 (25%) not analysed; dropouts likely differ, results biased"}
+  S1: {item: 1, why: "randomized assignment, documented"}
+  S2: {item: 5, why: "sourced workload figure with n"}
+T4:
+  D1: {item: 2, mechanism: "arithmetic: 14:03 to 14:52 is 49 minutes, not 47"}
+  D2: {item: 4, mechanism: "confound: the DNS provider's incident resolved at 14:49 (item 6), a minute before the rollback; the recovery may be the DNS fix, not the rollback"}
+  D3: {item: 5, mechanism: "absence of evidence: only the three suspected services were checked, so 'no data affected' is not shown"}
+  D4: {item: 8, mechanism: "unfalsifiable / overclaim: an alert detects recurrence, it does not prevent it"}
+  S1: {item: 3, why: "sourced measurement"}
+  S2: {item: 7, why: "alert validated by replay against the incident"}
+T5:
+  D1: {item: 2, mechanism: "seasonality: November rose 40% over October last year too (item 6); the campaign's increment is at most ~5 points, not 45%"}
+  D2: {item: 3, mechanism: "selection: ads were shown to cart-abandoners (item 7), who already intended to buy; the comparison is not causal"}
+  D3: {item: 4, mechanism: "arithmetic: ROI is (540-180)/180 = 200%, not 300%"}
+  D4: {item: 8, mechanism: "impressions are not people or potential customers (repeat views, no purchase intent)"}
+  S1: {item: 5, why: "same survey, stated n"}
+  S2: {item: 9, why: "defined metric from CRM"}
+T6:
+  D1: {item: 2, mechanism: "a clean scan is not proof of no vulnerabilities (scanner rule-set limits; absence of evidence)"}
+  D2: {item: 4, mechanism: "coverage was not complete: 48 scanned vs 53 in the inventory (item 6)"}
+  D3: {item: 5, mechanism: "self-arbitrated pentest: the platform team tested its own platform, not an independent tester"}
+  D4: {item: 7, mechanism: "training completion is not reduced phishing risk; 'negligible' is unmeasured"}
+  S1: {item: 3, why: "same definitions, sourced"}
+  S2: {item: 8, why: "verified by an exported policy with 0 exceptions"}
