@@ -108,5 +108,63 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run" }
 
-experiments: []
-results: []
+experiments:
+  - id: "EXP-EVAL-006"
+    hypotheses: ["H-EVAL-006a", "H-EVAL-006b"]
+    design: "six fresh tasks, haiku, arm O (EVAL-004 SKILL.md) vs arm N (current SKILL.md minus the rule's EVAL-004 citation), 2 reps, 24 runs"
+    materials:
+      tasks: "evals/EVAL-006/tasks/"
+      key: "evals/EVAL-006/key.yaml"
+    baseline:
+      description: "arm O, run in the same batch as N"
+    confound_controls:
+      - confound: "the key's U/E labels and the six tasks were written by the evaluation's author, who has seen which claim types O refused (causal claims with a stated control); the earned items may be easier or harder than EVAL-004's"
+        control: "accepted risk -- rationale: stated in the result"
+      - confound: "one E item (T1 #4) was rewritten before any run: the first draft read non-significance as no effect, which is not an earned claim"
+        control: "accepted risk -- rationale: stated in the result"
+      - confound: "24 runs; a 5-claim effect is at the edge of what this n resolves"
+        control: "accepted risk -- rationale: stated in the result"
+      - confound: "the same three as H-EVAL-006a"
+        control: "accepted risk -- rationale: stated in the result"
+    status: "completed"
+    raw_output: "evals/EVAL-006/runs/ and evals/EVAL-006/scores/"
+    deviations:
+      - "runner prompt added 'Write only once.' after EVAL-005's two-Write exclusion; identical for both arms"
+      - "T3-O-1 first attempt edited its answer after writing it (Read, Write, Edit, Edit): excluded, kept at runs/excluded/T3-O-1.edited.md (sha256 6a44f3f6eeb0...), re-run once. Scoring with it instead changes no verdict (O 0.833 either way)."
+
+results:
+  - id: "RES-EVAL-006"
+    experiment: "EXP-EVAL-006"
+    hypothesis: "H-EVAL-006a"
+    date: "2026-09-29"
+    measured: >
+      Parse rate 1.000. Earned-PROVEN O 0.833, N 0.750; unearned-PROVEN 0.000
+      in both. Mean words O 1334, N 1084. H5a N-O -0.083, 95% CI [-0.167,
+      0.000]. H5b words N/O 0.813, CI [0.605, 1.059]. Earned refusals: O 4
+      (T1 #1, T3 #3 twice, T3 #4), N 6 (T1 #1, T2 #3, T3 #3 and #4 in both reps).
+    threshold_met: "no"
+    surprising_positive: false
+    confound_control_result: >
+      Precondition met (O refused 16.7% of earned claims, so the cost exists on
+      fresh tasks too). N did not reduce it; the point estimate goes the other
+      way. Refuted on the locked threshold (N-O < 0.03). Post hoc, labelled as
+      such: 7 of the 10 refusals are on T3, whose #3 ("time-to-hire fell",
+      before/after with no non-adopting department) is arguably not earned as
+      a causal claim -- a possible key error, NOT re-scored. Dropping T3
+      entirely still gives O 0.95, N 0.90: no support either way.
+    statistics:
+      effect_size: "earned-PROVEN -0.083"
+      n: "24 runs, 6 fresh tasks, 48 earned claims"
+      uncertainty: "95% CI [-0.167, 0.000]"
+    artifact_freshness: >
+      score.py (sha256 c658b1bac1de...) is byte-identical to the preregistration
+      commit 885a9f1 and reads the run files directly; all 24 were written
+      after that commit.
+    failure_is_loud: "a missing run file raises; a run with no VERDICTS block lowers the parse rate, and < 0.90 blocks the verdict"
+    decision: "propose H->R: the neutral-worded rule does not reduce over-refusal on fresh tasks"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "RES-EVAL-005's support does not replicate. Two things changed at once (fresh tasks, citation removed), so this run cannot say which one carried EVAL-005's effect: fit to the seen tasks, or the model reading the cited numbers"
+      - "the shipped SKILL.md still carries the cited wording; its effect on unseen tasks is untested, and on this evidence should not be assumed"
+      - "the length rule is null twice (0.81, 0.81; both CIs include 1)"
+    followup: ["decide whether the rule stays: an ablation with the shipped (cited) wording on these fresh tasks would separate the two explanations at 24 runs"]

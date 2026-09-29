@@ -14,3 +14,11 @@ Arms O (EVAL-004's SKILL.md) and N on haiku, 2 repetitions: 24 runs, scored by
 `score.py` (EVAL-004's parser). If O does not over-refuse on these tasks
 (earned-PROVEN > 0.90), there is nothing to repair and no verdict is read.
 Preregistration: `eval-006.mizan-registry.yaml`.
+
+## Result (RES-EVAL-006) — refuted
+
+The replication failed. On fresh tasks arm O still over-refused (earned-PROVEN
+0.833), and arm N did not help: 0.750, N−O −0.083, 95% CI [−0.167, 0.000].
+RES-EVAL-005's support therefore does not carry to unseen tasks with a neutral
+wording. Because both the tasks and the wording changed, this run cannot say
+which one EVAL-005's effect depended on. The length rule is null again (0.81).
