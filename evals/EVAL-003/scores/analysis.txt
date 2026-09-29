@@ -1,0 +1,8 @@
+calibration (known positive = 1.0/0.0, known negative = 0.0/0.0): PASS
+arm A: detection 0.771  false-flag 0.083
+arm B: detection 0.875  false-flag 0.208
+arm C: detection 0.812  false-flag 0.083
+mean words: {'A': 385, 'B': 1803, 'C': 494}
+H1 B-A detection: +0.104  95% CI [-0.062, +0.250]  -> UNDERPOWERED
+H2 B-C detection: +0.062  95% CI [+0.000, +0.146]  -> UNDERPOWERED
+GUARD B-C false-flag: +0.125  95% CI [-0.125, +0.500]  -> BROKEN: detection bought by over-flagging
