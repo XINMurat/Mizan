@@ -860,7 +860,11 @@ def check(data: dict, lang: str,
             elif not isinstance(bl, dict):
                 bl = {}
             desc = _s(bl.get("description"))
-            if not desc or desc.lower() == "none":
+            # A missing baseline is already R2_no_baseline on the experiment;
+            # reporting it again here made one defect two findings (rule_pairs).
+            # This check is for the case R2_no_baseline lets through: a
+            # baseline justified as "none", then used to promote anyway.
+            if desc.lower() == "none":
                 errs.append(m("R2_baseless_promotes_K", lang, id=r.get("id"), eid=eid))
 
     # R3 — every confound named in a hypothesis must be controlled or accepted
