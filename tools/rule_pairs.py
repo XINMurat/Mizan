@@ -20,7 +20,10 @@ fires are compared to the one it was written for:
 
 Codes come from the message catalog key (R8_no_who, not just R8), so two
 checks inside one rule number are told apart. Findings are gathered by
-running check() in-process with the catalog lookup recorded.
+running the validator's own main() on each mutated file, with its catalog
+lookup recorded. A shared tool, identical in all four repositories; the
+three with a validator keep their fixtures in tests/rule-pairs/ and run it
+in CI (Iskele has no validator and nothing to run it on).
 
 The lock file freezes the fired set of every mutation. CI fails when a
 mutation's fired set changes (a new overlap appeared, or a rule stopped
@@ -34,39 +37,86 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import contextlib
 import copy
+import importlib.util
+import inspect
+import io
 import json
 import os
 import re
 import sys
+import tempfile
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
-sys.path.insert(0, HERE)
-import mizan_validate as mv  # noqa: E402
-import yaml  # noqa: E402
+import yaml
 
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIXTURES = os.path.join(ROOT, "tests", "rule-pairs", "mutations.yaml")
 LOCK = os.path.join(ROOT, "tests", "rule-pairs", "rule-pairs.lock.json")
-AS_OF = "2026-09-29"  # R17 deadlines are date-relative; pin the date
-CODE = re.compile(r"^[RW]\d+_")
 
 
-def run(data: dict, baseline: dict | None = None) -> list[str]:
-    fired: list[str] = []
-    orig = mv.m
+class Validator:
+    """The repository's own validator, driven through its command line.
 
-    def spy(key, lang, **kw):
-        if CODE.match(key):
-            fired.append(key)
-        return orig(key, lang, **kw)
+    The fixture file names it (`validator`), the arguments every run gets
+    (`args`, `{file}` is the registry), the catalog-key pattern (`codes`), and
+    for append-only rules the function that reads the git baseline
+    (`baseline_loader`), which is replaced by one returning the base. This
+    file therefore has no per-repository code and is shared byte for byte.
+    """
 
-    mv.m = spy
-    try:
-        mv.check(data, "en", baseline, AS_OF)
-    finally:
-        mv.m = orig
-    return sorted(set(fired))
+    def __init__(self, spec: dict):
+        path = os.path.join(ROOT, spec["validator"])
+        sys.path.insert(0, os.path.dirname(path))
+        mspec = importlib.util.spec_from_file_location("_rule_pairs_validator", path)
+        self.mod = importlib.util.module_from_spec(mspec)
+        mspec.loader.exec_module(self.mod)
+        self.args = spec.get("args") or ["{file}"]
+        self.code = re.compile(spec["codes"])
+        self.loader = spec.get("baseline_loader")
+        self.dir = os.path.dirname(os.path.join(ROOT, spec["base"]))
+
+    def catalog(self) -> list[str]:
+        return sorted(k for k in self.mod.MSG if self.code.match(k))
+
+    def run(self, data: dict, baseline: dict | None = None, extra: list | None = None) -> list[str]:
+        fired: list[str] = []
+        mod, orig = self.mod, self.mod.m
+
+        def spy(key, lang, **kw):
+            if self.code.match(key):
+                fired.append(key)
+            return orig(key, lang, **kw)
+
+        # next to the base, so paths the registry names relative to itself resolve
+        fd, tmp = tempfile.mkstemp(suffix=".yaml", dir=self.dir)
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            yaml.safe_dump(data, fh, allow_unicode=True, sort_keys=False)
+        argv = [a.replace("{file}", tmp) for a in self.args] + list(extra or [])
+        saved = {}
+        if baseline is not None:
+            saved[self.loader] = getattr(mod, self.loader)
+            setattr(mod, self.loader, lambda *a, **k: copy.deepcopy(baseline))
+            argv += ["--against", "HEAD"]
+        mod.m = spy
+        old_argv = sys.argv
+        sys.argv = [mod.__file__] + argv
+        try:
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                try:
+                    if inspect.signature(mod.main).parameters:
+                        mod.main(argv)
+                    else:
+                        mod.main()  # a main() that reads sys.argv itself
+                except SystemExit:
+                    pass
+        finally:
+            mod.m = orig
+            sys.argv = old_argv
+            for k, v in saved.items():
+                setattr(mod, k, v)
+            os.unlink(tmp)
+        return sorted(set(fired))
 
 
 def _walk(doc, path: str):
@@ -86,15 +136,9 @@ def mutate(base: dict, ops: list[dict]) -> dict:
             del node[key]
         elif "append" in op:
             node[key].append(copy.deepcopy(op["append"]))
-        elif isinstance(node, dict) or key < len(node):
-            node[key] = copy.deepcopy(op["set"])
         else:
             node[key] = copy.deepcopy(op["set"])
     return doc
-
-
-def catalog() -> list[str]:
-    return sorted(k for k in mv.MSG if CODE.match(k))
 
 
 def main(argv: list[str]) -> int:
@@ -103,8 +147,10 @@ def main(argv: list[str]) -> int:
     args = ap.parse_args(argv)
 
     spec = yaml.safe_load(open(FIXTURES, encoding="utf-8"))
-    base = mutate(mv.load(os.path.join(ROOT, spec["base"])), spec.get("base_ops") or [])
-    base_fired = run(base)
+    v = Validator(spec)
+    raw = yaml.safe_load(open(os.path.join(ROOT, spec["base"]), encoding="utf-8"))
+    base = mutate(raw, spec.get("base_ops") or [])
+    base_fired = v.run(base)
     report: dict = {"base": spec["base"], "base_fired": base_fired, "mutations": {}}
 
     for mu in spec["mutations"]:
@@ -112,12 +158,12 @@ def main(argv: list[str]) -> int:
         bl = mutate(base, mu["baseline_ops"]) if "baseline_ops" in mu else None
         if mu.get("baseline_is_base"):
             bl = base
-        fired = run(doc, bl)
+        fired = v.run(doc, bl, mu.get("args"))
         report["mutations"][mu["id"]] = {"target": mu["target"], "fired": fired}
 
     covered = {v["target"] for v in report["mutations"].values()}
     uncovered = spec.get("uncovered") or {}
-    cat = catalog()
+    cat = v.catalog()
     unaccounted = [c for c in cat if c not in covered and c not in uncovered]
 
     iso, over, silent = [], [], []

@@ -77,7 +77,9 @@ satisfied at once. Then each of the 69 catalog codes (R and W) has one
 mutation in `tests/rule-pairs/mutations.yaml` that breaks one thing; the codes
 it fires are locked in `rule-pairs.lock.json`. A mutation that fires more than
 its target is an overlap. The first run: 68 isolated, one overlap (a missing
-baseline is reported as both `R2_no_baseline` and `R2_baseless_promotes_K`).
+baseline was reported as both `R2_no_baseline` and `R2_baseless_promotes_K`);
+the second now fires only for a baseline justified as "none", so all 69 are
+isolated.
 "Isolated" means isolated for that mutation, not for every possible defect.
 
 ---

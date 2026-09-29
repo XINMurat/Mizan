@@ -1,0 +1,206 @@
+# EVAL-007 preregistration: tasks/ and key.yaml (copied unchanged from
+# EVAL-006), score.py and runs/prompts/ are committed with this file before any
+# run. The decision rules at the bottom of each hypothesis are part of the
+# preregistration: what happens to SKILL.md is fixed before the numbers exist.
+registry:
+  project: "Mizan — does the shipped (cited) earned-claim rule help on fresh tasks?"
+  owner: "XINMurat"
+  schema_version: "1.12"
+  created: "2026-09-29"
+
+hypotheses:
+  - id: "H-EVAL-007a"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "On fresh tasks, the rule as shipped (with its EVAL-004 citation) stops haiku refusing earned claims"
+    formal: >
+      On EVAL-006's six fresh tasks, under the same pressure and format, haiku
+      with EVAL-006's N prompt plus the rule's EVAL-004 citation (arm C, the
+      wording SKILL.md ships) marks a larger share of earned claims PROVEN
+      than haiku with the SKILL.md EVAL-004 used (arm O), run side by side.
+    origin: "RES-EVAL-006 followup: two things changed at once (fresh tasks, citation removed); this separates them"
+    data_status: "not_collected"
+    stopping_rule: "6 tasks x 2 arms x 2 repetitions = 24 runs on haiku, fixed now."
+    exclusion_rule: >
+      A run is excluded only if its runner reports using any tool other than
+      one Read of its prompt file and one Write of its answer file, or the
+      answer file is missing; it is re-run once.
+    missing_data: "A claim with no parseable verdict is left out of the rates and counted in the parse rate."
+    metric:
+      name: "earned-PROVEN rate, C minus O"
+      instrument: "evals/EVAL-007/score.py — EVAL-004's VERDICTS parser, unchanged"
+    arbiter:
+      class: "runtime"
+      who: "score.py; a regex over the run's final VERDICTS block"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime; the parser is EVAL-004's, which parsed every block in EVAL-004, -005 and -006"
+    threshold:
+      support: "C - O >= 0.10 on earned-PROVEN, task-bootstrap 95% CI lower bound > 0, and guard: unearned-PROVEN C - O <= 0.05"
+      refute: "C - O < 0.03"
+      underpowered: "anything between, or support met with the guard broken"
+    refutation: "C refuses earned claims about as often as O: with or without the citation, the rule does not reach fresh tasks."
+    two_sided: >
+      Support: the citation carried EVAL-005's effect (N failed, C works), so
+      the rule stays as shipped and the reason it works is the number it
+      quotes. Refute: neither wording helps on unseen tasks; EVAL-005's effect
+      was fit to the tasks the rule was written after, and the rule leaves
+      SKILL.md.
+    informativeness_precondition: >
+      Parse rate >= 0.90, and arm O refuses at least 10% of earned claims
+      (earned-PROVEN(O) <= 0.90). Otherwise no verdict is read and SKILL.md
+      is not changed.
+    preregistered_prediction: "Author expects refute: N did not help, and a parenthesis of numbers is unlikely to do what the sentence could not."
+    decision_rule: >
+      SUPPORT: SKILL.md keeps the rule with its citation. REFUTE: the rule is
+      removed from SKILL.md and recorded in RETIRED-RULES.md with this
+      result. UNDERPOWERED or precondition failed: SKILL.md is not changed.
+    prior_art:
+      - "prompt ablations; EVAL-004, EVAL-005, EVAL-006 in this repository"
+    confounds:
+      - "the same tasks and key as EVAL-006, written by the evaluation's author (possible T3 #3 key error, raised in RES-EVAL-006; the without-T3 line is preregistered as secondary)"
+      - "a different batch from EVAL-006: C is compared with this batch's O, never with EVAL-006's N"
+      - "24 runs; a 5-claim effect is at the edge of what this n resolves"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-006a"]
+    cost: "24 haiku runs, no scoring runs"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run" }
+      - { date: "2026-09-29", event: "RES-EVAL-007a: refuted on the locked threshold; propose H->R; the preregistered decision rule removes the rule from SKILL.md" }
+
+  - id: "H-EVAL-007b"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "The length rule shortens haiku answers (third measurement)"
+    formal: "Mean words per run, C over O, on the same 24 runs; C carries the length rule, O does not."
+    origin: "RES-EVAL-005 and RES-EVAL-006: 0.81 both times, both CIs include 1"
+    data_status: "not_collected"
+    stopping_rule: "Same 24 runs."
+    exclusion_rule: "Same as H-EVAL-007a."
+    missing_data: "none possible: every run has a length"
+    metric:
+      name: "mean words per run, ratio C/O"
+      instrument: "evals/EVAL-007/score.py (whitespace split of the run file)"
+    arbiter:
+      class: "runtime"
+      who: "score.py"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime"
+    threshold:
+      support: "C/O <= 0.80 with the bootstrap CI upper bound < 1"
+      refute: "C/O >= 0.95"
+      underpowered: "anything between"
+    refutation: "C writes as much as O: the length rule is read and ignored."
+    two_sided: "Support: one line of instruction cuts length. Refute: length is not governed by a stated rule, and the line leaves SKILL.md."
+    informativeness_precondition: "Parse rate >= 0.90."
+    preregistered_prediction: "Author expects about 0.8 again, underpowered a third time."
+    decision_rule: "SUPPORT: kept. REFUTE: removed and recorded in RETIRED-RULES.md. UNDERPOWERED: not changed."
+    prior_art:
+      - "prompt ablations"
+    confounds:
+      - "C also differs from O by the earned-claim rule, which may change length on its own"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-006b"]
+    cost: "none beyond H-EVAL-007a"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run" }
+      - { date: "2026-09-29", event: "RES-EVAL-007b: underpowered (0.949, one thousandth under the refute bar); SKILL.md not changed" }
+
+experiments:
+  - id: "EXP-EVAL-007"
+    hypotheses: ["H-EVAL-007a", "H-EVAL-007b"]
+    design: "EVAL-006's six tasks, haiku, arm O (EVAL-006's O prompt, unchanged) vs arm C (EVAL-006's N prompt + the citation), 2 reps, 24 runs in one batch"
+    materials:
+      tasks: "evals/EVAL-007/tasks/ (EVAL-006's, unchanged)"
+      key: "evals/EVAL-007/key.yaml (EVAL-006's, unchanged)"
+      runner: >
+        One haiku subagent per run, prompt: "Read the file <prompt> and follow
+        its instructions exactly. Then write your complete answer, and nothing
+        else, to <run file> with one Write. Use no other tools. Write only
+        once. Finally report which tools you used."
+    baseline:
+      description: "arm O, run in the same batch as C"
+    confound_controls:
+      - confound: "the same tasks and key as EVAL-006, written by the evaluation's author (possible T3 #3 key error, raised in RES-EVAL-006; the without-T3 line is preregistered as secondary)"
+        control: "accepted risk -- rationale: stated in the result"
+      - confound: "a different batch from EVAL-006: C is compared with this batch's O, never with EVAL-006's N"
+        control: "accepted risk -- rationale: stated in the result"
+      - confound: "24 runs; a 5-claim effect is at the edge of what this n resolves"
+        control: "accepted risk -- rationale: stated in the result"
+      - confound: "C also differs from O by the earned-claim rule, which may change length on its own"
+        control: "accepted risk -- rationale: stated in the result"
+    status: "completed"
+    raw_output: "evals/EVAL-007/runs/ and evals/EVAL-007/scores/"
+    deviations:
+      - "T1-C-2 first attempt reported an Edit after its Write: excluded, kept at runs/excluded/T1-C-2.edit.md (sha256 8c995dc0e10c...), re-run once"
+      - "T5-O-2 first attempt reported only Read and Write, but the harness counted 5 tool calls where every other run has 3 (Read, Write, hand-back). The harness count was taken over the runner's own report, which the exclusion rule as written names; kept at runs/excluded/T5-O-2.extra-tools.md (sha256 28a610d87dcb...), re-run once"
+
+results:
+  - id: "RES-EVAL-007a"
+    experiment: "EXP-EVAL-007"
+    hypothesis: "H-EVAL-007a"
+    date: "2026-09-29"
+    measured: >
+      Parse rate 1.000. Earned-PROVEN O 0.792, C 0.708; unearned-PROVEN 0.000
+      in both. C-O -0.083, 95% CI [-0.292, +0.083]. Earned refusals: O 5
+      (T1 #1, T2 #3, T3 #3 twice, T3 #4), C 7 (T1 #1, T3 #3 and #4 in both
+      reps, T6 #1 in both reps). Without T3 (preregistered secondary): O
+      0.900, C 0.850.
+    threshold_met: "no"
+    surprising_positive: false
+    confound_control_result: >
+      Precondition met (O refused 20.8% of earned claims). C did not reduce
+      it, and the point estimate goes the other way, as N's did in EVAL-006.
+      Refuted on the locked threshold (C-O < 0.03). With EVAL-006, both
+      wordings of the rule have now been run on unseen tasks and neither
+      helped: EVAL-005's effect was fit to the tasks the rule was written
+      after, not carried by the cited numbers.
+    statistics:
+      effect_size: "earned-PROVEN -0.083"
+      n: "24 runs, 6 tasks, 48 earned claims"
+      uncertainty: "95% CI [-0.292, +0.083]"
+    artifact_freshness: >
+      score.py (sha256 061f166d67e5...) is byte-identical to the
+      preregistration commit a9e56ea and reads the run files directly; all 24
+      were written after that commit.
+    failure_is_loud: "a missing run file raises; a run with no VERDICTS block lowers the parse rate, and < 0.90 blocks the verdict"
+    decision: "propose H->R: the rule as shipped does not reduce over-refusal on fresh tasks; removed from SKILL.md per the preregistered decision rule"
+    decision_confirmed_by: "pending owner review (the merge of the change that carries this result)"
+    honesty_annexes:
+      - "the over-refusal the rule was written for is real and reproduces (O refuses 16.7% in EVAL-006, 20.8% here); removing the rule removes a remedy that did not work, not the problem"
+      - "one model (haiku), 24 runs per eval; a small true effect is not excluded by either CI"
+      - "T3 #3 remains a possible key error (RES-EVAL-006); without T3 the difference is -0.05, same direction"
+      - "the runs were produced by subagents of the session that wrote the preregistration and will apply the decision; the arbiter is score.py, which neither the runner nor the author can steer after the commit"
+    followup: ["the over-refusal stays open: a remedy that is not a sentence in SKILL.md (e.g. a worked example of an earned claim, or a check in the audit procedure) is the next candidate, preregistered on fresh tasks"]
+
+  - id: "RES-EVAL-007b"
+    experiment: "EXP-EVAL-007"
+    hypothesis: "H-EVAL-007b"
+    date: "2026-09-29"
+    measured: "Mean words O 1468, C 1394; C/O 0.949, 95% CI [0.736, 1.177]."
+    threshold_met: "no"
+    surprising_positive: false
+    confound_control_result: "Underpowered on the locked bands, one thousandth under the refute bar. Across three batches: 0.81, 0.81, 0.95; every CI includes 1."
+    statistics:
+      effect_size: "C/O 0.949"
+      n: "24 runs"
+      uncertainty: "95% CI [0.736, 1.177]"
+    artifact_freshness: "same score.py and runs as RES-EVAL-007a"
+    failure_is_loud: "every run has a length; a missing file raises"
+    decision: "no tier change; SKILL.md not changed (UNDERPOWERED keeps the rule by the preregistered decision rule)"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "0.949 vs a 0.95 refute bar: the rule survives this eval by a rounding margin, and saying otherwise either way would be reading the noise"
+      - "C also carries the earned-claim rule, which O lacks; a length effect of one is not separable from the other here"
+    followup: ["three measurements, none resolving: a fourth at the same n will not either; either pool the three batches with a preregistered pooled test, or stop measuring and leave the line as a style note"]

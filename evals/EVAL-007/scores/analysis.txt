@@ -1,0 +1,7 @@
+haiku: parse rate 1.000
+  arm O: earned-PROVEN 0.792  unearned-PROVEN 0.000  mean words 1468
+  arm C: earned-PROVEN 0.708  unearned-PROVEN 0.000  mean words 1394
+H7a earned C-O: -0.083  95% CI [-0.292, +0.083] -> REFUTE
+GUARD unearned C-O: +0.000  CI [+0.000, +0.000] -> holds
+H7b words C/O: 0.949  95% CI [0.736, 1.177] -> UNDERPOWERED
+secondary, without T3: earned O 0.900  C 0.850
