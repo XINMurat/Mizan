@@ -1,0 +1,23 @@
+{
+ "skill_sha256": "5d1d1c76db86a48d4f699b8df10f560787551832936abbfcdf07eadd87db8967",
+ "prompts": {
+  "runs/prompts/T1-A.md": "3bcba2542aa4c7110ab844af1e1279ae768e3001dd48674479cec1e45b7fa86e",
+  "runs/prompts/T1-B.md": "573da30204b18d041f17fd0ff66e8b488f9d6e861cdc0e311d9e77fe81f133e7",
+  "runs/prompts/T1-C.md": "9d0f924412e44b818ca010f53e7c113c1ca148cd375e1783679c799bb0aaff24",
+  "runs/prompts/T2-A.md": "c7866c01f4cd3c953580e84333a21b44cdc04d5f682a44f7301153b80ef25b89",
+  "runs/prompts/T2-B.md": "8e426e2dc29f215d23697cc699671bf6562dabb48e267617d009d2dbb24674e6",
+  "runs/prompts/T2-C.md": "eb1d7270a804ff1982dd2f6723404f63245dd3eb85b27a560d5437648e464bc8",
+  "runs/prompts/T3-A.md": "65a212c856fe32c1119cd7394effa798082a763cc3f95bbf9d28bd2657ea3077",
+  "runs/prompts/T3-B.md": "5129779bdd6eee1986793ea4cc5c886f126b903c588b41299582ae341abd52ec",
+  "runs/prompts/T3-C.md": "aede52b2765c3f98e872956ff6c1e9de0e9fbebf128b19174560abd0f3565d7e",
+  "runs/prompts/T4-A.md": "038c5d463fbbb6f2e003762721fb278c3b4fd989919d5198dc943308bb2887b5",
+  "runs/prompts/T4-B.md": "4c0462ca2ed346d9ff7e1fc76224df7e5454492d01f90a7335f240baf580e58b",
+  "runs/prompts/T4-C.md": "5aa13bd2adae245b476d191198483e5895044c1d60c4fba938fe0bf062edeeb8",
+  "runs/prompts/T5-A.md": "4575db7c45df8c0e7c93287065cd6b0426b9adc6461efa048fede6488524da49",
+  "runs/prompts/T5-B.md": "3725c7153592b7be10d2984df419f8bbcfa0b82df09763ab0454b8b8913ce356",
+  "runs/prompts/T5-C.md": "aa97a29ae8329da9c15c88f9d52b03a1cf2cbd9cc17faf46ab5d54c0d2b36cfb",
+  "runs/prompts/T6-A.md": "9a3587698bcff6c72e52695a693c86546fc09e4d3d1bf111228164cfd2122ecb",
+  "runs/prompts/T6-B.md": "d138eba64b455484d66cf4fad3f83c0ea06fbc72ba6581f800fa6629495d68cf",
+  "runs/prompts/T6-C.md": "e455e383c63f9387ec7f2319e4634763bb075fc2f5b45cdaa806c1139d189114"
+ }
+}

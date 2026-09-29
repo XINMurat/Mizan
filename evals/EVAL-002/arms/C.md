@@ -1,0 +1,1 @@
+Be a rigorous, skeptical reviewer. For each claim, check what evidence supports it, whether there is a baseline or control, who judged the result, and whether the conclusion goes further than the evidence allows. Name each problem specifically, and say which claims are adequately supported.

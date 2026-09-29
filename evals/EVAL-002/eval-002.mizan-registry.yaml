@@ -1,0 +1,130 @@
+# EVAL-002 preregistration. This file, key.yaml, tasks/, arms/, SCORER.md,
+# blind.py and analyze.py are committed BEFORE any file under runs/ exists;
+# the git history is the timestamp. Results are appended, never edited in.
+registry:
+  project: "Mizan — does the skill change what an audit finds? (harder task set)"
+  owner: "XINMurat"
+  schema_version: "1.12"
+  created: "2026-09-29"
+
+hypotheses:
+  - id: "H-EVAL-002a"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "With the skill loaded, an audit finds more planted defects than with no instruction"
+    formal: >
+      Across six claim sets with four unsignposted planted defects (four
+      needing arithmetic, five needing another item), two sound claims and
+      unscored distractors each, arm B (Mizan SKILL.md as instructions) detects a larger share of
+      planted defects than arm A (the task alone).
+    origin: "EVAL-001 hit the ceiling (every arm 4/4): its tasks signposted their defects. Same design, harder tasks."
+    data_status: "not_collected"
+    stopping_rule: >
+      Exactly 6 tasks x 3 arms x 2 repetitions = 36 runs, fixed now. No run is
+      added or repeated because of what a result shows.
+    exclusion_rule: >
+      A run is excluded only if it used any tool other than one Read of its
+      prompt file and one Write of its answer file (contamination: it could
+      have loaded a skill or seen another run). Excluded runs are
+      re-run once with the same prompt; a second contamination is reported as
+      precondition failed for that cell.
+    missing_data: "A run that returns no answer is re-run once; a second failure is reported."
+    metric:
+      name: "planted-defect detection rate"
+      instrument: "evals/EVAL-002/analyze.py over blinded scores (SCORER.md rubric, key.yaml)"
+    arbiter:
+      class: "third_party"
+      who: "a separate model instance given blinded, shuffled reviews, the answer key and SCORER.md; it never sees arm labels"
+      independent_of_author: true
+      latency: "hours"
+      calibration: >
+        Every scoring packet hides a known positive (written from the key,
+        must score 4/4 detected, 0/2 flagged) and a known negative (finds
+        nothing, must score 0/4, 0/2). Any calibration miss = precondition
+        failed, no verdict.
+    threshold:
+      support: "B - A >= 0.15 and the task-bootstrap 95% CI lower bound > 0"
+      refute: "B - A < 0.05"
+      underpowered: "anything between: reported as underpowered, not [R] and not [K]"
+    refutation: >
+      B detects less than 5 points more than A: the skill does not change
+      what an audit finds on claims like these.
+    two_sided: >
+      Support: loading the skill measurably changes audit output. Refute:
+      the model audits this well without it, and the skill's cost (context
+      tokens, rules) buys nothing measurable here.
+    informativeness_precondition: >
+      Arm A detection <= 0.85. Above that the tasks are too easy to separate
+      arms, and no [R] may be read from the run.
+    preregistered_prediction: "After EVAL-001 the author is less sure: expects A around 0.6-0.8 and B above it by 0.05-0.20."
+    prior_art:
+      - "LLM-as-judge with reference answers; planted-error detection benchmarks"
+    confounds:
+      - "length: B may write more and so mention more -- mean words per arm is reported beside every rate"
+      - "blinding is imperfect: tier tags are stripped, style and length are not"
+      - "distractor items are not scored, so a review that also criticises them costs nothing in the score"
+      - "the same model family writes the reviews and scores them"
+      - "the answer key was written by the evaluation's author"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: []
+    cost: "36 review runs + 6 scoring runs, model-hours; EVAL-001 cost the same"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
+
+  - id: "H-EVAL-002b"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-10-31"
+    preregistered: "2026-09-29"
+    title: "The skill beats a one-paragraph 'be skeptical' instruction"
+    formal: >
+      Arm B detects a larger share of planted defects than arm C, a
+      45-word generic rigor instruction, without buying it with false flags.
+    origin: "the question that matters: is 486 lines of skill worth more than one paragraph?"
+    data_status: "not_collected"
+    stopping_rule: "Same 36 runs as H-EVAL-002a."
+    exclusion_rule: "Same as H-EVAL-002a."
+    missing_data: "Same as H-EVAL-002a."
+    metric:
+      name: "planted-defect detection rate, with false-flag rate as a guard"
+      instrument: "evals/EVAL-002/analyze.py"
+    arbiter:
+      class: "third_party"
+      who: "the blinded scorer of H-EVAL-002a"
+      independent_of_author: true
+      latency: "hours"
+      calibration: "Same known positive / known negative per packet as H-EVAL-002a."
+    threshold:
+      support: "B - C >= 0.10, CI lower bound > 0, and false-flag B - C <= 0.10"
+      refute: "B - C < 0.03"
+      underpowered: "anything between, or support met with the guard broken"
+    refutation: >
+      B detects less than 3 points more than C: a one-paragraph instruction
+      does the measurable work of the skill on claims like these.
+    two_sided: >
+      Support: the skill's structure carries information a generic
+      instruction does not. Refute: its measurable value here is the
+      instruction to be skeptical, and the rest is not shown to matter.
+    informativeness_precondition: "Same as H-EVAL-002a, and arm C detection <= 0.90."
+    preregistered_prediction: "Author is uncertain; expects a smaller gap than B - A, possibly none."
+    prior_art:
+      - "prompt ablations: long system prompts vs short instructions"
+    confounds:
+      - "the same five as H-EVAL-002a"
+      - "six tasks give a wide CI; underpowered is a likely and legitimate outcome"
+    relations:
+      depends_on: ["H-EVAL-002a"]
+      contradicts: []
+      refines: []
+    cost: "none beyond H-EVAL-002a"
+    history:
+      - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
+
+experiments: []
+results: []
