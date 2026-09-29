@@ -1,0 +1,49 @@
+# EVAL-001 answer key. Written before any arm was run; the commit that adds
+# this file precedes every file under runs/. Each task has four planted
+# defects (D) and two sound claims (S). A defect counts as DETECTED only if the
+# output names its specific mechanism -- "needs more evidence" said of every
+# item is not a detection. A sound claim counts as FALSELY FLAGGED only if the
+# output calls it unsupported, invalid or misleading as a primary judgement; a
+# secondary nuance ("p95 would also help") is not a false flag.
+T1:
+  D1: {item: 1, mechanism: "self-arbitration: the team that built the bot wrote the test set and graded the answers"}
+  D2: {item: 2, mechanism: "before/after comparison with no control; March vs February can differ for other reasons (seasonality, other changes) -- causal claim unsupported"}
+  D3: {item: 3, mechanism: "threshold moved after seeing the result (goalpost moving / HARKing)"}
+  D4: {item: 4, mechanism: "cherry-picked subset: the three most active segments do not represent overall success"}
+  S1: {item: 5, why: "specified statistic, source, window and n"}
+  S2: {item: 6, why: "honest scope limitation"}
+T2:
+  D1: {item: 1, mechanism: "single run: no variance estimate, a 3.6-point gain may be seed noise"}
+  D2: {item: 2, mechanism: "hyperparameters tuned on the test split: test-set leakage, reported accuracy is optimistic"}
+  D3: {item: 3, mechanism: "baseline not re-run: copied 2019 numbers are not comparable (different setup/compute/tuning)"}
+  D4: {item: 4, mechanism: "'significant' claimed with no statistical test"}
+  S1: {item: 5, why: "matched ablation with seeds and spread"}
+  S2: {item: 6, why: "reproducibility artifacts released with exact commit"}
+T3:
+  D1: {item: 1, mechanism: "optional stopping / peeking: stopping when p<0.05 inflates false positives"}
+  D2: {item: 2, mechanism: "outcome switching: primary metric changed after the result"}
+  D3: {item: 3, mechanism: "cherry-picked window: revenue from B's last week only, no comparable A window"}
+  D4: {item: 4, mechanism: "subgroup claim (mobile and desktop) with no subgroup analysis"}
+  S1: {item: 5, why: "randomization unit stated, arm sizes and balance check reported"}
+  S2: {item: 6, why: "confound (pricing/campaigns) controlled and documented"}
+T4:
+  D1: {item: 1, mechanism: "'all tests pass' while 3 tests are skipped -- and they are exactly the legacy parser tests"}
+  D2: {item: 2, mechanism: "non-comparable measurement: one laptop run vs production dashboard numbers"}
+  D3: {item: 3, mechanism: "'no behaviour change' contradicted by the strict_mode default flip"}
+  D4: {item: 4, mechanism: "self-review: the author reviewed their own security, no independent reviewer"}
+  S1: {item: 5, why: "tests added with an attached coverage report"}
+  S2: {item: 6, why: "compatibility verified with a concrete run and logs"}
+T5:
+  D1: {item: 1, mechanism: "'3x users' has no source and contradicts item 5 (12,400 -> 15,100 is ~1.2x)"}
+  D2: {item: 2, mechanism: "vague / unfalsifiable superlative with no metric"}
+  D3: {item: 3, mechanism: "confound: a 20% price cut in the same month can explain lower churn"}
+  D4: {item: 4, mechanism: "tiny sample / non-response: 3 of 5 answered, the average says little"}
+  S1: {item: 5, why: "source and constant definition stated"}
+  S2: {item: 6, why: "source and constant classification stated"}
+T6:
+  D1: {item: 1, mechanism: "survivorship (completers only) and self-report, no control group"}
+  D2: {item: 2, mechanism: "non-comparable populations: app users vs national average (selection), cannot attribute the difference to the app"}
+  D3: {item: 3, mechanism: "appeal to authority: an endorsement is not evidence"}
+  D4: {item: 4, mechanism: "correlation read as causation (reverse causation / selection: good sleepers may log in more)"}
+  S1: {item: 5, why: "metric with n, cohort and source"}
+  S2: {item: 6, why: "honest limitation"}
