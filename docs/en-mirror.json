@@ -8,7 +8,7 @@
       "tr": "docs/tr/yazilim-modlari.md",
       "sources": ["skill/mizan/references/code-audit.md", "skill/mizan/references/feature-gate.md"] },
     { "out": "domain-adaptation.md", "title": "Domain adaptation — modes 3/4/5 beyond software",
-      "tr": "docs/tr/alan-uyarlama.md",
+      "tr": "docs/tr/alan-uyarlama.md", "tr_structure": "1:1",
       "sources": ["skill/mizan/references/domain-adaptation.md"] }
   ]
 }

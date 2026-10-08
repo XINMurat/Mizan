@@ -929,6 +929,30 @@ jobs:
           cp /tmp/shared-backup tools/token_budget.py
           echo "ok -- drift is caught"
 
+      - name: One-to-one Turkish pages keep their source's shape
+        run: |
+          set -e
+          # The recipe in domain-adaptation.md grew a question 0 (the arbiter)
+          # and the Turkish page kept saying "answer five questions". Nothing
+          # failed, because nothing compared the two documents -- the parity
+          # check above is about menus. This counts bullets and numbered items
+          # per section on pages marked "tr_structure": "1:1".
+          python tools/check_tr_structure.py
+
+      - name: Self-test — the shape check actually fails on a dropped question
+        run: |
+          set -e
+          # A gate that cannot fail is decoration. Drop the recipe's question 0,
+          # which is exactly the drift that went unnoticed.
+          cp docs/tr/alan-uyarlama.md /tmp/shape-backup
+          sed -i '/^0\. \*\*Hakem/d' docs/tr/alan-uyarlama.md
+          if python tools/check_tr_structure.py; then
+            cp /tmp/shape-backup docs/tr/alan-uyarlama.md
+            echo "FAIL: a dropped recipe question went unnoticed" >&2; exit 1
+          fi
+          cp /tmp/shape-backup docs/tr/alan-uyarlama.md
+          echo "ok -- a dropped question is caught"
+
       - name: The context budget holds (T0/T1 and the per-run sets)
         run: |
           set -e
