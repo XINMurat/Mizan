@@ -219,4 +219,5 @@ experiments:
       - "2026-10-09, before any run: runs are spread one task per day, all three arms of a task in the same session, to fit the owner's quota"
       - "2026-10-09, before any run: EVAL-003's blind.py and analyze.py hard-code arms A/B/C and 2 reps; EVAL-008 uses copies changed only in those constants (arms O/P/C, reps 1-3)"
       - "2026-10-09, after T1's first batch, before any scoring: 7 of 9 T1 runs stopped at max_tokens 8000 (haiku-5-5 spends most output on non-visible reasoning; visible answers 220-880 words, cut mid-sentence). Runner configuration defect, not a run-level event: all 9 runs moved to runs/excluded/t1-maxtokens8000/ with their log, max_tokens raised to 32000 with streaming, T1 re-run. The author read parts of the cut outputs; none was scored and arms P/C were not changed"
+      - "2026-10-09, after T1 (9/9 end_turn), before any scoring: owner chose to run T2-T6 in one batch instead of one per day (API credit, not plan quota); each task still runs all three arms back to back"
     raw_output: "evals/EVAL-008/runs/ and evals/EVAL-008/scores/"
