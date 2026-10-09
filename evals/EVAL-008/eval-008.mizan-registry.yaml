@@ -85,6 +85,7 @@ hypotheses:
     cost: "54 haiku review runs + 6 default-model scoring runs"
     history:
       - { date: "2026-10-09", event: "preregistered v1, before arm P was written and before any run" }
+      - { date: "2026-10-09", event: "arm P committed (ec5a021, sha256 ee2401a0c6ec...); runner and schedule amended before any run, see EXP-EVAL-008 deviations" }
 
   - id: "H-EVAL-008b"
     version: 1
@@ -193,10 +194,10 @@ experiments:
       tasks: "evals/EVAL-002/tasks/ (as used by EVAL-003)"
       key: "evals/EVAL-003/key.yaml"
       runner: >
-        One haiku subagent per run, prompt: "Read the file <prompt> and follow
-        its instructions exactly. Then write your complete answer, and nothing
-        else, to <run file> with one Write. Use no other tools. Write only
-        once. Finally report which tools you used."
+        evals/EVAL-008/run.py: one Messages API call per run on
+        claude-haiku-5-5, no system prompt, no tools, max_tokens 8000; prompt =
+        "# Instructions" + arm body + EVAL-003's "# Task" section. Every prompt
+        is written to runs/prompts/ and every call logged to runs/log.jsonl.
     baseline:
       description: "arm O (full SKILL.md) and arm C (45-word brief), same batch"
     confound_controls:
@@ -213,4 +214,8 @@ experiments:
       - confound: "a shorter answer can be shorter because it found less; read only beside H-EVAL-008a"
         control: "controlled by design: H-EVAL-008c's decision rule changes nothing on its own"
     status: "planned"
+    deviations:
+      - "2026-10-09, before any run: runner changed from haiku subagents to direct API calls (run.py) to cut per-run overhead; with no tools, the exclusion rule's tool clause cannot fire and a run is excluded instead if stop_reason is not end_turn or the answer is empty"
+      - "2026-10-09, before any run: runs are spread one task per day, all three arms of a task in the same session, to fit the owner's quota"
+      - "2026-10-09, before any run: EVAL-003's blind.py and analyze.py hard-code arms A/B/C and 2 reps; EVAL-008 uses copies changed only in those constants (arms O/P/C, reps 1-3)"
     raw_output: "evals/EVAL-008/runs/ and evals/EVAL-008/scores/"
