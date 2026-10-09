@@ -1,0 +1,152 @@
+{
+"X1": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "$3.0M / $2.4M = 1.25, so growth is 25%, not 40%.",
+"D2": "An annual-plan customer cannot churn monthly... they dilute the monthly churn denominator without any real improvement in retention.",
+"D3": "A single p = 0.04 is what you would expect to see from noise in this setup.",
+"D4": "Reverse causation is possible. High-LTV customers may have more time and reason to set up integrations."
+}
+},
+"X2": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 1,
+"S2": 0,
+"quotes": {
+"D1": "$3.0M / $2.4M = 1.25, so growth is 25%.",
+"D2": "annual subscribers cannot churn monthly. Adding them to the denominator lowers the monthly rate with zero change in behavior.",
+"D3": "With 20 tests, the chance of at least one p < 0.05 under pure noise is... ≈ 64%.",
+"D4": "Integration adopters are likely self-selected (larger, more engaged teams).",
+"S1": "three have causal framings the data cannot yet support (4, 5, 3)."
+}
+},
+"X3": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "($3.0M − $2.4M) / $2.4M = 25%, not 40%.",
+"D2": "Annual-plan customers cannot churn on a monthly cycle... the blended rate falls mechanically.",
+"D3": "A single p-value from a search across 20 metrics is not evidence of an effect.",
+"D4": "Reverse causation (customers who stay longer adopt more) is equally plausible."
+}
+},
+"X4": {
+"D1": 0,
+"D2": 0,
+"D3": 0,
+"D4": 0,
+"S1": 0,
+"S2": 0,
+"quotes": {}
+},
+"X5": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "The stated numbers give +25%, not +40%",
+"D2": "Annual-plan customers cannot churn monthly... adding them to the denominator mechanically lowers the monthly churn rate.",
+"D3": "Best of 20 uncorrected tests, unpreregistered",
+"D4": "Adopters are probably more engaged to begin with, so the gap is partly selection."
+}
+},
+"X6": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "$3.0M / $2.4M = 1.25, a 25% increase, not 40%.",
+"D2": "As the share of annual customers grows, measured monthly churn mechanically falls",
+"D3": "A single p = 0.04 is what you'd expect from that process by chance.",
+"D4": "Unsupported. Clear selection-bias problem."
+}
+},
+"X7": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "$3.0M / $2.4M = 1.25, so growth is 25%.",
+"D2": "Denominator composition. If annual subscribers do not appear as monthly churners... the blended monthly rate falls",
+"D3": "Twenty tests at α = 0.05 give a 64% chance of at least one false positive",
+"D4": "Integration adoption is self-selected... The 2× gap is consistent with that selection alone."
+}
+},
+"X8": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "($3.0M − $2.4M) / $2.4M = 25%, not 40%.",
+"D2": "the blended monthly rate falls simply because a growing share of the base cannot churn in-period.",
+"D3": "The chance that the best of 20 null results lands at p ≤ 0.04 is... ≈ 56%.",
+"D4": "the 2× gap may reflect who chooses integrations, not what integrations do."
+}
+},
+"X9": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "arithmetic: 2.4M -> 3.0M is +25%, not +40%.",
+"D2": "annual-plan customers... cannot churn monthly, so the metric's denominator changed, not retention.",
+"D3": "one p=0.04 out of 20 metrics is about what chance produces.",
+"D4": "high-value customers may adopt integrations, not the reverse."
+}
+},
+"X10": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "$3.0M / $2.4M = 1.25, so growth is 25%.",
+"D2": "A blended 'monthly churn' figure will fall as the annual share of the base grows",
+"D3": "20 tests on a null effect give a 64% chance... at least one falls below p = 0.05",
+"D4": "selection bias plus reverse causation (engaged users adopt integrations, and engagement drives LTV)."
+}
+},
+"X11": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "($3.0M − $2.4M) / $2.4M = 25%, not 40%.",
+"D2": "Annual customers... cannot churn monthly. Including them... changes the denominator and population.",
+"D3": "A p = 0.04 result is the expected kind of false positive from this process.",
+"D4": "Reverse causation: Long-lived, high-value customers have more time to adopt integrations."
+}
+}
+}

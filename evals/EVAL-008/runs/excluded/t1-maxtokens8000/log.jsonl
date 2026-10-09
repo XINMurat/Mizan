@@ -1,0 +1,9 @@
+{"run": "T1-O-1", "model": "claude-haiku-5-5", "prompt_sha": "6eee40bfbd01", "stop": "max_tokens", "in": 10773, "out": 8000, "at": "2026-10-09T17:15:57"}
+{"run": "T1-O-2", "model": "claude-haiku-5-5", "prompt_sha": "6eee40bfbd01", "stop": "max_tokens", "in": 10773, "out": 8000, "at": "2026-10-09T17:16:38"}
+{"run": "T1-O-3", "model": "claude-haiku-5-5", "prompt_sha": "6eee40bfbd01", "stop": "max_tokens", "in": 10773, "out": 8000, "at": "2026-10-09T17:17:20"}
+{"run": "T1-P-1", "model": "claude-haiku-5-5", "prompt_sha": "a67ec157c2e3", "stop": "max_tokens", "in": 2721, "out": 8000, "at": "2026-10-09T17:18:02"}
+{"run": "T1-P-2", "model": "claude-haiku-5-5", "prompt_sha": "a67ec157c2e3", "stop": "max_tokens", "in": 2721, "out": 8000, "at": "2026-10-09T17:18:45"}
+{"run": "T1-P-3", "model": "claude-haiku-5-5", "prompt_sha": "a67ec157c2e3", "stop": "max_tokens", "in": 2721, "out": 8000, "at": "2026-10-09T17:19:27"}
+{"run": "T1-C-1", "model": "claude-haiku-5-5", "prompt_sha": "9d0f924412e4", "stop": "end_turn", "in": 699, "out": 7874, "at": "2026-10-09T17:20:07"}
+{"run": "T1-C-2", "model": "claude-haiku-5-5", "prompt_sha": "9d0f924412e4", "stop": "end_turn", "in": 699, "out": 6847, "at": "2026-10-09T17:20:43"}
+{"run": "T1-C-3", "model": "claude-haiku-5-5", "prompt_sha": "9d0f924412e4", "stop": "max_tokens", "in": 699, "out": 8000, "at": "2026-10-09T17:21:24"}

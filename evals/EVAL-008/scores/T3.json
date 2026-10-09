@@ -1,0 +1,152 @@
+{
+"X1": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Kendi sayılarında fark −1 puan, yani program kontrolden az arttı. Sonuç cümlesi bu veriyle ters.",
+"D2": "Toplamın yüksek çıkması... yüksek puanlı grubun payının fazla olmasıyla açıklanabilir (Simpson türü bileşim etkisi).",
+"D3": "Ölçüm aracı programın yazarına ait... Program okulları konularla 'öğretilmiş' sınavda avantajlı.",
+"D4": "kayıp 610 öğrenci, %25,4. Kaybın gruplara göre dağılımı... verilmemiş. Yalnızca tamamlayanlar analiz edilmiş."
+}
+},
+"X2": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Kendi verisi, programın kontrol okullarından daha az arttığını gösteriyor.",
+"D2": "Bu bir Simpson paradoksu... Yorum 'her iki grup için faydalı' olamaz; tam tersi okunmalı.",
+"D3": "Program içeriğine göre hazırlanmış bir sınav... Bu bir 'öğretmeye-yönelik-testi' (teaching to the test) etkisidir.",
+"D4": "Kayıp: 610 öğrenci, %25,4... Ölçülebilirlik sonuçla ilişkiliyse analiz yanlı olur."
+}
+},
+"X3": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Rakamlar tersini gösteriyor: fark −1 puan.",
+"D2": "Toplamın pozitif çıkması, grupların bileşim farkından kaynaklanıyor olabilir (Simpson paradoksu).",
+"D3": "öğretme-test ölçüm yanlılığı (teaching-to-the-test) çok olası. Bağımsız bir standart ölçüm yapılmamış.",
+"D4": "%25 kayıp, yanlılık için yeterince büyük."
+}
+},
+"X4": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Kendi sayıları programın kontrol okullarından daha az arttığını gösteriyor (fark −1 puan).",
+"D2": "Toplamın yüksek çıkması Simpson paradoksunun imzasıdır: program okullarının bileşimi... kontrol okullarından farklı.",
+"D3": "Ölçüm aracının yazarı, değerlendirilen müdahalenin sahibidir... sınav 'program içeriğine maruziyeti' ölçer.",
+"D4": "%25,4 kayıp... Kayıp rastgele değilse, yalnızca 'ölçülebilenler' analiz edilerek sonuç kolayca yanlılaşır."
+}
+},
+"X5": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 1,
+"quotes": {
+"D1": "raporun kendi sayıları programın işe yaramadığını gösteriyor, ama rapor programın başarıyı artırdığını söylüyor.",
+"D2": "bu bir Simpson paradoksu kalıbı... program okullarının kompozisyonu farklıdır.",
+"D3": "Program içeriğine göre yazılmış bir sınav, programı lehine yanlı ölçer.",
+"D4": "Yalnızca tamamlayanların analizi, dengesiz kaybın sonucu çevirebileceği anlamına gelir.",
+"S2": "Kritik Kontrol Eksik... 'ek' kelimesi bir referans noktası gerektiriyor: programsız öğretmenlerin iş yükü yok."
+}
+},
+"X6": {
+"D1": 0,
+"D2": 0,
+"D3": 0,
+"D4": 0,
+"S1": 0,
+"S2": 0,
+"quotes": {}
+},
+"X7": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "control schools improved more (9% vs 8%): the data show no program effect",
+"D2": "Simpson's paradox: lower in both subgroups, higher only in aggregate (composition)",
+"D3": "instrument built by the program's developer and aligned with program material: teaching to the test",
+"D4": "attrition: 610 of 2,400 (25%) not analysed; dropouts likely differ, results biased."
+}
+},
+"X8": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Program grubu kontrol grubundan 1 puan daha az arttı... 'Artırıyor' sonucu, verilen veriyle çelişiyor.",
+"D2": "Bu bir Simpson paradoksu örüntüsü ve kompozisyon farkı işareti. 'Faydalı' ifadesi bu veriyle desteklenmiyor.",
+"D3": "sınavı programın geliştiricisi hazırlamış ve içeriği program materyaline göre. Program okulları bu konularda avantajlı.",
+"D4": "610 öğrenci (%25,4) kayıp... Bu, −1 puanlık farkı tamamen açıklayabilir."
+}
+},
+"X9": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Program okulları, kontrol okullarından daha az artış göstermiş.",
+"D2": "Toplam ortalamanın yukarı çıkması bir Simpson paradoksu örneği olabilir... cinsiyet bileşiminin farklı olduğunu gösterir.",
+"D3": "Ciddi sorun: çıkar çatışması ve öğretmeye-sınav uyumu.",
+"D4": "Kayıp oranı %25,4 (610 öğrenci)... Analiz edilen örneklem seçici olabilir."
+}
+},
+"X10": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Veriler programın kontrol grubundan daha az artış gösterdiğini söylüyor (−1 puan fark).",
+"D2": "Bu, Simpson paradoksunun tipik bir örneği: ...gruplardaki cinsiyet dağılımının farklılığından kaynaklanıyor olabilir.",
+"D3": "Öğretmeye göre sınav uyumu (teaching to the test): Sınav, programın kendi materyalindeki konuları kapsıyor.",
+"D4": "'Ölçülebilen' öğrenciler seçici bir alt küme olabilir; bu, 'tamamen analizi' (complete-case) yanlılığı yaratır."
+}
+},
+"X11": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Program okulları kontrol okullarından daha az artmış (−1 puan fark).",
+"D2": "Yanlış yorum (Simpson paradoksu)... cinsiyet bileşimi iki grupta farklıysa ortaya çıkabilir.",
+"D3": "Bu, 'öğretmeye-yönelik-sınav' (teaching to the test) sorunudur.",
+"D4": "Kayıp verinin sistematik olduğu (örneğin zayıf öğrencilerin ayrılması) varsayılırsa, analizdeki sonuçlar yanlı olabilir."
+}
+}
+}

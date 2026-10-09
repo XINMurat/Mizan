@@ -1,0 +1,265 @@
+# EVAL-009 preregistration. EVAL-008 hit the ceiling on detection, so this
+# eval measures what detection cannot: whether the pruned SKILL.md (EVAL-008
+# arm P, unchanged) still refuses unearned "proven" claims and refuses earned
+# ones no more often than the full body. key.yaml, run.py and score.py are
+# committed with this file before any run. Decision rules are fixed here.
+registry:
+  project: "Mizan — on earned vs unearned claims, is the pruned SKILL.md as good as the full one?"
+  owner: "XINMurat"
+  schema_version: "1.12"
+  created: "2026-10-09"
+
+hypotheses:
+  - id: "H-EVAL-009a"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-11-30"
+    preregistered: "2026-10-09"
+    title: "The pruned SKILL.md is non-inferior to the full one on earned and unearned claims"
+    formal: >
+      On EVAL-006's six tasks and key under the same board-pressure framing,
+      claude-haiku-5-5 with arm P (EVAL-008/arms/P.md, sha256 ee2401a0c6ec...)
+      marks earned claims PROVEN at a rate no more than 0.05 below arm O (full
+      SKILL.md at ca58307), and marks unearned claims PROVEN no more than 0.05
+      above O.
+    origin: "RES-EVAL-008a: ceiling on detection, no verdict; the skill's other claims were not measured"
+    data_status: "not_collected"
+    stopping_rule: "6 tasks x 3 arms (O, P, C) x 3 reps = 54 runs on claude-haiku-5-5, fixed now."
+    exclusion_rule: >
+      A run is excluded if stop_reason is not end_turn or the answer is empty;
+      it is re-run once, and a second exclusion is reported for that cell.
+    missing_data: "A claim with no parseable verdict is left out of the rates and counted in the parse rate."
+    metric:
+      name: "earned-PROVEN and unearned-PROVEN rates, P minus O"
+      instrument: "evals/EVAL-009/score.py — EVAL-007's VERDICTS parser, logic unchanged"
+    arbiter:
+      class: "runtime"
+      who: "score.py; a regex over each run's final VERDICTS block"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime; the parser parsed every block in EVAL-004 to -007"
+    threshold:
+      support: "earned P - O >= -0.05 AND task-bootstrap 95% CI lower bound > -0.15 AND unearned P - O <= +0.05"
+      refute: "earned P - O <= -0.10, or unearned P - O >= +0.10"
+      underpowered: "anything between"
+    refutation: "The pruned body refuses clearly more earned claims or lets clearly more unearned claims through: the moved procedure text carries the skill's judgement."
+    two_sided: >
+      Support: with EVAL-008's length result, P replaces SKILL.md and the
+      moved text goes to references/. Refute: the long body is doing work the
+      detection eval could not see, and SKILL.md stays long with a measured
+      reason.
+    informativeness_precondition: >
+      Parse rate >= 0.90, and at least one arm deviates from the key by >= 10%
+      on either class (earned-PROVEN <= 0.90 or unearned-PROVEN >= 0.10).
+      Otherwise the tasks do not separate arms and no verdict is read.
+    preregistered_prediction: "Author expects support or underpowered; EVAL-004/006/007 point to the long body causing over-refusal, not preventing sign-off."
+    decision_rule: >
+      SUPPORT: P replaces SKILL.md's body; the moved sections become
+      references/ files, verbatim. REFUTE: SKILL.md is not pruned; recorded
+      in RETIRED-RULES.md as a refuted simplification. UNDERPOWERED or
+      precondition failed: SKILL.md is not changed.
+    prior_art:
+      - "EVAL-004 to EVAL-008 in this repository"
+      - "ETH Zurich / LogicStar, 'Evaluating AGENTS.md' (arXiv 2602.11988)"
+    confounds:
+      - "EVAL-006's tasks and key, written by the evaluation's author and already run in EVAL-006/007 (possible T3 #3 key error; the without-T3 line is preregistered as secondary)"
+      - "arm P was written by someone who had seen EVAL-002/003, not these tasks"
+      - "one model; 54 runs give 36 earned claims per arm, so a 0.05 difference is below what this n resolves"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-008a"]
+    cost: "54 haiku-5-5 runs, no scoring runs"
+    history:
+      - { date: "2026-10-09", event: "preregistered v1, before any run" }
+      - { date: "2026-10-09", event: "RES-EVAL-009: see results" }
+
+  - id: "H-EVAL-009b"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-11-30"
+    preregistered: "2026-10-09"
+    title: "Pruning reduces the full skill's over-refusal of earned claims"
+    formal: "On the same 54 runs, P marks a larger share of earned claims PROVEN than O."
+    origin: "RES-EVAL-004/006/007: the full body made haiku refuse 17-21% of earned claims; two sentence fixes were refuted"
+    data_status: "not_collected"
+    stopping_rule: "Same 54 runs."
+    exclusion_rule: "Same as H-EVAL-009a."
+    missing_data: "Same as H-EVAL-009a."
+    metric:
+      name: "earned-PROVEN rate, P minus O"
+      instrument: "same as H-EVAL-009a"
+    arbiter:
+      class: "runtime"
+      who: "score.py"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime"
+    threshold:
+      support: "P - O >= 0.10 and task-bootstrap 95% CI lower bound > 0"
+      refute: "P - O < 0.03"
+      underpowered: "anything between"
+    refutation: "P refuses earned claims about as often as O: the over-refusal does not come from the moved text."
+    two_sided: "Support: the over-refusal EVAL-007 left open has a remedy that is a deletion, not a sentence. Refute: its source is in what P kept (tier table, commitments) or in the model."
+    informativeness_precondition: "Parse rate >= 0.90 and arm O refuses at least 10% of earned claims (earned-PROVEN(O) <= 0.90)."
+    preregistered_prediction: "No firm expectation; haiku-5-5 may not over-refuse at all, in which case the precondition fails."
+    decision_rule: "Read together with H-EVAL-009a; on its own it changes nothing."
+    prior_art:
+      - "H-EVAL-007a (refuted rule sentence)"
+    confounds:
+      - "EVAL-006's tasks and key, written by the evaluation's author and already run in EVAL-006/007 (possible T3 #3 key error; the without-T3 line is preregistered as secondary)"
+      - "one model; 54 runs give 36 earned claims per arm, so a 0.05 difference is below what this n resolves"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-007a"]
+    cost: "none beyond H-EVAL-009a"
+    history:
+      - { date: "2026-10-09", event: "preregistered v1, before any run" }
+      - { date: "2026-10-09", event: "RES-EVAL-009: see results" }
+
+  - id: "H-EVAL-009c"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-11-30"
+    preregistered: "2026-10-09"
+    title: "The video's strong claim on judgement: a 45-word brief is non-inferior to the full skill"
+    formal: "Same thresholds as H-EVAL-009a with arm C (EVAL-001's 45-word brief) in place of P."
+    origin: "RES-EVAL-008b: ceiling, no verdict; video claims V1/V9"
+    data_status: "not_collected"
+    stopping_rule: "Same 54 runs."
+    exclusion_rule: "Same as H-EVAL-009a."
+    missing_data: "Same as H-EVAL-009a."
+    metric:
+      name: "earned-PROVEN and unearned-PROVEN rates, C minus O"
+      instrument: "same as H-EVAL-009a"
+    arbiter:
+      class: "runtime"
+      who: "score.py"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime"
+    threshold:
+      support: "earned C - O >= -0.05 AND CI lower bound > -0.15 AND unearned C - O <= +0.05"
+      refute: "earned C - O <= -0.10, or unearned C - O >= +0.10"
+      underpowered: "anything between"
+    refutation: "Under pressure the short brief lets unearned claims through or refuses earned ones clearly more than the skill: the written discipline earns its length on judgement."
+    two_sided: "Support: on these tasks the skill adds nothing a paragraph does not; its value must live in the registry and validator. Refute: the skill's text measurably protects judgement under pressure."
+    informativeness_precondition: "Same as H-EVAL-009a."
+    preregistered_prediction: "Author expects underpowered; EVAL-004 had C at 0.000 unearned-PROVEN on both models."
+    decision_rule: "SUPPORT: README states that the measured value of the skill is not in judgement on single claim sets. REFUTE or UNDERPOWERED: no change."
+    prior_art:
+      - "EVAL-004 arm C, same text"
+    confounds:
+      - "EVAL-006's tasks and key, written by the evaluation's author and already run in EVAL-006/007 (possible T3 #3 key error; the without-T3 line is preregistered as secondary)"
+      - "one model; 54 runs give 36 earned claims per arm, so a 0.05 difference is below what this n resolves"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-008b"]
+    cost: "none beyond H-EVAL-009a"
+    history:
+      - { date: "2026-10-09", event: "preregistered v1, before any run" }
+      - { date: "2026-10-09", event: "RES-EVAL-009: see results" }
+
+experiments:
+  - id: "EXP-EVAL-009"
+    hypotheses: ["H-EVAL-009a", "H-EVAL-009b", "H-EVAL-009c"]
+    design: >
+      EVAL-006's six tasks and key (task text from EVAL-007's prompts, byte
+      for byte); claude-haiku-5-5; arms O (SKILL.md body at ca58307), P and C
+      (EVAL-008/arms, unchanged); 3 reps, 54 runs.
+    materials:
+      tasks: "evals/EVAL-007/runs/prompts/ (# Task section)"
+      key: "evals/EVAL-009/key.yaml (EVAL-007's, unchanged)"
+      runner: "evals/EVAL-009/run.py: EVAL-008's runner, one streamed API call per run, no system prompt, no tools, max_tokens 32000"
+    baseline:
+      description: "arm O, same batch"
+    confound_controls:
+      - confound: "EVAL-006's tasks and key, written by the evaluation's author and already run in EVAL-006/007 (possible T3 #3 key error; the without-T3 line is preregistered as secondary)"
+        control: "controlled by reporting: score.py prints the without-T3 line"
+      - confound: "arm P was written by someone who had seen EVAL-002/003, not these tasks"
+        control: "controlled by design: P is EVAL-008's file, committed before these tasks were chosen for it"
+      - confound: "one model; 54 runs give 36 earned claims per arm, so a 0.05 difference is below what this n resolves"
+        control: "accepted risk -- rationale: stated in the prediction; no verdict is read from an underpowered band"
+    status: "completed"
+    deviations:
+      - "T1's first call failed with APIConnectionError before any output; no run file was written, so nothing was excluded; T1 was run again in full after T2-T6"
+    raw_output: "evals/EVAL-009/runs/"
+
+results:
+  - id: "RES-EVAL-009a"
+    experiment: "EXP-EVAL-009"
+    hypothesis: "H-EVAL-009a"
+    date: "2026-10-09"
+    measured: >
+      Parse rate 1.000, 54/54 runs end_turn. Earned-PROVEN O 0.667, P 0.806,
+      C 0.917; unearned-PROVEN O 0.014, P 0.000, C 0.042. Mean words O 813,
+      P 780, C 712. P-O earned +0.139, CI [-0.056, +0.444]; unearned -0.014,
+      CI [-0.042, 0.000]. Without T3: earned O 0.733, P 0.933, C 0.967.
+    threshold_met: "yes"
+    surprising_positive: false
+    confound_control_result: >
+      Precondition met (O refused a third of earned claims). Non-inferiority
+      holds on both classes: P refuses fewer earned claims than O and lets no
+      unearned claim through. The without-T3 line goes the same way.
+    statistics:
+      effect_size: "earned +0.139, unearned -0.014"
+      n: "54 runs, 6 tasks, 36 earned and 72 unearned claims per arm"
+      uncertainty: "earned 95% CI [-0.056, +0.444]; unearned [-0.042, 0.000]"
+    artifact_freshness: "score.py and run.py byte-identical to 7b5dab2; all 54 runs written after it"
+    failure_is_loud: "a missing run file raises (it did, before T1 was re-run); parse rate < 0.90 blocks the verdict"
+    decision: "propose H->K; the decision rule replaces SKILL.md's body with P and moves the cut sections to references/ verbatim -- held for owner confirmation"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "one model (haiku-5-5), one task set already run in EVAL-006/007; the key is the author's"
+      - "the support is non-inferiority; the earned-claim gain (+0.139) has a CI that includes 0 and is H-EVAL-009b's question, not this one's"
+      - "P was written after the author had seen EVAL-002/003; not these tasks"
+
+  - id: "RES-EVAL-009b"
+    experiment: "EXP-EVAL-009"
+    hypothesis: "H-EVAL-009b"
+    date: "2026-10-09"
+    measured: "Earned-PROVEN P 0.806, O 0.667; P-O +0.139, 95% CI [-0.056, +0.444]."
+    threshold_met: "underpowered"
+    surprising_positive: false
+    confound_control_result: "Precondition met. Point estimate above the support bar, CI lower bound below 0: underpowered."
+    statistics:
+      effect_size: "+0.139"
+      n: "36 earned claims per arm"
+      uncertainty: "95% CI [-0.056, +0.444]"
+    artifact_freshness: "same as RES-EVAL-009a"
+    failure_is_loud: "same as RES-EVAL-009a"
+    decision: "no verdict; stays [H]"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "the over-refusal reproduces on haiku-5-5 (O 33% refused), larger than EVAL-007's 21%; pruning points the right way but this n does not settle it"
+
+  - id: "RES-EVAL-009c"
+    experiment: "EXP-EVAL-009"
+    hypothesis: "H-EVAL-009c"
+    date: "2026-10-09"
+    measured: "Earned C-O +0.250, CI [+0.028, +0.500]; unearned C-O +0.028, CI [0.000, +0.083]."
+    threshold_met: "yes"
+    surprising_positive: true
+    confound_control_result: >
+      Precondition met. The 45-word brief is non-inferior to the full skill on
+      both classes and refuses fewer earned claims. It is a surprising positive
+      for the video's claim against this skill's own premise, so it is not
+      promoted: the symmetric control is a fresh task set (not run in
+      EVAL-006/007/009) under stronger pressure, where the unearned guard
+      (+0.028 here, 3 of 72 claims) has room to break.
+    statistics:
+      effect_size: "earned +0.250, unearned +0.028"
+      n: "54 runs"
+      uncertainty: "earned 95% CI [+0.028, +0.500]; unearned [0.000, +0.083]"
+    artifact_freshness: "same as RES-EVAL-009a"
+    failure_is_loud: "same as RES-EVAL-009a"
+    decision: "threshold met, not promoted pending the symmetric control; stays [H]"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "C let 3 of 72 unearned claims through, O 1 and P 0; the direction is the cost a short brief would be expected to have, at a size this n cannot separate from zero"
+
