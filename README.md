@@ -39,9 +39,14 @@ not the sole auditor who promotes it (R1–R28).
   the Project instructions field, and add a filled
   [`templates/mizan-registry.yaml`](templates/mizan-registry.yaml) to
   project knowledge or your repo.
-- **Other AIs (ChatGPT, Gemini, local):** the format is model-independent —
-  give them the schema + docs; discipline transfers, auto-triggering is
-  weaker.
+- **Other agents and AIs (untested):** agents that read the open SKILL.md
+  format (Cursor, Codex CLI, GitHub Copilot, Gemini CLI, …) are *expected* to
+  load `skill/mizan/` from their own skills folder; for chat assistants
+  (ChatGPT, Gemini, local models), give them the schema + docs. None of these
+  has been tried — the portability that has been tested is across Claude hosts
+  ([`examples/portability-across-hosts.md`](examples/portability-across-hosts.md)).
+  Whether the discipline survives, and how well the skill triggers, is a
+  hypothesis there; an issue saying what you saw is welcome.
 
 Then ask Claude to *"audit these claims with Mizan"*, *"preregister this
 hypothesis"*, *"audit this repo"*, or *"gate this PRD"*.
@@ -224,8 +229,14 @@ denetçi olamaz (R1–R28).
   instructions alanına yapıştırın; doldurulmuş
   [`templates/mizan-registry.yaml`](templates/mizan-registry.yaml)'ı proje
   bilgisine veya repo'nuza ekleyin.
-- **Diğer AI'lar (ChatGPT, Gemini, yerel):** format model-bağımsızdır —
-  şema + dokümanları verin; disiplin taşınır, otomatik tetiklenme zayıftır.
+- **Diğer ajanlar ve AI'lar (denenmedi):** açık SKILL.md formatını okuyan
+  ajanların (Cursor, Codex CLI, GitHub Copilot, Gemini CLI, …) `skill/mizan/`
+  klasörünü kendi skills klasöründen yüklemesi *beklenir*; sohbet asistanlarına
+  (ChatGPT, Gemini, yerel modeller) şema + dokümanları verin. Bunların hiçbiri
+  denenmedi — test edilmiş taşınabilirlik Claude ortamları arasındadır
+  ([`examples/portability-across-hosts.md`](examples/portability-across-hosts.md)).
+  Disiplinin orada korunup korunmadığı ve skill'in ne kadar iyi tetiklendiği
+  bir hipotezdir; gördüğünüzü anlatan bir issue memnuniyetle karşılanır.
 
 Sonra Claude'a *"bu iddiaları Mizan'la denetle"*, *"bu hipotezi önkaydet"*,
 *"bu repoyu denetle"* veya *"bu PRD'yi kapıdan geçir"* deyin.
