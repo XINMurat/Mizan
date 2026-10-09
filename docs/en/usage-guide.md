@@ -161,7 +161,8 @@ entry and a feature gate ARE hypotheses — same fields, same rules 1–8 — pl
     distinguishes it from the first explanation that came to mind.
 
 Registries declaring 1.0–1.4 keep working unenforced; bump the version when
-the entries are ready. The shipped schema is 1.5.
+the entries are ready. The shipped schema version is the one in the banner of
+`skill/mizan/schemas/mizan-registry.yaml`.
 
 16. A **coverage claim** waits for reconciliation. For a phased audit, the
     `coverage` block's `claim_tier` may only be `[K]` once every phase row
@@ -218,10 +219,60 @@ the entries are ready. The shipped schema is 1.5.
     problem already solved. R2, pointed at the claim teams most often make
     without a control. Schema 1.9.
 
-**Warnings (W1–W5) advise, they do not block.** An entry with no `two_sided`
+Rules 23–25 came from one audit that missed four defects a user found by hand
+the same day — every one of them lying between slices, and none reachable by
+the rules above. Each closes a place the method trusted without checking.
+
+23. **MERGE reconciles the pairs nobody looked at.** A `MERGE` row marked done
+    carries `cross_slice`: the slice boundaries actually examined, each with
+    an outcome. Empty, or every pair `unchecked`, fails. Slices are cut by
+    container (module, path, surface); a defect living in a seam appears in
+    neither slice's findings, so reconciling the findings can never find it.
+
+24. **The auditor's own instruments get calibrated too.** A `[K]` entry whose
+    `metric.instrument_built_by` is `auditor` carries `instrument_validated`:
+    the record of running that instrument against a known positive and a
+    known negative. A scanner written during an audit is not a lesser
+    instrument; it is an uncalibrated one.
+
+25. **A runtime verdict names the artifact it ran against.** A result with
+    `threshold_met: yes` on a `runtime` arbiter carries `artifact_freshness`:
+    how it is known the arbiter ran the code under audit. A stale build
+    reports green, red and a full passing suite with equal confidence — not a
+    weaker measurement, a false assurance. Schema 1.10.
+
+26. **Not exploited is not a pass** (Mode 7). An entry resting on
+    `security_evidence: attack_failed | scanner_silence` may not sit at `[K]`:
+    a failed attack is one adversary's attempt, and a quiet scanner is a
+    statement about its own rule set. Only `blocked_by` promotes — a named
+    control (`control_ref`) on every path to the asset, judged by someone
+    other than the person who ran the attempt.
+
+27. **A security coverage claim maps its trust boundaries.** A `coverage`
+    block claiming `[K]` with `security_scope: true` needs `probes.adversary`:
+    each boundary with `who` / `controls` / `near_side_assumes`, scenarios
+    written as actions, none `unchecked`, written before the work, and
+    supplied by someone other than the auditor. R19 with the supplier
+    changed: nobody can name an assumption they never knew they made.
+    Schema 1.11; procedure in `references/security-probe.md`.
+
+28. **The audit lists what the repository produces.** A coverage block with
+    finished phases carries `coverage.produced_artifacts` — each generated
+    file and whether it was `inspected` (`no` / `partial` need a `why_not`) —
+    or waives it in one sentence. Slices are cut from the source tree, which
+    holds what a human typed; a generated config sits in no slice at all.
+    Running the producer and reading its output is what catches it. Schema
+    1.12.
+
+**Warnings (W1–W8) advise, they do not block.** An entry with no `two_sided`
 statement; an entry with no result yet and no threshold or refutation; a
 registry where every tiered entry sits at `[K]`; a coverage ledger with no
-MERGE row; a coverage block with no domain or conjunction probe. Each has a legitimate
+MERGE row; a coverage block with no domain or conjunction probe; every phase
+done while the domain probe was never answered (W6 — waiving is a decision,
+silence is not); an adversary map with no supply-chain or CI boundary (W7);
+and a met runtime threshold with no `failure_is_loud` line saying how that
+arbiter fails (W8 — a hung run returns no verdict, and no verdict reads like
+patience). Each has a legitimate
 exception — a draft entry, a one-entry registry — which is why none is a
 rule. `--strict` promotes them to failures; CI runs strict on the files whose
 job is to model the discipline (schema, templates, examples) and advisory
