@@ -19,7 +19,7 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 MODEL = "claude-haiku-5-5"
-MAX_TOKENS = 8000
+MAX_TOKENS = 32000
 ARMS = ("O", "P", "C")
 REPS = (1, 2, 3)
 
@@ -70,8 +70,9 @@ def main():
             out = os.path.join(HERE, "runs", f"{a.task}-{arm}-{rep}.md")
             if a.dry or os.path.exists(out):
                 continue
-            r = client.messages.create(model=MODEL, max_tokens=MAX_TOKENS,
-                                       messages=[{"role": "user", "content": p}])
+            with client.messages.stream(model=MODEL, max_tokens=MAX_TOKENS,
+                                        messages=[{"role": "user", "content": p}]) as st:
+                r = st.get_final_message()
             text = "".join(b.text for b in r.content if b.type == "text")
             with open(out, "w", encoding="utf-8", newline="\n") as f:
                 f.write(text)
