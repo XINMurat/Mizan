@@ -45,3 +45,12 @@ Video maliyeti yalnızca bir kez anıyor ("maliyet de arttı"). Kısa promptlar
 daha uzun sürdü ve daha pahalıya geldi. Bu, ETH bulgusunun tersi yönünde
 bir maliyet ve videoda tartışılmıyor. Ayrıca başarısız kısa prompt denemeleri
 gösterilmiyor.
+
+## EVAL-008 sonrası (2026-10-09)
+
+Tüm kollar tavana ulaştı (54/54 çalıştırmada tespit 1,000), bu yüzden V1 ve V3 için karar
+okunamadı. Ölçülenler: 45 kelimelik kısa brif, 488 satırlık skill kadar hata buldu;
+budanmış skill aynı tespitte %26 daha kısa cevap yazdı ve prompt token'ı 10,8 binden
+2,7 bine indi; yanlış alarm yönü O 0,083 > C 0,056 > P 0,000 (tavan nedeniyle yalnızca ipucu).
+Bu, V9'u ("modelin bilebileceğini sil") Mizan'ın hata tespiti işlevi için destekler yönde;
+skill'in tespit dışındaki iddiaları ölçülmedi.
