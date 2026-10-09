@@ -138,8 +138,17 @@ jobs:
       - name: Self-test — calibration counts verdicts before rates
         run: |
           set -e
-          python tools/mizan_calibration.py evals/*/*.mizan-registry.yaml | tee /tmp/cal.out
+          # Below MIN_N: EVAL-001..007 are completed and frozen at 4 decisive results.
+          python tools/mizan_calibration.py evals/EVAL-00[1-7]/*.mizan-registry.yaml | tee /tmp/cal.out
           grep -q "hit rate: not reported" /tmp/cal.out || { echo "FAIL: a rate from n<5" >&2; exit 1; }
+          # At or above MIN_N the rate must appear: whichever side the live set is on, the tool must agree.
+          python tools/mizan_calibration.py evals/*/*.mizan-registry.yaml | tee /tmp/cal-all.out
+          n=$(sed -n 's/.*decisive (a verdict returned): \([0-9]*\)\/.*/\1/p' /tmp/cal-all.out)
+          if [ "$n" -ge 5 ]; then
+            grep -q "hit rate among decisive:" /tmp/cal-all.out || { echo "FAIL: n=$n >= 5 but no rate" >&2; exit 1; }
+          else
+            grep -q "hit rate: not reported" /tmp/cal-all.out || { echo "FAIL: a rate from n<5" >&2; exit 1; }
+          fi
           set +e; python tools/mizan_calibration.py README.md >/dev/null 2>&1; rc=$?; set -e
           [ "$rc" -eq 2 ] || { echo "FAIL: non-registry exited $rc" >&2; exit 1; }
 
