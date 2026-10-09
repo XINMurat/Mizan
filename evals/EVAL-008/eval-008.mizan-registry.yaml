@@ -1,0 +1,216 @@
+# EVAL-008 preregistration. Origin: a video claim (audited in
+# video-claims-audit.md) that long skills and CLAUDE.md files now LOWER output
+# quality, because current models apply every written detail literally.
+# This file, README.md and arms/C.md are committed before any run. Arm P (the
+# pruned SKILL.md) is written by the recipe in README.md and committed BEFORE
+# any run as well; a run whose arm-P text is not byte-identical to that commit
+# is excluded. The decision rules are part of the preregistration.
+registry:
+  project: "Mizan — does a pruned SKILL.md audit as well as the full one, and does a short brief beat both?"
+  owner: "XINMurat"
+  schema_version: "1.12"
+  created: "2026-10-09"
+
+hypotheses:
+  - id: "H-EVAL-008a"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-11-30"
+    preregistered: "2026-10-09"
+    title: "A pruned SKILL.md (<= 200 lines) detects planted defects no worse than the full one"
+    formal: >
+      On EVAL-003's six tasks and key, run on haiku, arm P (SKILL.md pruned by
+      the README recipe to at most 200 lines, procedures moved to references/)
+      detects planted defects at a rate no more than 0.05 below arm O (the
+      full SKILL.md at commit ca58307, sha256 968cb38ba4c5...), with false
+      flags no higher.
+    origin: "video claim V5/V8 in video-claims-audit.md; RES-EVAL-001 measured the full skill doubling length for no detection gain on a ceiling task set"
+    data_status: "not_collected"
+    stopping_rule: >
+      Exactly 6 tasks x 3 arms (O, P, C) x 3 repetitions = 54 haiku runs,
+      fixed now. No run is added or repeated because of what a result shows.
+    exclusion_rule: >
+      A run is excluded only if it used any tool other than one Read of its
+      prompt file and one Write of its answer file, or its arm text differs
+      from the committed one. Excluded runs are re-run once; a second
+      exclusion is reported as precondition failed for that cell.
+    missing_data: "A run that returns no answer is re-run once; a second failure is reported."
+    metric:
+      name: "planted-defect detection rate, P minus O"
+      instrument: "evals/EVAL-003/blind.py + SCORER.md + analyze.py, unchanged, over EVAL-003/key.yaml"
+    arbiter:
+      class: "third_party"
+      who: "a separate default-model instance given blinded, shuffled reviews, the key and SCORER.md; it never sees arm labels"
+      independent_of_author: true
+      latency: "hours"
+      calibration: >
+        As EVAL-003: every scoring packet hides a known positive (4/4, 0/2)
+        and a known negative (0/4, 0/2); any calibration miss = precondition
+        failed, no verdict.
+    threshold:
+      support: "P - O >= -0.05 on detection AND task-bootstrap 95% CI lower bound > -0.15 AND false flags P - O <= 0"
+      refute: "P - O <= -0.10 on detection, or false flags P - O >= +0.10"
+      underpowered: "anything between"
+    refutation: "The pruned skill finds clearly fewer defects or flags more sound claims: the procedure text was doing work, and the video's advice does not transfer to an audit skill."
+    two_sided: >
+      Support: about 290 lines of procedure can leave the always-loaded file
+      at no measured loss; SKILL.md is replaced by P. Refute: the procedure
+      text carries detection; SKILL.md stays long and the length is now a
+      measured, justified cost rather than an untested habit.
+    informativeness_precondition: >
+      Arm O detection <= 0.90 and calibration passes in every packet. EVAL-003
+      had arm B (= O) at 0.875 on these tasks, so a ceiling is possible; above
+      0.90 no verdict is read.
+    preregistered_prediction: "Author expects P within 0.05 of O, and underpowered on the CI condition."
+    decision_rule: >
+      SUPPORT: P replaces SKILL.md; moved text lives in references/. REFUTE:
+      SKILL.md is not pruned; the result is recorded in RETIRED-RULES.md as a
+      refuted simplification. UNDERPOWERED or precondition failed: SKILL.md
+      is not changed by this eval.
+    prior_art:
+      - "prompt ablations; EVAL-001 and EVAL-003 arm C in this repository"
+      - "ETH Zurich / LogicStar, 'Evaluating AGENTS.md' (arXiv 2602.11988): context files raise cost ~20% for small or negative success change"
+      - "Anthropic skill-authoring guidance: keep SKILL.md body short, move detail to referenced files"
+    confounds:
+      - "arm P is written by someone who has seen EVAL-002/003's tasks and runs; the recipe forbids new rule text, but selection of what stays is still a choice made after seeing the data"
+      - "length: P will write less, and a shorter answer mentions less; mean words reported beside every rate"
+      - "the same model family writes and scores the reviews"
+      - "the answer key was written by the evaluation's author"
+      - "six tasks: a 0.05 difference is below what this n resolves; underpowered is a likely outcome"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-003a"]
+    cost: "54 haiku review runs + 6 default-model scoring runs"
+    history:
+      - { date: "2026-10-09", event: "preregistered v1, before arm P was written and before any run" }
+
+  - id: "H-EVAL-008b"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-11-30"
+    preregistered: "2026-10-09"
+    title: "The video's strong claim: a 45-word brief audits at least as well as the full skill"
+    formal: >
+      On the same 54 runs, arm C (EVAL-001's 45-word skeptical-reviewer
+      instruction, byte-identical) detects planted defects at a rate at least
+      equal to arm O, with false flags no higher.
+    origin: "video claim V1/V9: short outcome briefs beat long instructions; contradicted in direction (not significance) by RES-EVAL-003, B - C +0.062, CI [0.000, +0.146]"
+    data_status: "not_collected"
+    stopping_rule: "Same 54 runs."
+    exclusion_rule: "Same as H-EVAL-008a."
+    missing_data: "Same as H-EVAL-008a."
+    metric:
+      name: "planted-defect detection rate, C minus O"
+      instrument: "same as H-EVAL-008a"
+    arbiter:
+      class: "third_party"
+      who: "same scorer as H-EVAL-008a"
+      independent_of_author: true
+      latency: "hours"
+      calibration: "same calibration packets as H-EVAL-008a"
+    threshold:
+      support: "C - O >= 0 on detection AND false flags C - O <= 0"
+      refute: "C - O <= -0.08 on detection"
+      underpowered: "anything between"
+    refutation: "The short brief finds clearly fewer defects than the full skill: on audit work, written discipline beats 'let the model decide', and the video's claim does not hold here."
+    two_sided: >
+      Support: the video's claim transfers to auditing; the skill's value must
+      then live somewhere other than detection (registry, validator,
+      preregistration), and SKILL.md should say so. Refute: the claim is
+      domain-bound (creative tasks), and the README can cite this run when
+      the advice is raised again.
+    informativeness_precondition: "Same as H-EVAL-008a."
+    preregistered_prediction: "Author expects refute or underpowered, leaning O > C as in EVAL-003."
+    decision_rule: "SUPPORT: README and SKILL.md state that detection alone is not the skill's value. REFUTE or UNDERPOWERED: no change; result cited in video-claims-audit.md."
+    prior_art:
+      - "EVAL-001 / EVAL-003 arm C, same text"
+    confounds:
+      - "the same model family writes and scores the reviews"
+      - "the answer key was written by the evaluation's author"
+      - "six tasks: a 0.05 difference is below what this n resolves; underpowered is a likely outcome"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-003b"]
+    cost: "none beyond H-EVAL-008a"
+    history:
+      - { date: "2026-10-09", event: "preregistered v1, before any run" }
+
+  - id: "H-EVAL-008c"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-11-30"
+    preregistered: "2026-10-09"
+    title: "The pruned skill is cheaper: P writes at most 80% of O's words"
+    formal: "Mean words per run, P over O, on the same 54 runs."
+    origin: "RES-EVAL-001/003: the full skill wrote 2.2x and 4.7x the words of no instruction"
+    data_status: "not_collected"
+    stopping_rule: "Same 54 runs."
+    exclusion_rule: "Same as H-EVAL-008a."
+    missing_data: "none possible: every run has a length"
+    metric:
+      name: "mean words per run, ratio P/O"
+      instrument: "evals/EVAL-003/analyze.py word count (whitespace split of the run file)"
+    arbiter:
+      class: "runtime"
+      who: "analyze.py"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime"
+    threshold:
+      support: "P/O <= 0.80 with the task-bootstrap CI upper bound < 1"
+      refute: "P/O >= 0.95"
+      underpowered: "anything between"
+    refutation: "P writes about as much as O: answer length is not driven by instruction length."
+    two_sided: "Support: pruning cuts the per-audit cost as well as the always-loaded cost. Refute: only the always-loaded cost falls; answer length has another driver."
+    informativeness_precondition: "Every run has an answer file."
+    preregistered_prediction: "Author expects about 0.7."
+    decision_rule: "Read together with H-EVAL-008a; on its own it changes nothing."
+    prior_art:
+      - "H-EVAL-007b (length rule, 0.81 / 0.81 / 0.95, all CIs include 1)"
+    confounds:
+      - "a shorter answer can be shorter because it found less; read only beside H-EVAL-008a"
+    relations:
+      depends_on: ["H-EVAL-008a"]
+      contradicts: []
+      refines: []
+    cost: "none beyond H-EVAL-008a"
+    history:
+      - { date: "2026-10-09", event: "preregistered v1, before any run" }
+
+experiments:
+  - id: "EXP-EVAL-008"
+    hypotheses: ["H-EVAL-008a", "H-EVAL-008b", "H-EVAL-008c"]
+    design: >
+      EVAL-003's six tasks and key unchanged; haiku review runs, blinded
+      default-model scoring; arms O (SKILL.md at ca58307), P (pruned, committed
+      before any run), C (EVAL-001's arms/C.md); 3 reps, 54 runs in one batch.
+    materials:
+      tasks: "evals/EVAL-002/tasks/ (as used by EVAL-003)"
+      key: "evals/EVAL-003/key.yaml"
+      runner: >
+        One haiku subagent per run, prompt: "Read the file <prompt> and follow
+        its instructions exactly. Then write your complete answer, and nothing
+        else, to <run file> with one Write. Use no other tools. Write only
+        once. Finally report which tools you used."
+    baseline:
+      description: "arm O (full SKILL.md) and arm C (45-word brief), same batch"
+    confound_controls:
+      - confound: "arm P is written by someone who has seen EVAL-002/003's tasks and runs; the recipe forbids new rule text, but selection of what stays is still a choice made after seeing the data"
+        control: "the README recipe allows only moving and deleting text, never new rule text; the P diff is committed and reviewable before any run"
+      - confound: "length: P will write less, and a shorter answer mentions less; mean words reported beside every rate"
+        control: "controlled by reporting: mean words per arm beside every rate (H-EVAL-008c)"
+      - confound: "the same model family writes and scores the reviews"
+        control: "accepted risk -- rationale: calibration packets bound scorer error; stated in the result"
+      - confound: "the answer key was written by the evaluation's author"
+        control: "accepted risk -- rationale: EVAL-003's key already had its two known errors removed"
+      - confound: "six tasks: a 0.05 difference is below what this n resolves; underpowered is a likely outcome"
+        control: "accepted risk -- rationale: stated in the prediction; no verdict is read from an underpowered band"
+      - confound: "a shorter answer can be shorter because it found less; read only beside H-EVAL-008a"
+        control: "controlled by design: H-EVAL-008c's decision rule changes nothing on its own"
+    status: "planned"
+    raw_output: "evals/EVAL-008/runs/ and evals/EVAL-008/scores/"
