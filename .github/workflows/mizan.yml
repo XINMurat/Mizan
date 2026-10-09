@@ -953,6 +953,28 @@ jobs:
           cp /tmp/shape-backup docs/tr/alan-uyarlama.md
           echo "ok -- a dropped question is caught"
 
+      - name: The usage guides teach every rule the schema defines
+        run: |
+          set -e
+          # Both guides said "R1–R28" in a heading and stopped explaining at
+          # rule 22 -- three schema versions behind -- and each stated "the
+          # shipped schema" as a number that disagreed with the other and with
+          # the schema. Reasoning in the script's docstring.
+          python tools/check_guide_coverage.py
+
+      - name: Self-test — the guide check fails on a pinned schema number
+        run: |
+          set -e
+          # A gate that cannot fail is decoration.
+          cp docs/en/usage-guide.md /tmp/guide-backup
+          echo "The shipped schema is 1.5." >> docs/en/usage-guide.md
+          if python tools/check_guide_coverage.py; then
+            cp /tmp/guide-backup docs/en/usage-guide.md
+            echo "FAIL: a pinned schema number went unnoticed" >&2; exit 1
+          fi
+          cp /tmp/guide-backup docs/en/usage-guide.md
+          echo "ok -- a pinned schema number is caught"
+
       - name: The context budget holds (T0/T1 and the per-run sets)
         run: |
           set -e

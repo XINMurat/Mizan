@@ -151,7 +151,8 @@ ve bir feature gate'i birer hipotezDİR — aynı alanlar, aynı 1–8 kurallar�
     açıklamadan ayıran hiçbir şey yoktur.
 
 1.0–1.4 beyan eden registry'ler uygulanmadan çalışmaya devam eder; girdiler
-hazır olduğunda sürümü yükseltin. Dağıtılan şema 1.8'dir.
+hazır olduğunda sürümü yükseltin. Dağıtılan şemanın sürümü,
+`skill/mizan/schemas/mizan-registry.yaml` dosyasının başlığında yazandır.
 
 16. **Kapsam iddiası** uzlaştırmayı bekler. Fazlı denetimde `coverage`
     bloğunun `claim_tier`'ı ancak her faz satırı *ve* MERGE satırı bittiğinde
@@ -217,12 +218,67 @@ edilemez:
 yazdığın prob satırlarına bakar, kapı yarısı yalnızca `[K]` **iddia eden** bir
 `coverage` bloğunda ateşlenir.
 
-**Uyarılar (W1–W5) bloke etmez, tavsiye eder.** `two_sided` beyanı olmayan
+23–25. kurallar, bir kullanıcının aynı gün elle bulduğu dört kusuru KAÇIRAN tek
+bir denetimden çıktı — dördü de dilimlerin ARASINDAYDI ve yukarıdaki
+kuralların hiçbiri onlara ulaşamıyordu. Her biri, yöntemin kontrol etmeden
+güvendiği bir yeri kapatır.
+
+23. **MERGE, kimsenin bakmadığı çiftleri uzlaştırır.** `done` işaretli bir
+    `MERGE` satırı `cross_slice` taşır: gerçekten incelenen dilim sınırları,
+    her biri bir sonuçla. Boş liste ya da her çifti `unchecked` olan liste
+    düşer. Dilimler kapsayıcıya göre kesilir (modül, yol, yüzey); yalnızca
+    bir dikişte yaşayan kusur iki dilimin bulgularında da görünmez, bu yüzden
+    bulguları uzlaştırmak onu asla bulamaz.
+
+24. **Denetçinin kendi enstrümanları da kalibre edilir.**
+    `metric.instrument_built_by` değeri `auditor` olan bir `[K]` girdisi
+    `instrument_validated` taşır: o enstrümanın bilinen bir pozitife ve
+    bilinen bir negatife karşı çalıştırıldığının kaydı. Denetim sırasında
+    yazılan bir tarayıcı daha zayıf bir enstrüman değildir; kalibre
+    edilmemiş bir enstrümandır.
+
+25. **Çalışma zamanı kararı, koştuğu eseri adlandırır.** `runtime` hakemli
+    ve `threshold_met: yes` olan bir sonuç `artifact_freshness` taşır:
+    hakemin denetlenen kodu çalıştırdığının nereden bilindiği. Bayat bir
+    derleme yeşili, kırmızıyı ve tamamen geçen bir paketi aynı güvenle
+    raporlar — bu daha zayıf bir ölçüm değil, sahte bir güvencedir. Şema
+    1.10.
+
+26. **İstismar edilmemiş olmak geçmek değildir** (Mod 7).
+    `security_evidence: attack_failed | scanner_silence` üzerine kurulu bir
+    girdi `[K]`'da duramaz: başarısız bir saldırı tek bir saldırganın
+    denemesidir, sessiz bir tarayıcı ise kendi kural setine dair bir
+    beyandır. Yalnızca `blocked_by` yükseltir — varlığa giden her yolda
+    adı konmuş bir kontrol (`control_ref`), denemeyi yapan kişiden başkası
+    tarafından değerlendirilmiş.
+
+27. **Bir güvenlik kapsam iddiası güven sınırlarını haritalar.**
+    `security_scope: true` ile `[K]` iddia eden bir `coverage` bloğu
+    `probes.adversary` ister: her sınır `who` / `controls` /
+    `near_side_assumes` ile, senaryolar eylem olarak yazılmış, hiçbiri
+    `unchecked` değil, işten önce yazılmış ve denetçiden başkası tarafından
+    sağlanmış. Tedarikçisi değişmiş R19: kimse hiç fark etmediği bir
+    varsayımı adlandıramaz. Şema 1.11; prosedür
+    `references/security-probe.md` içinde.
+
+28. **Denetim, deponun ÜRETTİKLERİNİ listeler.** Fazları biten bir kapsam
+    bloğu `coverage.produced_artifacts` taşır — üretilen her dosya ve
+    `inspected` olup olmadığı (`no` / `partial` bir `why_not` ister) — ya da
+    bunu tek cümleyle feragat eder. Dilimler, bir insanın yazdığını tutan
+    kaynak ağacından kesilir; üretilen bir config hiçbir dilimde yer almaz.
+    Onu yakalayan, üreticiyi çalıştırıp çıktısını okumaktır. Şema 1.12.
+
+**Uyarılar (W1–W8) bloke etmez, tavsiye eder.** `two_sided` beyanı olmayan
 girdi; henüz sonucu olmayan ve eşiği/çürütmesi de bulunmayan girdi; her
-etiketli girdisi `[K]` olan registry; MERGE satırı olmayan kapsam defteri; ve
+etiketli girdisi `[K]` olan registry; MERGE satırı olmayan kapsam defteri;
 `coverage` bloğu olup alan ya da bileşim probu bulunmayan registry — tier-K
 iddiasının altında R19/R20 ateşlenmez, ve bu ikisi testlerin göremediğini bulan
-paslar olduğu için sessizce atlanması da en kolay olanlardır. Her birinin meşru istisnası var — taslak
+paslar olduğu için sessizce atlanması da en kolay olanlardır; her faz bittiği
+hâlde alan probu hiç cevaplanmamış registry (W6 — feragat bir karardır, sessizlik
+değildir); tedarik zinciri ya da CI sınırı olmayan bir saldırgan haritası (W7);
+ve o hakemin nasıl başarısız olduğunu söyleyen `failure_is_loud` satırı
+olmadan karşılanmış bir runtime eşiği (W8 — askıda kalan bir koşu karar
+döndürmez, ve kararsızlık sabır gibi okunur). Her birinin meşru istisnası var — taslak
 girdi, tek girdili registry — bu yüzden hiçbiri kural değil. `--strict` onları
 hataya yükseltir; CI, disiplini **modellemekle yükümlü** dosyalarda (şema,
 şablon, örnekler) strict, diğerlerinde tavsiye kipinde koşar; böylece henüz
