@@ -1,5 +1,5 @@
 <!-- GENERATED PAGE - do not edit here.
-     Source of truth: skill/mizan/SKILL.md
+     Source of truth: skill/mizan/SKILL.md, skill/mizan/references/modes.md, skill/mizan/references/audit-procedure.md, skill/mizan/references/registry-procedure.md, skill/mizan/references/context-economy.md, skill/mizan/references/conduct.md, skill/mizan/references/index.md
      Regenerate:      python tools/sync_en_docs.py
      CI (`--check`) fails if this page drifts from its source. -->
 
@@ -7,7 +7,7 @@
 
 > **Mirrored from the skill package.** This is the canonical English text that
 > Claude actually loads, published here so it can be read next to its Turkish
-> mirror instead of only on GitHub. Edit the source above, not this
+> mirror instead of only on GitHub. Edit the sources above, not this
 > page; the Turkish mirror is `docs/tr/metodoloji.md`.
 
 ## Mizan — Evidence-Tiered Auditing & Preregistration Registry
@@ -43,6 +43,95 @@ maintaining living hypothesis registries. Its core commitments:
 
 Tier drift is itself a finding: when a claim silently moved from `[H]` to
 `[K]` between two documents without new evidence, flag it.
+
+### Modes — decide which one applies
+
+**Audit mode (retrospective).** The user hands you an existing claim set —
+a summary, a review, a report, an AI-generated assessment — and wants to
+know how much of it survives scrutiny. Deliver the Audit Report
+(template in `references/templates.md`).
+
+**Registry mode (prospective).** The user wants to track hypotheses going
+forward — experiments, predictions, work-pattern claims, product bets.
+Create or update a registry file using the Registry Entry template. The
+registry is a living Markdown document the user keeps in their project.
+
+If the user's request contains elements of both ("audit this, then set up
+tracking so it doesn't happen again"), do the audit first, then seed the
+registry with the surviving `[H]` claims as its first entries.
+
+The same discipline applies to code, with one structural difference: in a
+codebase, the claim and its evidence live in DIFFERENT artifacts (name /
+comment / docstring / test / implementation), and every hop between them
+must be verified separately. Verifying that a comment exists is not
+verifying that its claim is true.
+
+**Mode 3 — Code audit.** Code is a claim set even without documentation. Read `references/code-audit.md`.
+**Mode 4 — Bug-hypothesis registry.** Each suspicion becomes a preregistered entry. Covered in `references/code-audit.md`.
+**Mode 5 — Feature / PRD gate.** Read `references/feature-gate.md` before gating a feature or PRD.
+**Mode 6 — Meta-review.** A hit rate ACROSS entries. It reads the registry itself.
+**Mode 7 — Security probe.** **not exploited is not a pass.** Read `references/security-probe.md`.
+**Beyond software.** Read `references/domain-adaptation.md`.
+
+The full text this body was cut from lives, verbatim, in `references/` — load
+a file when its situation arises, not upfront:
+- `modes.md` — Modes 3–7 in full, before working in one of them.
+- `audit-procedure.md` — the eleven-step audit, for a full audit of a
+  document, codebase or project; a quick claim check does not need it.
+- `registry-procedure.md` — writing or updating registry entries; the
+  schema rule history (R9–R28, W1–W8).
+- `context-economy.md` — when an audit will not finish in a few exchanges.
+- `conduct.md` — the long form of the tone, host-conflict and anti-pattern
+  rules below.
+
+### Tone and framing rules
+
+- Be direct about negative findings.
+- Give credit precisely: when something survives the audit, say so with
+  the same specificity used for failures.
+- Length is not rigor. One line per claim that survives; spend words only
+  where a claim fails.
+- Locate errors fully: which claim, which source, what the mechanism of
+  the error is, and what its quantitative impact is.
+- After every diagnosis, give the next step.
+- **Never bring a question empty-handed.**
+- Write in the user's language; keep the tier tags bilingual as in the
+  table.
+
+### Operating assumptions
+
+- **Name the conflict; do not silently comply.**
+- **An audit run under a constraint states the constraint.**
+- **Never assume a tool exists.**
+- **Load references on demand, not upfront.**
+- **The scripted part is the part that travels.**
+
+### Anti-patterns (refuse these politely)
+
+- Producing a tiered report where every claim lands in `[K]` without
+  checking sources — that is the flattery problem wearing a lab coat.
+- Letting the user (or yourself) quietly raise a threshold after seeing a
+  near-miss result. A near-miss is a near-miss; record it.
+- Deleting or rewriting `[R]` entries "for cleanliness".
+- Threshold theatre: attaching a precise-looking number to a claim whose
+  arbiter is the author or nonexistent. The form of the code-verification
+  loop without its judge is not rigor, it is rigor cosplay — and it is the
+  single most likely way this methodology fails outside software.
+- Auditing only the claims that are easy to check and presenting the
+  result as a full audit — state coverage explicitly (N of M claims
+  checkable).
+
+### References
+
+- `references/checklist.md` — read before the first audit in a conversation.
+- `references/templates.md` — read when producing either deliverable.
+- `references/recovery.md` — read when a run stops behaving.
+- `references/code-audit.md`, `feature-gate.md`, `security-probe.md`, `domain-adaptation.md` — per mode, above.
+- `schemas/mizan-registry.yaml` — when the user keeps a registry file, read it at session start, APPEND rather than overwrite, propose new entries in this schema, and enforce its hard rules R1–R28.
+
+## Modes — full text
+
+Moved verbatim from SKILL.md (v2.9, lines 45-123) when the body was pruned (EVAL-008/009). Nothing here was rewritten.
 
 ### Two modes — decide which one applies
 
@@ -122,6 +211,10 @@ forward-commitment gate). For ANY domain outside software, read
 14 per-domain hop maps and confound catalogs, and the constraints that
 transfer unchanged (append-only, DC-001 on individual hit rates,
 permanent [KKE] where symmetric controls are impossible).
+
+## Audit mode — full procedure
+
+Moved verbatim from SKILL.md (v2.9, lines 124-214) when the body was pruned (EVAL-008/009). Nothing here was rewritten.
 
 ### Audit mode — procedure
 
@@ -213,6 +306,10 @@ it lists the failure modes to hunt for and worked examples.
    skewed, prefer structural explanations (selection pressure, format
    incentives) over intent attribution ("they designed it to flatter") —
    unless intent is itself evidenced.
+
+## Registry mode — full procedure and schema rule history
+
+Moved verbatim from SKILL.md (v2.9, lines 215-343) when the body was pruned (EVAL-008/009). Nothing here was rewritten.
 
 ### Registry mode — procedure
 
@@ -343,6 +440,10 @@ rather than stop, for the same reason R8's flag classes differ in force — a
 checker that can only block teaches people to write around it, which is a
 different skill from writing honestly.
 
+## Context economy
+
+Moved verbatim from SKILL.md (v2.9, lines 344-373) when the body was pruned (EVAL-008/009). Nothing here was rewritten.
+
 ### Context economy (long audits, long sessions)
 
 An audit's cost grows with the transcript, not with the finding. Every
@@ -372,6 +473,10 @@ few exchanges:
   instead of carrying the whole history forward out of habit.
 - **State the cost honestly.** If coverage was reduced because the audit
   ran long, that is a coverage statement (A5), not an aside.
+
+## Tone, operating assumptions, anti-patterns — full text
+
+Moved verbatim from SKILL.md (v2.9, lines 374-456) when the body was pruned (EVAL-008/009). Nothing here was rewritten.
 
 ### Tone and framing rules
 
@@ -455,6 +560,10 @@ from the outside.
 - Auditing only the claims that are easy to check and presenting the
   result as a full audit — state coverage explicitly (N of M claims
   checkable).
+
+## Reference index — full text
+
+Moved verbatim from SKILL.md (v2.9, lines 457-488) when the body was pruned (EVAL-008/009). Nothing here was rewritten.
 
 ### References
 
