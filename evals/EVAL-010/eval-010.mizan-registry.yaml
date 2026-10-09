@@ -1,0 +1,196 @@
+# EVAL-010 preregistration. EVAL-009 tested the pruned body with NO access to
+# references; installed, it can read them, and its pointers tell it when. This
+# eval gives both arms a read tool over their own skill files at pinned
+# commits. run.py, score.py and key.yaml are committed with this file before
+# any run. The decision rule governs whether the prune reaches main.
+registry:
+  project: "Mizan — does the pruned skill keep its EVAL-009 result when its references are readable?"
+  owner: "XINMurat"
+  schema_version: "1.12"
+  created: "2026-10-09"
+
+hypotheses:
+  - id: "H-EVAL-010a"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-11-30"
+    preregistered: "2026-10-09"
+    title: "With references readable, the pruned skill is non-inferior to v2.9 on earned and unearned claims"
+    formal: >
+      On EVAL-006's six tasks and key, claude-haiku-5-5 with arm N (pruned
+      SKILL.md body and files at d2cef6c, readable through read_skill_file)
+      marks earned claims PROVEN no more than 0.05 below arm O (v2.9 body and
+      files at ca58307, same tool), and unearned claims PROVEN no more than
+      0.05 above O.
+    origin: "RES-EVAL-009a; open question raised before the prune was merged: the gain may come from the procedure text being unseen, and installed the model can read it"
+    data_status: "not_collected"
+    stopping_rule: "6 tasks x 2 arms x 3 reps = 36 runs, fixed now."
+    exclusion_rule: >
+      A run is excluded if its final stop_reason is not end_turn (including
+      hitting the 10-turn tool limit) or its answer is empty; it is re-run
+      once, and a second exclusion is reported for that cell. A run that fails
+      before writing anything (connection error) is simply run.
+    missing_data: "A claim with no parseable verdict is left out of the rates and counted in the parse rate."
+    metric:
+      name: "earned-PROVEN and unearned-PROVEN rates, N minus O"
+      instrument: "evals/EVAL-010/score.py — EVAL-009's parser and rules, arms O/N"
+    arbiter:
+      class: "runtime"
+      who: "score.py; a regex over each run's final VERDICTS block"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime; same parser as EVAL-004 to -009"
+    threshold:
+      support: "earned N - O >= -0.05 AND task-bootstrap 95% CI lower bound > -0.15 AND unearned N - O <= +0.05"
+      refute: "earned N - O <= -0.10, or unearned N - O >= +0.10"
+      underpowered: "anything between"
+    refutation: "Readable references undo the prune's result: N refuses clearly more earned claims or passes clearly more unearned ones than O."
+    two_sided: >
+      Support: the prune holds as installed; it goes to main as v3.0. Refute:
+      the result in EVAL-009 depended on the text being unreachable; the
+      reads log names which reference to rework before any merge.
+    informativeness_precondition: >
+      Parse rate >= 0.90, and at least one arm deviates from the key by >= 10%
+      on either class. Otherwise no verdict.
+    preregistered_prediction: "Author expects support if N reads little; if N reads audit-procedure.md on most runs, expects N to drift toward O (underpowered)."
+    decision_rule: >
+      SUPPORT: claude/skill-prune is merged with a version bump to 3.0.
+      REFUTE: not merged; the reads log decides which file's load condition
+      or text is reworked, preregistered as EVAL-011. UNDERPOWERED or
+      precondition failed: not merged on this evidence; the owner decides
+      whether EVAL-009 alone suffices, and that decision is recorded.
+    prior_art:
+      - "EVAL-004 to EVAL-009 in this repository"
+    confounds:
+      - "EVAL-006's tasks and key, run for the fourth time; possible T3 #3 key error (the without-T3 line is secondary)"
+      - "the tool is offered to both arms, but how often each arm uses it is an outcome, not a controlled factor; reported per arm"
+      - "one model; 36 runs give 18 runs and 36 earned claims per arm"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-009a"]
+    cost: "36 haiku-5-5 conversations with tool turns, no scoring runs"
+    history:
+      - { date: "2026-10-09", event: "preregistered v1, before any run" }
+      - { date: "2026-10-09", event: "RES-EVAL-010: see results" }
+
+  - id: "H-EVAL-010b"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-11-30"
+    preregistered: "2026-10-09"
+    title: "With references readable, the pruned skill still refuses fewer earned claims"
+    formal: "On the same 36 runs, N marks a larger share of earned claims PROVEN than O."
+    origin: "RES-EVAL-009b: +0.139, underpowered, without references"
+    data_status: "not_collected"
+    stopping_rule: "Same 36 runs."
+    exclusion_rule: "Same as H-EVAL-010a."
+    missing_data: "Same as H-EVAL-010a."
+    metric:
+      name: "earned-PROVEN rate, N minus O"
+      instrument: "same as H-EVAL-010a"
+    arbiter:
+      class: "runtime"
+      who: "score.py"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime"
+    threshold:
+      support: "N - O >= 0.10 and task-bootstrap 95% CI lower bound > 0"
+      refute: "N - O < 0.03"
+      underpowered: "anything between"
+    refutation: "N refuses earned claims as often as O once it can read the moved text."
+    two_sided: "Support: the over-refusal fix survives installation. Refute: the moved text causes the over-refusal wherever it is read from, and the fix is in the text, not its location."
+    informativeness_precondition: "Parse rate >= 0.90 and arm O refuses at least 10% of earned claims."
+    preregistered_prediction: "Underpowered again."
+    decision_rule: "Read together with H-EVAL-010a; on its own it changes nothing."
+    prior_art:
+      - "H-EVAL-009b"
+    confounds:
+      - "EVAL-006's tasks and key, run for the fourth time; possible T3 #3 key error (the without-T3 line is secondary)"
+      - "one model; 36 runs give 18 runs and 36 earned claims per arm"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-009b"]
+    cost: "none beyond H-EVAL-010a"
+    history:
+      - { date: "2026-10-09", event: "preregistered v1, before any run" }
+      - { date: "2026-10-09", event: "RES-EVAL-010: see results" }
+
+experiments:
+  - id: "EXP-EVAL-010"
+    hypotheses: ["H-EVAL-010a", "H-EVAL-010b"]
+    design: >
+      EVAL-006's tasks and key; claude-haiku-5-5; arm O = SKILL.md body at
+      ca58307, arm N = body at d2cef6c; each run may call read_skill_file on
+      its own commit's skill/mizan files, up to 10 turns; 3 reps, 36 runs.
+    materials:
+      tasks: "evals/EVAL-007/runs/prompts/ (# Task section)"
+      key: "evals/EVAL-010/key.yaml (EVAL-009's, unchanged)"
+      runner: "evals/EVAL-010/run.py: streamed Messages API, one tool (read_skill_file), no system prompt, max_tokens 32000; every read logged"
+    baseline:
+      description: "arm O with the same tool, same batch"
+    confound_controls:
+      - confound: "EVAL-006's tasks and key, run for the fourth time; possible T3 #3 key error (the without-T3 line is secondary)"
+        control: "controlled by reporting: score.py prints the without-T3 line"
+      - confound: "the tool is offered to both arms, but how often each arm uses it is an outcome, not a controlled factor; reported per arm"
+        control: "controlled by reporting: score.py prints every file read, per arm"
+      - confound: "one model; 36 runs give 18 runs and 36 earned claims per arm"
+        control: "accepted risk -- rationale: stated in the prediction"
+    status: "completed"
+    raw_output: "evals/EVAL-010/runs/"
+
+results:
+  - id: "RES-EVAL-010a"
+    experiment: "EXP-EVAL-010"
+    hypothesis: "H-EVAL-010a"
+    date: "2026-10-09"
+    measured: >
+      Parse rate 1.000, 36/36 end_turn. Earned-PROVEN O 0.583, N 0.750;
+      unearned-PROVEN O 0.000, N 0.000. Mean words O 988, N 707. N-O earned
+      +0.167, CI [-0.056, +0.333]; unearned 0.000. Without T3: O 0.667,
+      N 0.800. Reads: O checklist 18, templates 6; N checklist 18, templates
+      18, schema 15; audit-procedure.md read 0 times.
+    threshold_met: "yes"
+    surprising_positive: false
+    confound_control_result: >
+      Precondition met (O refused 42% of earned claims). With references
+      readable, N is non-inferior on both classes and the direction of
+      EVAL-009 holds. The open worry did not occur in this form: N never
+      opened audit-procedure.md, so this run does not test what happens when
+      it does.
+    statistics:
+      effect_size: "earned +0.167, unearned 0.000"
+      n: "36 runs, 6 tasks, 36 earned and 72 unearned claims per arm"
+      uncertainty: "earned 95% CI [-0.056, +0.333]"
+    artifact_freshness: "run.py and score.py byte-identical to 151df60; arm files served from git objects at ca58307 and d2cef6c"
+    failure_is_loud: "a run that ends on the 10-turn limit has stop_reason tool_use and is excluded; none did"
+    decision: "propose H->K; the decision rule merges claude/skill-prune as v3.0 -- held for owner confirmation"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "N read the full registry schema on 15 of 18 runs, about 8k more input tokens per run: P's compressed reference line dropped v2.9's condition 'when the user keeps a registry file', and the model applied the bare 'read it at session start' literally. The coverage check could not see this -- the v2.9 sentence survives verbatim in index.md; what changed is the meaning of the short line left in the body. Fixed after this run by restoring the condition (post-hoc, not preregistered)"
+      - "audit-procedure.md was never read, so the question 'does reading it bring the over-refusal back' remains open"
+      - "fourth run on the same tasks and key; one model"
+
+  - id: "RES-EVAL-010b"
+    experiment: "EXP-EVAL-010"
+    hypothesis: "H-EVAL-010b"
+    date: "2026-10-09"
+    measured: "Earned-PROVEN N 0.750, O 0.583; N-O +0.167, 95% CI [-0.056, +0.333]."
+    threshold_met: "underpowered"
+    surprising_positive: false
+    confound_control_result: "Precondition met. Point estimate above the support bar, CI lower bound below 0, as in EVAL-009 (+0.139)."
+    statistics:
+      effect_size: "+0.167"
+      n: "36 earned claims per arm"
+      uncertainty: "95% CI [-0.056, +0.333]"
+    artifact_freshness: "same as RES-EVAL-010a"
+    failure_is_loud: "same as RES-EVAL-010a"
+    decision: "no verdict; stays [H]"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "two independent batches (EVAL-009, EVAL-010) both point the same way, each underpowered alone; pooling them was not preregistered and is not done here"
+
