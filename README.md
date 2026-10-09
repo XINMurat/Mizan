@@ -361,7 +361,20 @@ verirsiniz.
 
 ### Version / Sürüm
 
-**Unreleased (on `main`, after v2.9.0)** — tooling only, no rule change.
+**v3.0** — the body is pruned, not the method. SKILL.md went from 488 lines
+to 129; everything cut moved verbatim to `references/` (modes,
+audit-procedure, registry-procedure, context-economy, conduct, index), and
+`tools/check_skill_coverage.py` checks in CI that every v2.9 sentence still
+exists. No rule changed; R1–R28 and the schema are untouched. Why: three
+preregistered evals on claude-haiku-5-5. EVAL-008 hit a detection ceiling
+(every arm found every planted defect), but the pruned body wrote 26% shorter
+answers. EVAL-009 (no references) and EVAL-010 (references readable) found
+the pruned body non-inferior on earned and unearned claims: unearned-PROVEN
+0 in both, earned-PROVEN 0.81 vs 0.67 and 0.75 vs 0.58. The full body's
+over-refusal reproduced, and pruning cut it in both runs, each underpowered
+alone. Always-loaded cost: about 8,500 tokens to about 1,900.
+
+Also in v3.0 — tooling only, no rule change.
 `mizan_validate.py` refuses a file that is not a registry (none of the known
 sections, a section of the wrong type, an entry that is not a mapping) with
 exit 2 instead of reporting `OK — 0 entries` or crashing with exit 1 —
