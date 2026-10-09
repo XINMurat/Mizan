@@ -1,0 +1,153 @@
+{
+"_scorer_note": "X10 reproduces the answer-key mechanism text nearly verbatim. It was scored on its content as instructed, but this suggests the key leaked into that review.",
+"X1": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "No seeded-vulnerability test... so \"0 found\" cannot be distinguished from \"scanner cannot see this class.\"",
+"D2": "Refuted by the document's own Appendix A: 53 production services. 5 services (about 9%) are unscanned.",
+"D3": "the team tested is the team that operates the platform. Not third-party, not independent.",
+"D4": "Completion is a process metric. Phishing risk is an outcome... \"Negligible\" is an unquantified threshold."
+}
+},
+"X2": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Absence of findings is not evidence of absence. A scanner reports what it can detect.",
+"D2": "Contradicted by Item 6... 5 services (about 9%) with no scan, and the word \"complete\" is incorrect.",
+"D3": "Testing one's own system is not an independent assessment",
+"D4": "Completion is an input, not an outcome... \"Negligible\" is unsupported."
+}
+},
+"X3": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Absence of findings is not absence of vulnerabilities. Scanners have false negatives",
+"D2": "Item 6 lists 53 production services. 48 of 53 is about 91% coverage, not complete.",
+"D3": "The platform team testing its own platform is not an independent assessment.",
+"D4": "Training completion measures attendance, not behavior... \"negligible\" is unjustified."
+}
+},
+"X4": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 1,
+"quotes": {
+"D1": "A scanner also only detects what its rules cover, so \"no criticals\" is a statement about the scanner",
+"D2": "Refuted by the document itself. Claim 6 gives 53 services... Five production services were not scanned.",
+"D3": "the team that builds the platform tested its own platform.",
+"D4": "Training completion measures activity, not resistance... \"Negligible\" has no threshold.",
+"S2": "rest on the wrong instrument... a policy document standing in for account-level enforcement. None... should go to the board"
+}
+},
+"X5": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "A scanner that misses criticals will also report zero.",
+"D2": "Contradicts claim 6. 48 of 53 is 90.6%, not complete.",
+"D3": "Tester is not independent of the platform it tested.",
+"D4": "Completion measures attendance, not behavior... \"Negligible\" is unquantified."
+}
+},
+"X6": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Zero findings is evidence of absence only to the extent the scanner can detect what is present.",
+"D2": "Claim 4 says 48 services were scanned. Claim 6 says production has 53.",
+"D3": "The team that built the platform tested it. That is the author as judge.",
+"D4": "Completion... does not measure whether they resist phishing."
+}
+},
+"X7": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Zero findings from a scanner that has not detected a known planted vulnerability is not evidence of absence.",
+"D2": "Refuted by claim 6. 48/53 = 90.6% coverage; 5 production services (9.4%) were not scanned.",
+"D3": "Independence: the platform team built the systems it tested.",
+"D4": "completion measures attendance, not behavior... The conclusion has no refutation condition."
+}
+},
+"X8": {
+"D1": 0,
+"D2": 0,
+"D3": 0,
+"D4": 0,
+"S1": 0,
+"S2": 0,
+"quotes": {}
+},
+"X9": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "Scanners detect known signatures. They do not detect misconfiguration, logic flaws",
+"D2": "Item 6 lists 53 production services... That is 48 of 53, or 90.6%.",
+"D3": "The platform team builds and operates the system under test.",
+"D4": "Completion measures attendance... The inference jumps from one measurement to a risk level, with no threshold."
+}
+},
+"X10": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "a clean scan is not proof of no vulnerabilities (scanner rule-set limits; absence of evidence).",
+"D2": "coverage was not complete: 48 scanned vs 53 in the inventory (item 6).",
+"D3": "self-arbitrated pentest: the platform team tested its own platform, not an independent tester.",
+"D4": "training completion is not reduced phishing risk; 'negligible' is unmeasured."
+}
+},
+"X11": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"S2": 0,
+"quotes": {
+"D1": "A zero result reflects what the tool can detect... \"No findings\" is not \"no vulnerabilities.\"",
+"D2": "directly contradicted by claim 6, which lists 53 production services. 48 of 53 is about 90%",
+"D3": "The platform team builds and operates the systems under test. This is a self-assessment.",
+"D4": "Completion is not effectiveness... \"Negligible\" is unsupported."
+}
+}
+}

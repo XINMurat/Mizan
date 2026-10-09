@@ -86,6 +86,7 @@ hypotheses:
     history:
       - { date: "2026-10-09", event: "preregistered v1, before arm P was written and before any run" }
       - { date: "2026-10-09", event: "arm P committed (ec5a021, sha256 ee2401a0c6ec...); runner and schedule amended before any run, see EXP-EVAL-008 deviations" }
+      - { date: "2026-10-09", event: "RES-EVAL-008: precondition failed (ceiling, O detection 1.000); no verdict; SKILL.md not changed by this eval" }
 
   - id: "H-EVAL-008b"
     version: 1
@@ -139,6 +140,7 @@ hypotheses:
     cost: "none beyond H-EVAL-008a"
     history:
       - { date: "2026-10-09", event: "preregistered v1, before any run" }
+      - { date: "2026-10-09", event: "RES-EVAL-008: see results" }
 
   - id: "H-EVAL-008c"
     version: 1
@@ -182,6 +184,7 @@ hypotheses:
     cost: "none beyond H-EVAL-008a"
     history:
       - { date: "2026-10-09", event: "preregistered v1, before any run" }
+      - { date: "2026-10-09", event: "RES-EVAL-008: see results" }
 
 experiments:
   - id: "EXP-EVAL-008"
@@ -213,7 +216,7 @@ experiments:
         control: "accepted risk -- rationale: stated in the prediction; no verdict is read from an underpowered band"
       - confound: "a shorter answer can be shorter because it found less; read only beside H-EVAL-008a"
         control: "controlled by design: H-EVAL-008c's decision rule changes nothing on its own"
-    status: "planned"
+    status: "completed"
     deviations:
       - "2026-10-09, before any run: runner changed from haiku subagents to direct API calls (run.py) to cut per-run overhead; with no tools, the exclusion rule's tool clause cannot fire and a run is excluded instead if stop_reason is not end_turn or the answer is empty"
       - "2026-10-09, before any run: runs are spread one task per day, all three arms of a task in the same session, to fit the owner's quota"
@@ -222,3 +225,76 @@ experiments:
       - "2026-10-09, after T1 (9/9 end_turn), before any scoring: owner chose to run T2-T6 in one batch instead of one per day (API credit, not plan quota); each task still runs all three arms back to back"
       - "2026-10-09, during T2-T6, before any scoring: scoring files committed -- blind.py (EVAL-003's, arms O/P/C, reps 1-3, seed 20261009, key and tasks read from EVAL-003), SCORER.md (EVAL-003's, 'eight reviews X1..X8' -> 'eleven reviews X1..X11', nothing else), analyze.py (EVAL-003's load/arm_rate/diff_ci unchanged, verdicts coded from H-EVAL-008a/b/c), score.py (one claude-opus-5-5 API call per packet, the scorer sees SCORER.md, the task's key and the packet, never mapping.json)"
     raw_output: "evals/EVAL-008/runs/ and evals/EVAL-008/scores/"
+
+results:
+  - id: "RES-EVAL-008a"
+    experiment: "EXP-EVAL-008"
+    hypothesis: "H-EVAL-008a"
+    date: "2026-10-09"
+    measured: >
+      Calibration PASS in all six packets. Detection O 1.000, P 1.000, C 1.000.
+      False flags O 0.083, P 0.000, C 0.056. Mean words O 1588, P 1167, C 1311.
+      P-O detection +0.000; false flags -0.083, CI [-0.139, -0.028].
+    threshold_met: "precondition_failed"
+    surprising_positive: false
+    confound_control_result: >
+      Ceiling: arm O detected every planted defect (1.000 > 0.90), so no
+      verdict is read; analyze.py prints SUPPORT, the precondition overrides
+      it, as the registry says. On EVAL-003 haiku arm A (no instruction) was
+      0.771; claude-haiku-5-5 finds all 24 defects under every arm. The task
+      set no longer separates instructions on this model.
+    statistics:
+      effect_size: "P-O detection 0.000; false flags -0.083"
+      n: "54 runs, 6 tasks, task-level bootstrap"
+      uncertainty: "detection CI [0, 0] (no variance at ceiling); false flags CI [-0.139, -0.028]"
+    artifact_freshness: "analyze.py, blind.py, score.py committed in 3b5184c before blind.py ran; all 54 runs written after d060a27/2251c7d"
+    failure_is_loud: "calibration packets void the run on any miss; analyze.py raises on a missing score or run file"
+    decision: "no verdict; H-EVAL-008a stays [H]; SKILL.md not changed by this eval (decision rule)"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "the false-flag direction (P fewer than O) is read from a run whose precondition failed; it is a lead, not a result"
+      - "spot check by the author: all nine T1 runs name regression to the mean and the 0.5% prevalence, consistent with the scorer"
+      - "analyze.py was run with PYTHONUTF8=1: EVAL-003's load() opens score files without an encoding and Windows defaulted to cp1254; no code changed"
+    followup: ["a harder task set, or one that measures what detection cannot: registry discipline, refusal of unearned [K], over-refusal of earned claims"]
+
+  - id: "RES-EVAL-008b"
+    experiment: "EXP-EVAL-008"
+    hypothesis: "H-EVAL-008b"
+    date: "2026-10-09"
+    measured: "Detection C 1.000, O 1.000; false flags C-O -0.028, CI [-0.139, +0.139]."
+    threshold_met: "precondition_failed"
+    surprising_positive: false
+    confound_control_result: "Same ceiling as RES-EVAL-008a; no verdict."
+    statistics:
+      effect_size: "C-O detection 0.000"
+      n: "54 runs"
+      uncertainty: "detection CI [0, 0]"
+    artifact_freshness: "same as RES-EVAL-008a"
+    failure_is_loud: "same as RES-EVAL-008a"
+    decision: "no verdict; stays [H]"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "a 45-word brief matched the 488-line skill on every defect here; on detection of planted defects this model needs no instruction to reach the ceiling, which says nothing yet about the skill's other claims"
+
+  - id: "RES-EVAL-008c"
+    experiment: "EXP-EVAL-008"
+    hypothesis: "H-EVAL-008c"
+    date: "2026-10-09"
+    measured: "Mean words P 1167, O 1588; P/O 0.735, 95% CI [0.648, 0.826]."
+    threshold_met: "yes"
+    surprising_positive: false
+    confound_control_result: >
+      Precondition met (every run has an answer). The preregistered confound
+      (shorter because it found less) is ruled out on this set: P and O both
+      detected 1.000. Prediction was about 0.7.
+    statistics:
+      effect_size: "P/O 0.735"
+      n: "54 runs, 6 tasks"
+      uncertainty: "95% CI [0.648, 0.826]"
+    artifact_freshness: "same as RES-EVAL-008a"
+    failure_is_loud: "a missing run file raises"
+    decision: "propose H->K for H-EVAL-008c; by its decision rule it changes nothing on its own"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "one model, one task set at ceiling; the always-loaded cost also falls (prompt 10.8k -> 2.7k input tokens), measured in runs/log.jsonl"
+

@@ -42,3 +42,21 @@ run. The recipe allows only **moving** and **deleting**, never new rule text:
 - Six tasks: a 0.05 difference is below what this n resolves; *underpowered* is
   the most likely verdict for H-EVAL-008a.
 - Same model family writes and scores; calibration packets bound, not remove, this.
+
+## Result (2026-10-09): precondition failed — ceiling
+
+```
+calibration   PASS in all six packets
+detection     O 1.000   P 1.000   C 1.000
+false flags   O 0.083   P 0.000   C 0.056
+mean words    O 1588    P 1167    C 1311
+P/O words     0.735, CI [0.648, 0.826]  -> H-EVAL-008c met
+```
+
+claude-haiku-5-5 found all 24 planted defects under every arm, where EVAL-003's
+haiku with no instruction found 77%. No verdict is read for 008a or 008b, and
+SKILL.md is not changed by this eval. What the run does show: the pruned body
+cuts answer length by about a quarter and prompt tokens by three quarters with
+no detection loss on this set — and that a 45-word brief does as well on
+detection. Whether the skill earns its length must be measured on something
+detection cannot see (registry discipline, earned vs unearned [K]).

@@ -1,0 +1,140 @@
+{
+"X1": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"quotes": {
+"D1": "14:03 to 14:52 is 49 minutes.",
+"D2": "Claim 6 says the DNS provider's incident was resolved at 14:49, one minute before the rollback.",
+"D3": "The check covers only the services someone suspected, so it cannot establish absence of impact.",
+"D4": "Not supported and should be removed. No system guarantees this."
+}
+},
+"X2": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"quotes": {
+"D1": "14:03 to 14:52 is **49 minutes**. The stated duration fails against its own endpoints.",
+"D2": "The DNS incident (claim 6) predicts the same timing and was not ruled out.",
+"D3": "Universal claim from a check limited to \"three services we suspected.\"",
+"D4": "Cannot fail as written. No mechanism, no scope, no test."
+}
+},
+"X3": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"quotes": {
+"D1": "14:03 to 14:52 is **49 minutes**.",
+"D2": "The DNS provider resolved at 14:49, one minute earlier.",
+"D3": "The \"no customer data\" claim is a negative over a selected set.",
+"D4": "Absolute, with no mechanism, no refutation condition, and no test."
+}
+},
+"X4": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"quotes": {
+"D1": "14:03 to 14:52 is 49 minutes.",
+"D2": "The recovery is equally consistent with the DNS fix and the rollback.",
+"D3": "This is a system-wide claim with a three-service scope.",
+"D4": "No mechanism, no refutation condition, no measurement. Untestable as written."
+}
+},
+"X5": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"quotes": {
+"D1": "arithmetic: 14:03 to 14:52 is 49 minutes, not 47.",
+"D2": "the recovery may be the DNS fix, not the rollback.",
+"D3": "only the three suspected services were checked, so 'no data affected' is not shown.",
+"D4": "an alert detects recurrence, it does not prevent it."
+}
+},
+"X6": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"quotes": {
+"D1": "14:03 to 14:52 is 49 minutes, not 47.",
+"D2": "DNS recovery fixed the errors, and the rollback was coincidental.",
+"D3": "The check covered three suspected services. \"No customer data was affected\" is a system-wide claim.",
+"D4": "No refutation condition. It cannot be tested."
+}
+},
+"X7": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"quotes": {
+"D1": "14:03 to 14:52 is 49 minutes.",
+"D2": "The rollback is confounded with DNS recovery.",
+"D3": "Services not suspected were not checked, so the claim says more than the check covers.",
+"D4": "Certainty with no mechanism, no prevention test, and no refutation condition."
+}
+},
+"X8": {
+"D1": 0,
+"D2": 0,
+"D3": 0,
+"D4": 0,
+"S1": 0,
+"quotes": {}
+},
+"X9": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"quotes": {
+"D1": "14:03 to 14:52 is 49 minutes.",
+"D2": "The errors could have stopped because DNS recovered, not because of the rollback.",
+"D3": "A result scoped to three services cannot support \"no customer data was affected.\"",
+"D4": "Not testable as written. No refutation condition, no timeframe, no metric."
+}
+},
+"X10": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"quotes": {
+"D1": "14:03 to 14:52 is 49 minutes.",
+"D2": "Errors stopping \"shortly after\" 14:50 is equally consistent with DNS recovery.",
+"D3": "The strongest claim is \"no partial order writes were found in the three services checked.\"",
+"D4": "Unsupported. No evidence can establish this."
+}
+},
+"X11": {
+"D1": 1,
+"D2": 1,
+"D3": 1,
+"D4": 1,
+"S1": 0,
+"quotes": {
+"D1": "14:03 to 14:52 is 49 minutes.",
+"D2": "The rollback at 14:50 coincides with the DNS provider's resolution at 14:49.",
+"D3": "The check covered only services suspected in advance, so it cannot support a blanket claim.",
+"D4": "The rollback restores service, and the alert shortens detection, but neither stops a bad cache change."
+}
+}
+}
