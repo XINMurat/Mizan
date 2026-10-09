@@ -1,0 +1,137 @@
+# EVAL-011 preregistration. Two questions RES-EVAL-010a left open: did the
+# post-hoc fix to the schema pointer work, and does the audit procedure's
+# text bring the over-refusal back when the model has read it (in EVAL-010 it
+# never opened the file). run.py, score.py and key.yaml are committed with
+# this file before any run.
+registry:
+  project: "Mizan v3.0 — schema-pointer fix, and does audit-procedure.md cause over-refusal?"
+  owner: "XINMurat"
+  schema_version: "1.12"
+  created: "2026-10-10"
+
+hypotheses:
+  - id: "H-EVAL-011a"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-11-30"
+    preregistered: "2026-10-10"
+    title: "With the restored condition, v3.0 no longer reads the registry schema on a plain audit"
+    formal: >
+      On EVAL-006's six tasks (no registry file in play), arm N (v3.0 at
+      e9d842b, body only, read_skill_file available) calls
+      read_skill_file on schemas/mizan-registry.yaml in at most 2 of 18 runs.
+    origin: "RES-EVAL-010a honesty annex: the pruned pointer had lost 'when the user keeps a registry file'; 15/18 runs read the schema; condition restored post-hoc"
+    data_status: "not_collected"
+    stopping_rule: "6 tasks x 2 arms x 3 reps = 36 runs on claude-haiku-5-5, fixed now; this hypothesis reads arm N's 18."
+    exclusion_rule: >
+      A run is excluded if its final stop_reason is not end_turn or its answer
+      is empty; re-run once, a second exclusion is reported. A run that fails
+      before writing anything is simply run.
+    missing_data: "none possible: every run has a reads list"
+    metric:
+      name: "runs of arm N that read schemas/mizan-registry.yaml"
+      instrument: "evals/EVAL-011/runs/log.jsonl reads field, counted by score.py"
+    arbiter:
+      class: "runtime"
+      who: "run.py logs every tool call; score.py counts them"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime; the same logging counted 15/18 in EVAL-010"
+    threshold:
+      support: "<= 2 of 18"
+      refute: ">= 8 of 18"
+      underpowered: "3 to 7"
+    refutation: "The model still reads the schema on most plain audits: the restored condition is not enough, and the pointer needs rework."
+    two_sided: "Support: the fix works and the extra ~8k tokens per audit are gone. Refute: the cause is not the missing condition (e.g. the pointer's position), and the post-hoc diagnosis was wrong."
+    informativeness_precondition: "At least 15 of arm N's 18 runs complete (end_turn)."
+    preregistered_prediction: "Author expects support."
+    decision_rule: "SUPPORT: nothing to change. REFUTE: the pointer is reworked and re-measured before the next release."
+    prior_art:
+      - "RES-EVAL-010a"
+    confounds:
+      - "the task wording ('review and confirm') never mentions a registry; a task that did would legitimately read the schema"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-010a"]
+    cost: "arm N's 18 runs"
+    history:
+      - { date: "2026-10-10", event: "preregistered v1, before any run" }
+
+  - id: "H-EVAL-011b"
+    version: 1
+    tier: "H"
+    status: "open"
+    review_by: "2026-11-30"
+    preregistered: "2026-10-10"
+    title: "Having read audit-procedure.md, the model refuses more earned claims"
+    formal: >
+      On the same tasks, arm Q (v3.0 body with references/audit-procedure.md
+      in the prompt after it) marks a smaller share of earned claims PROVEN
+      than arm N (body only), run side by side.
+    origin: "RES-EVAL-010a: audit-procedure.md was read 0 times, so whether its text drives the over-refusal measured in EVAL-004 to -010 was untested"
+    data_status: "not_collected"
+    stopping_rule: "Same 36 runs."
+    exclusion_rule: "Same as H-EVAL-011a."
+    missing_data: "A claim with no parseable verdict is left out of the rates and counted in the parse rate."
+    metric:
+      name: "earned-PROVEN rate, N minus Q"
+      instrument: "evals/EVAL-011/score.py — EVAL-010's parser, arms N/Q"
+    arbiter:
+      class: "runtime"
+      who: "score.py; a regex over each run's final VERDICTS block"
+      independent_of_author: true
+      latency: "seconds"
+      calibration: "not applicable for class runtime"
+    threshold:
+      support: "N - Q >= 0.10 and task-bootstrap 95% CI lower bound > 0"
+      refute: "N - Q < 0.03"
+      underpowered: "anything between"
+    refutation: "Reading the procedure does not make the model refuse more earned claims: the over-refusal does not come from that text."
+    two_sided: >
+      Support: the procedure's text is a source of the over-refusal, so a
+      full audit (which reads it) pays that cost; which step causes it is
+      preregistered next. Refute: the procedure is safe to read, and the
+      over-refusal comes from what the long body had besides it.
+    informativeness_precondition: "Parse rate >= 0.90, and at least one arm refuses >= 10% of earned claims or passes >= 10% of unearned ones."
+    preregistered_prediction: "Author expects support or underpowered: the earned-claim refusals in EVAL-004 used the procedure's '[KKE] no comparison group' language."
+    decision_rule: "SUPPORT: EVAL-012 is preregistered to locate the step. REFUTE or UNDERPOWERED: no change; audit-procedure.md stays a load-on-demand file."
+    prior_art:
+      - "EVAL-004 to EVAL-010 in this repository"
+    confounds:
+      - "Q's prompt is about 1,000 words longer than N's; length and content are not separated"
+      - "the procedure is placed after the body rather than read through the tool, so placement may differ from a real read"
+      - "EVAL-006's tasks and key, run for the fifth time; possible T3 #3 key error (the without-T3 line is secondary)"
+    relations:
+      depends_on: []
+      contradicts: []
+      refines: ["H-EVAL-010b"]
+    cost: "36 haiku-5-5 conversations, no scoring runs"
+    history:
+      - { date: "2026-10-10", event: "preregistered v1, before any run" }
+
+experiments:
+  - id: "EXP-EVAL-011"
+    hypotheses: ["H-EVAL-011a", "H-EVAL-011b"]
+    design: >
+      EVAL-006's tasks and key; claude-haiku-5-5; both arms v3.0 at e9d842b
+      with read_skill_file available; arm Q has audit-procedure.md appended
+      to the body in the prompt; 3 reps, 36 runs.
+    materials:
+      tasks: "evals/EVAL-007/runs/prompts/ (# Task section)"
+      key: "evals/EVAL-011/key.yaml (EVAL-010's, unchanged)"
+      runner: "evals/EVAL-011/run.py: EVAL-010's runner with arms N/Q; every read logged"
+    baseline:
+      description: "arm N, same batch"
+    confound_controls:
+      - confound: "the task wording ('review and confirm') never mentions a registry; a task that did would legitimately read the schema"
+        control: "accepted risk -- rationale: this hypothesis is about plain audits; scope stated"
+      - confound: "Q's prompt is about 1,000 words longer than N's; length and content are not separated"
+        control: "accepted risk -- rationale: a support result is followed by EVAL-012, which can length-match"
+      - confound: "the procedure is placed after the body rather than read through the tool, so placement may differ from a real read"
+        control: "accepted risk -- rationale: forcing the read is the only way to observe it; EVAL-010 showed the model does not choose to"
+      - confound: "EVAL-006's tasks and key, run for the fifth time; possible T3 #3 key error (the without-T3 line is secondary)"
+        control: "controlled by reporting: score.py prints the without-T3 line"
+    status: "planned"
+    raw_output: "evals/EVAL-011/runs/"
