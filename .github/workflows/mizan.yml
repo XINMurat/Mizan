@@ -135,6 +135,11 @@ jobs:
           set +e; python tools/mizan_validate.py --profile lite /tmp/lite.yaml > /tmp/lite.out; rc=$?; set -e
           [ "$rc" -eq 1 ] && grep -q "✗ R5" /tmp/lite.out || { echo "FAIL: lite passed an R5 violation" >&2; exit 1; }
 
+      - name: Pruned SKILL.md lost nothing — every v2.9 sentence is still somewhere
+        # EVAL-008/009 moved most of the body to references/. "Moved, not
+        # deleted" is checked here, verbatim, against the last unpruned body.
+        run: python tools/check_skill_coverage.py
+
       - name: Self-test — calibration counts verdicts before rates
         run: |
           set -e
