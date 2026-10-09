@@ -73,6 +73,7 @@ hypotheses:
     cost: "36 haiku-5-5 conversations with tool turns, no scoring runs"
     history:
       - { date: "2026-10-09", event: "preregistered v1, before any run" }
+      - { date: "2026-10-09", event: "RES-EVAL-010: see results" }
 
   - id: "H-EVAL-010b"
     version: 1
@@ -117,6 +118,7 @@ hypotheses:
     cost: "none beyond H-EVAL-010a"
     history:
       - { date: "2026-10-09", event: "preregistered v1, before any run" }
+      - { date: "2026-10-09", event: "RES-EVAL-010: see results" }
 
 experiments:
   - id: "EXP-EVAL-010"
@@ -138,5 +140,57 @@ experiments:
         control: "controlled by reporting: score.py prints every file read, per arm"
       - confound: "one model; 36 runs give 18 runs and 36 earned claims per arm"
         control: "accepted risk -- rationale: stated in the prediction"
-    status: "planned"
+    status: "completed"
     raw_output: "evals/EVAL-010/runs/"
+
+results:
+  - id: "RES-EVAL-010a"
+    experiment: "EXP-EVAL-010"
+    hypothesis: "H-EVAL-010a"
+    date: "2026-10-09"
+    measured: >
+      Parse rate 1.000, 36/36 end_turn. Earned-PROVEN O 0.583, N 0.750;
+      unearned-PROVEN O 0.000, N 0.000. Mean words O 988, N 707. N-O earned
+      +0.167, CI [-0.056, +0.333]; unearned 0.000. Without T3: O 0.667,
+      N 0.800. Reads: O checklist 18, templates 6; N checklist 18, templates
+      18, schema 15; audit-procedure.md read 0 times.
+    threshold_met: "yes"
+    surprising_positive: false
+    confound_control_result: >
+      Precondition met (O refused 42% of earned claims). With references
+      readable, N is non-inferior on both classes and the direction of
+      EVAL-009 holds. The open worry did not occur in this form: N never
+      opened audit-procedure.md, so this run does not test what happens when
+      it does.
+    statistics:
+      effect_size: "earned +0.167, unearned 0.000"
+      n: "36 runs, 6 tasks, 36 earned and 72 unearned claims per arm"
+      uncertainty: "earned 95% CI [-0.056, +0.333]"
+    artifact_freshness: "run.py and score.py byte-identical to 151df60; arm files served from git objects at ca58307 and d2cef6c"
+    failure_is_loud: "a run that ends on the 10-turn limit has stop_reason tool_use and is excluded; none did"
+    decision: "propose H->K; the decision rule merges claude/skill-prune as v3.0 -- held for owner confirmation"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "N read the full registry schema on 15 of 18 runs, about 8k more input tokens per run: P's compressed reference line dropped v2.9's condition 'when the user keeps a registry file', and the model applied the bare 'read it at session start' literally. The coverage check could not see this -- the v2.9 sentence survives verbatim in index.md; what changed is the meaning of the short line left in the body. Fixed after this run by restoring the condition (post-hoc, not preregistered)"
+      - "audit-procedure.md was never read, so the question 'does reading it bring the over-refusal back' remains open"
+      - "fourth run on the same tasks and key; one model"
+
+  - id: "RES-EVAL-010b"
+    experiment: "EXP-EVAL-010"
+    hypothesis: "H-EVAL-010b"
+    date: "2026-10-09"
+    measured: "Earned-PROVEN N 0.750, O 0.583; N-O +0.167, 95% CI [-0.056, +0.333]."
+    threshold_met: "underpowered"
+    surprising_positive: false
+    confound_control_result: "Precondition met. Point estimate above the support bar, CI lower bound below 0, as in EVAL-009 (+0.139)."
+    statistics:
+      effect_size: "+0.167"
+      n: "36 earned claims per arm"
+      uncertainty: "95% CI [-0.056, +0.333]"
+    artifact_freshness: "same as RES-EVAL-010a"
+    failure_is_loud: "same as RES-EVAL-010a"
+    decision: "no verdict; stays [H]"
+    decision_confirmed_by: "pending owner review"
+    honesty_annexes:
+      - "two independent batches (EVAL-009, EVAL-010) both point the same way, each underpowered alone; pooling them was not preregistered and is not done here"
+
