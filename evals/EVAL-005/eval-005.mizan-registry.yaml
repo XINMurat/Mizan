@@ -10,7 +10,7 @@ hypotheses:
   - id: "H-EVAL-005a"
     version: 1
     tier: "H"
-    status: "open"
+    status: "dormant"
     review_by: "2026-10-31"
     preregistered: "2026-09-29"
     title: "With the new rules, haiku stops refusing earned claims"
@@ -64,11 +64,12 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run" }
       - { date: "2026-09-29", event: "RES-EVAL-005: threshold met, not promoted (confounds); stays H" }
+      - { date: "2026-11-11", event: "review_by 2026-10-31 passed with no decision recorded (R17). Owner decision: parked (dormant), tier stays [H]. Not marked [R]: this entry met its own locked threshold, on the tasks the rule was written after. It was never promoted, and the replications it required (EVAL-006 neutral wording, EVAL-007 cited wording, fresh tasks) both refuted the rule, which then left SKILL.md (RETIRED-RULES.md). The support here is recorded as fit to seen tasks, not as evidence for the rule." }
 
   - id: "H-EVAL-005b"
     version: 1
     tier: "H"
-    status: "open"
+    status: "dormant"
     review_by: "2026-10-31"
     preregistered: "2026-09-29"
     title: "With the new rules, haiku writes shorter answers"
@@ -106,6 +107,7 @@ hypotheses:
     cost: "none beyond H-EVAL-005a"
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run" }
+      - { date: "2026-11-11", event: "review_by 2026-10-31 passed with no decision recorded (R17). Owner decision: parked (dormant), tier stays [H]. This registry records no separate result entry for the length measurement; RES-EVAL-006 and RES-EVAL-007b report the ratio as inconclusive. Parked for consistency with H-EVAL-007b, not on a verdict of its own." }
 
 experiments:
   - id: "EXP-EVAL-005"
@@ -164,7 +166,7 @@ results:
       and the verdict. scores/analysis.txt is its output on the committed runs.
     failure_is_loud: "a missing run file raises FileNotFoundError; a run with no VERDICTS block lowers the printed parse rate, and < 0.90 blocks the verdict"
     decision: "no tier change: support on the locked threshold, but a replication on fresh tasks with a rule text that does not cite EVAL-004 is required before H->K"
-    decision_confirmed_by: "pending owner review"
+    decision_confirmed_by: "owner, 2026-11-11 (no tier change; both hypotheses parked as dormant)"
     honesty_annexes:
       - "arm O reproduced EVAL-004 exactly (0.792): the over-refusal is a stable property of the old SKILL.md on haiku, not noise"
       - "one earned refusal remains in N (T2 #1, recall on held-out data): the rule reduced the cost, it did not remove it"
