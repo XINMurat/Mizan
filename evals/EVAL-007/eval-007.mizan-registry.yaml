@@ -11,8 +11,8 @@ registry:
 hypotheses:
   - id: "H-EVAL-007a"
     version: 1
-    tier: "H"
-    status: "open"
+    tier: "R"
+    status: "closed"
     review_by: "2026-10-31"
     preregistered: "2026-09-29"
     title: "On fresh tasks, the rule as shipped (with its EVAL-004 citation) stops haiku refusing earned claims"
@@ -72,11 +72,12 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run" }
       - { date: "2026-09-29", event: "RES-EVAL-007a: refuted on the locked threshold; propose H->R; the preregistered decision rule removes the rule from SKILL.md" }
+      - { date: "2026-11-11", event: "review_by 2026-10-31 passed with no decision recorded (R17). Owner decision: H->R confirmed, entry closed. The rule had already left SKILL.md with the merge that carried RES-EVAL-007a (RETIRED-RULES.md); this records the tier that merge implied." }
 
   - id: "H-EVAL-007b"
     version: 1
     tier: "H"
-    status: "open"
+    status: "dormant"
     review_by: "2026-10-31"
     preregistered: "2026-09-29"
     title: "The length rule shortens haiku answers (third measurement)"
@@ -116,6 +117,7 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run" }
       - { date: "2026-09-29", event: "RES-EVAL-007b: underpowered (0.949, one thousandth under the refute bar); SKILL.md not changed" }
+      - { date: "2026-11-11", event: "review_by 2026-10-31 passed with no decision recorded (R17). Owner decision: parked (dormant), tier stays [H]. Three measurements (EVAL-005, 006, 007) were each underpowered or inconclusive on length; no fourth is planned. Reopening needs a new preregistration with more runs, not a re-reading of these." }
 
 experiments:
   - id: "EXP-EVAL-007"
@@ -176,7 +178,7 @@ results:
       were written after that commit.
     failure_is_loud: "a missing run file raises; a run with no VERDICTS block lowers the parse rate, and < 0.90 blocks the verdict"
     decision: "propose H->R: the rule as shipped does not reduce over-refusal on fresh tasks; removed from SKILL.md per the preregistered decision rule"
-    decision_confirmed_by: "pending owner review (the merge of the change that carries this result)"
+    decision_confirmed_by: "owner, 2026-11-11 (H->R confirmed; the change that carried this result was merged earlier)"
     honesty_annexes:
       - "the over-refusal the rule was written for is real and reproduces (O refuses 16.7% in EVAL-006, 20.8% here); removing the rule removes a remedy that did not work, not the problem"
       - "one model (haiku), 24 runs per eval; a small true effect is not excluded by either CI"
@@ -199,7 +201,7 @@ results:
     artifact_freshness: "same score.py and runs as RES-EVAL-007a"
     failure_is_loud: "every run has a length; a missing file raises"
     decision: "no tier change; SKILL.md not changed (UNDERPOWERED keeps the rule by the preregistered decision rule)"
-    decision_confirmed_by: "pending owner review"
+    decision_confirmed_by: "owner, 2026-11-11 (no tier change; hypothesis parked as dormant)"
     honesty_annexes:
       - "0.949 vs a 0.95 refute bar: the rule survives this eval by a rounding margin, and saying otherwise either way would be reading the noise"
       - "C also carries the earned-claim rule, which O lacks; a length effect of one is not separable from the other here"
