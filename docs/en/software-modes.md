@@ -201,6 +201,25 @@ whether reconciliation has run.
    - TODO/dead-code inventory → deferral record
    The Gap Map feeds Mode 5's feature suggestions.
 
+#### A7. Change audit — a diff is a claim set too
+
+A change claims what it does, that it does only that, and that someone
+understood it. Tier each:
+
+- **Blind pass.** Audit the diff WITHOUT the author's explanation (a fresh
+  session given only the diff and the tests). A finding that needed the
+  explanation to dismiss is `[KKE]`: the code does not carry its own reason.
+- **Scope claim.** One stated purpose per change. A diff that also moves,
+  renames or reformats makes "behaviour unchanged" unreadable — `[H]` until
+  a test that could fail says so (A4).
+- **Comprehension claim.** "Reviewed" is `[K]` only when a named reviewer
+  can say, without the author, what the change does and what would break it.
+  Otherwise `[H]`; and arbiter = author when one model wrote and reviewed.
+- **Unverified list.** A delivery note with no "not verified" line claims
+  full verification — `[Y]` unless true.
+
+Report the denominator: N changes audited, K too large to read whole.
+
 ### Part B — Bug-hypothesis registry (Mode 4)
 
 #### B1. The frame
