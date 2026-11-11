@@ -134,6 +134,26 @@ uzlaştırmanın koşup koşmadığını gösterir.
    - TODO/ölü-kod envanteri → erteleme kaydı
    Boşluk Haritası, Mod 5'in özellik önerilerini besler.
 
+### A7. Değişiklik denetimi — fark da bir iddia kümesidir
+
+Bir değişiklik üç şey iddia eder: ne yaptığını, yalnız onu yaptığını ve birinin
+onu anladığını. Her birini ayrı katmanla:
+
+- **Kör geçiş.** Farkı yazarın açıklaması OLMADAN denetle (yalnız fark ve
+  testler verilmiş taze bir oturum). Elemek için açıklamaya ihtiyaç duyan bulgu
+  `[KKE]`'dir: kod kendi gerekçesini taşımıyor.
+- **Kapsam iddiası.** Değişiklik başına tek beyan edilmiş amaç. Aynı anda taşıyan,
+  yeniden adlandıran ya da biçimlendiren fark "davranış değişmedi" iddiasını
+  okunamaz kılar — başarısız olabilen bir test söyleyene kadar `[H]` (A4).
+- **Anlama iddiası.** "İncelendi" ancak adı yazılı bir inceleyen, yazar olmadan,
+  değişikliğin ne yaptığını ve onu neyin bozacağını söyleyebiliyorsa `[K]`'dir.
+  Değilse `[H]`; yazan ve inceleyen aynı modelse hakem = yazar.
+- **Doğrulanmayanlar listesi.** "Doğrulanmadı" satırı olmayan teslim notu tam
+  doğrulama iddia eder — doğru değilse `[Y]`.
+
+Paydayı raporla: N değişiklik denetlendi, K tanesi bütün olarak okunamayacak
+kadar büyük.
+
 ## B Kısmı — Bug-hipotez registry'si (Mod 4)
 
 ### B1. Çerçeve
