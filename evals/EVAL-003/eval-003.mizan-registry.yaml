@@ -11,7 +11,7 @@ hypotheses:
   - id: "H-EVAL-003a"
     version: 1
     tier: "H"
-    status: "open"
+    status: "dormant"
     review_by: "2026-10-31"
     preregistered: "2026-09-29"
     title: "With the skill loaded, an audit finds more planted defects than with no instruction"
@@ -76,11 +76,12 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
       - { date: "2026-09-29", event: "RES-EVAL-003: underpowered; tier unchanged" }
+      - { date: "2026-11-11", event: "review_by 2026-10-31 passed with no decision recorded (R17). Owner decision: parked (dormant), tier stays [H]. RES-EVAL-003 was underpowered and returned no verdict. Reopening needs a new preregistration with more runs, not a re-reading of these." }
 
   - id: "H-EVAL-003b"
     version: 1
     tier: "H"
-    status: "open"
+    status: "dormant"
     review_by: "2026-10-31"
     preregistered: "2026-09-29"
     title: "The skill beats a one-paragraph 'be skeptical' instruction"
@@ -127,6 +128,7 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
       - { date: "2026-09-29", event: "RES-EVAL-003: underpowered; tier unchanged" }
+      - { date: "2026-11-11", event: "review_by 2026-10-31 passed with no decision recorded (R17). Owner decision: parked (dormant), tier stays [H]. RES-EVAL-003 was underpowered and returned no verdict. Reopening needs a new preregistration with more runs, not a re-reading of these." }
 
 experiments:
   - id: "EXP-EVAL-003"
@@ -181,7 +183,7 @@ results:
       n: "36 runs, 6 tasks, task-level bootstrap"
       uncertainty: "95% CI B-A [-0.062, +0.250], B-C [0.000, +0.146]"
     decision: "no verdict; H-EVAL-003a/b stay [H]"
-    decision_confirmed_by: "pending owner review"
+    decision_confirmed_by: "owner, 2026-11-11 (no verdict; both hypotheses parked as dormant)"
     honesty_annexes:
       - "the positive direction is a point estimate inside a CI that includes zero; reporting it as 'the skill helps' would be [Y]"
       - "B's detection gain comes with more false flags and 4.7x length; a longer answer mentions more by construction"

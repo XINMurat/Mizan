@@ -11,7 +11,7 @@ hypotheses:
   - id: "H-EVAL-002a"
     version: 1
     tier: "H"
-    status: "open"
+    status: "dormant"
     review_by: "2026-10-31"
     preregistered: "2026-09-29"
     title: "With the skill loaded, an audit finds more planted defects than with no instruction"
@@ -77,11 +77,12 @@ hypotheses:
       - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
       - { date: "2026-09-29", event: "deviation, recorded before scoring: one launch hit the 20-subagent limit and never started; misreading which cell it was, T4-B-2 was launched a second time. The FIRST T4-B-2 output (sha256 0198c295..., committed in 9f03d9f before the second finished) is the one scored; the second was discarded unread. The cell that never started, T4-C-2, was launched once." }
       - { date: "2026-09-29", event: "run complete: precondition FAILED again (ceiling) -- arm A detected 0.958 > 0.85; no [R] and no [K]; stays [H], see RES-EVAL-002" }
+      - { date: "2026-11-11", event: "review_by 2026-10-31 passed with no decision recorded (R17). Owner decision: parked (dormant), tier stays [H]. The precondition failed at the ceiling again (arm A 0.958 > 0.85); no verdict. The question was carried forward by EVAL-003." }
 
   - id: "H-EVAL-002b"
     version: 1
     tier: "H"
-    status: "open"
+    status: "dormant"
     review_by: "2026-10-31"
     preregistered: "2026-09-29"
     title: "The skill beats a one-paragraph 'be skeptical' instruction"
@@ -129,6 +130,7 @@ hypotheses:
       - { date: "2026-09-29", event: "preregistered v1, before any run; each run reads its prompt from a file, all arms alike (EVAL-001 clarification carried over)" }
       - { date: "2026-09-29", event: "deviation, recorded before scoring: one launch hit the 20-subagent limit and never started; misreading which cell it was, T4-B-2 was launched a second time. The FIRST T4-B-2 output (sha256 0198c295..., committed in 9f03d9f before the second finished) is the one scored; the second was discarded unread. The cell that never started, T4-C-2, was launched once." }
       - { date: "2026-09-29", event: "run complete: precondition FAILED again (ceiling) -- arm A detected 0.958 > 0.85; no [R] and no [K]; stays [H], see RES-EVAL-002" }
+      - { date: "2026-11-11", event: "review_by 2026-10-31 passed with no decision recorded (R17). Owner decision: parked (dormant), tier stays [H]. The precondition failed at the ceiling again (arm A 0.958 > 0.85); no verdict. The question was carried forward by EVAL-003." }
 
 experiments:
   - id: "EXP-EVAL-002"
@@ -189,7 +191,7 @@ results:
       n: "36 runs, 6 tasks"
       uncertainty: "95% CI B-A [0.000, 0.125]"
     decision: "no verdict; H-EVAL-002a/b stay [H]"
-    decision_confirmed_by: "pending owner review"
+    decision_confirmed_by: "owner, 2026-11-11 (no verdict; both hypotheses parked as dormant)"
     honesty_annexes:
       - "two of the author's six 'sound' claims were not sound; the models found it -- the key's author is a fallible arbiter, exactly as the confounds list said"
       - "measured across EVAL-001 and EVAL-002, not in dispute: the skill more than doubles output length (1370/1438 vs 619/664 words) with no detection gain on either task set"

@@ -10,7 +10,7 @@ hypotheses:
   - id: "H-EVAL-004a"
     version: 1
     tier: "H"
-    status: "open"
+    status: "dormant"
     review_by: "2026-10-31"
     preregistered: "2026-09-29"
     title: "Under sign-off pressure, the skill marks fewer unearned claims PROVEN than no instruction"
@@ -67,11 +67,12 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run" }
       - { date: "2026-09-29", event: "RES-EVAL-004: precondition failed (floor); tier unchanged" }
+      - { date: "2026-11-11", event: "review_by 2026-10-31 passed with no decision recorded (R17). Owner decision: parked (dormant), tier stays [H]. The precondition failed at the floor; no verdict. What the run did surface (over-refusal of earned claims) was followed up in EVAL-005 to EVAL-007." }
 
   - id: "H-EVAL-004b"
     version: 1
     tier: "H"
-    status: "open"
+    status: "dormant"
     review_by: "2026-10-31"
     preregistered: "2026-09-29"
     title: "Under sign-off pressure, the skill holds the line better than a 45-word 'be skeptical' instruction"
@@ -110,6 +111,7 @@ hypotheses:
     history:
       - { date: "2026-09-29", event: "preregistered v1, before any run" }
       - { date: "2026-09-29", event: "RES-EVAL-004: precondition failed (floor); tier unchanged" }
+      - { date: "2026-11-11", event: "review_by 2026-10-31 passed with no decision recorded (R17). Owner decision: parked (dormant), tier stays [H]. The precondition failed at the floor; no verdict. What the run did surface (over-refusal of earned claims) was followed up in EVAL-005 to EVAL-007." }
 
 experiments:
   - id: "EXP-EVAL-004"
@@ -162,7 +164,7 @@ results:
       n: "72 runs, 6 tasks, 2 models"
       uncertainty: "95% CI haiku A-B [0.000, +0.083]"
     decision: "no verdict; H-EVAL-004a/b stay [H]"
-    decision_confirmed_by: "pending owner review"
+    decision_confirmed_by: "owner, 2026-11-11 (no verdict; both hypotheses parked as dormant)"
     honesty_annexes:
       - "the pressure manipulation was too weak for both models; absence of sycophancy here says nothing about stronger pressure"
       - "the only measured behavioural effect of the skill on haiku is a cost: 21% of earned claims refused, with the same '[KKE] no comparison group' template applied to claims that had one"
